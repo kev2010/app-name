@@ -2,8 +2,16 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
 import colors from "../assets/colors";
 
-// img url, name, time, text, collabs, reactions
 const Thought = (props) => {
+  let collabsText = "";
+  if (props.collabs.length == 1) {
+    collabsText = `thought with ${props.collabs[0]}`;
+  } else if (props.collabs.length == 2) {
+    collabsText = `thought with ${props.collabs[0]} and ${props.collabs[1]}`;
+  } else if (props.collabs.length > 2) {
+    collabsText = `thought with ${props.collabs[0]}, ${props.collabs[1]}, and more`;
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.row1}>
@@ -13,19 +21,19 @@ const Thought = (props) => {
           //   source={{uri: props.img}}
           //   resizeMode="stretch"
         />
-        <Text style={styles.name}>Kevin Jiang</Text>
-        <Text style={styles.time}>4m</Text>
+        <Text style={styles.name}>{props.name}</Text>
+        <Text style={styles.time}>{props.time}</Text>
       </View>
-      <View style={styles.row2}>
-        <Text style={styles.text}>
-          Some cool text here. Some interesting insights. Yee haw. Some cool
-          text here. Some interesting insights. Yee haw. Some cool text here.
-          Some interesting insights. Yee haw. Some cool text here. Some
-          interesting insights. Yee haw.
-        </Text>
+      <View
+        style={[
+          styles.row2,
+          { marginBottom: props.collabs.length > 0 ? 16 : 8 },
+        ]}
+      >
+        <Text style={styles.text}>{props.thought}</Text>
       </View>
       <View style={styles.row3}>
-        <Text style={styles.thought}>thought with NAME1</Text>
+        <Text style={styles.thought}>{collabsText}</Text>
         <View style={styles.actions}>
           <Image
             style={styles.stars}
@@ -33,7 +41,7 @@ const Thought = (props) => {
             //   source={{uri: props.img}}
             // resizeMode="stretch"
           />
-          <Text style={styles.number}>5</Text>
+          <Text style={styles.number}>{props.reactions}</Text>
         </View>
       </View>
     </View>
@@ -43,7 +51,6 @@ const Thought = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: "90%",
     justifyContent: "space-around",
     backgroundColor: colors.almost_white,
     borderRadius: 15,
@@ -73,12 +80,12 @@ const styles = StyleSheet.create({
   name: {
     marginRight: 8,
     color: colors.gray_9,
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: "Nunito-SemiBold",
   },
   time: {
     color: colors.gray_3,
-    fontSize: 12,
+    fontSize: 14,
     fontFamily: "Nunito-Regular",
   },
   text: {
