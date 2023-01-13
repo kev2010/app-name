@@ -1,16 +1,22 @@
 import { StatusBar } from "expo-status-bar";
 import {
   SafeAreaView,
-  FlatList,
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
   RefreshControl,
+  Image,
+  TextInput,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo, useRef } from "react";
 import colors from "./assets/colors";
-import Thought from "./components/Thought";
+import Backdrop from "./components/Backdrop";
+import Handle from "./components/Handle";
+import Think from "./components/Think";
+import BottomSheet from "@gorhom/bottom-sheet";
 import Feed from "./components/Feed";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -32,6 +38,7 @@ export default function App() {
   const [friendsFeed, setFriends] = useState(true);
   const globalStyle = useGlobalStyle(globalFeed);
   const friendsStyle = useFriendsStyle(friendsFeed);
+  const [swiped, setSwipe] = useState(false);
 
   const onPressGlobal = () => {
     if (!globalFeed) {
@@ -46,6 +53,17 @@ export default function App() {
       setFriends(true);
     }
   };
+
+  const handleBottomSheetSwipe = () => {
+    setSwipe(!swiped);
+    console.log("logs", swiped);
+  };
+
+  // ref
+  const bottomSheetRef = useRef();
+
+  // variables
+  const snapPoints = useMemo(() => ["10%", "75%"], []);
 
   const [fontsLoaded] = useFonts({
     "Nunito-Black": require("./assets/fonts/Nunito-Black.ttf"),
@@ -82,6 +100,18 @@ export default function App() {
         </View>
       </View>
       <Feed></Feed>
+
+      <BottomSheet
+        ref={bottomSheetRef}
+        snapPoints={snapPoints}
+        onChange={handleBottomSheetSwipe}
+        backgroundStyle={styles.sheet}
+        backdropComponent={Backdrop}
+        style={styles.sheet}
+        handleComponent={() => <Handle swiped={!swiped}></Handle>} // WHYYY? TODO @RAPH
+      >
+        <Think></Think>
+      </BottomSheet>
     </SafeAreaView>
   );
 }
@@ -123,5 +153,19 @@ const styles = StyleSheet.create({
   type: {
     fontSize: 16,
     marginHorizontal: 16,
+  },
+  sheet: {
+    backgroundColor: colors.almost_white,
+  },
+  sheet: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: -4,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 20,
+
+    elevation: 10,
   },
 });
