@@ -10,16 +10,24 @@ import {
   TextInput,
   Keyboard,
   TouchableWithoutFeedback,
+  Pressable,
 } from "react-native";
-import React, { useState, useCallback, useMemo, useRef } from "react";
+import React, {
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+  useEffect,
+} from "react";
 import colors from "./assets/colors";
-import Backdrop from "./components/Backdrop";
 import Handle from "./components/Handle";
 import Think from "./components/Think";
 import BottomSheet from "@gorhom/bottom-sheet";
 import Feed from "./components/Feed";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import { useAssets } from "expo-asset";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -54,16 +62,30 @@ export default function App() {
     }
   };
 
+  // ref
+  const bottomSheetRef = useRef(null);
+
+  // variables
+  const snapPoints = useMemo(() => ["10.5%", "70%"], []);
+
+  const renderBackdrop = (props) => {
+    return (
+      <BottomSheetBackdrop {...props} pressBehavior={"collapse"} opacity={0.25}>
+        <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }} />
+      </BottomSheetBackdrop>
+    );
+  };
+
+  const onPressSheet = () => {
+    bottomSheetRef.current.snapToIndex(1);
+    console.log("hello");
+  };
+
   const handleBottomSheetSwipe = () => {
+    Keyboard.dismiss;
     setSwipe(!swiped);
     console.log("logs", swiped);
   };
-
-  // ref
-  const bottomSheetRef = useRef();
-
-  // variables
-  const snapPoints = useMemo(() => ["10%", "75%"], []);
 
   const [fontsLoaded] = useFonts({
     "Nunito-Black": require("./assets/fonts/Nunito-Black.ttf"),
@@ -76,13 +98,15 @@ export default function App() {
     "Nunito-SemiBold": require("./assets/fonts/Nunito-SemiBold.ttf"),
   });
 
+  const [assets, error] = useAssets([require("./assets/handleIndicator.png")]);
+
   const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
+    if (fontsLoaded && !!assets) {
       await SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, !!assets]);
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || !assets) {
     return null;
   }
 
@@ -101,17 +125,30 @@ export default function App() {
       </View>
       <Feed></Feed>
 
+      {/* <TouchableOpacity onPress={onPressSheet} style={styles.touchable}> */}
       <BottomSheet
         ref={bottomSheetRef}
         snapPoints={snapPoints}
         onChange={handleBottomSheetSwipe}
         backgroundStyle={styles.sheet}
-        backdropComponent={Backdrop}
+        backdropComponent={renderBackdrop}
+        enabledContentTapInteraction={true}
         style={styles.sheet}
-        handleComponent={() => <Handle swiped={!swiped}></Handle>} // WHYYY? TODO @RAPH
+        handleComponent={({ animatedIndex, animatedPosition }) => (
+          <Handle
+            // animatedIndex={animatedIndex}
+            // animatedPosition={animatedPosition}
+            swiped={!swiped}
+          />
+        )} // WHYYY? TODO @RAPH
       >
-        <Think></Think>
+        {/* <Pressable onPress={onPressSheet} style={{ flex: 1 }} /> */}
+        {/* WHY??? */}
+        {/* <View style={styles.contentContainer}> */}
+        <Think swiped={!swiped}></Think>
+        {/* </View> */}
       </BottomSheet>
+      {/* </TouchableOpacity> */}
     </SafeAreaView>
   );
 }
@@ -154,10 +191,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginHorizontal: 16,
   },
-  sheet: {
-    backgroundColor: colors.almost_white,
+  touchable: {
+    flex: 1,
+    padding: 24,
   },
   sheet: {
+    backgroundColor: colors.almost_white,
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -165,7 +204,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.05,
     shadowRadius: 20,
-
+    flex: 1,
     elevation: 10,
   },
 });
