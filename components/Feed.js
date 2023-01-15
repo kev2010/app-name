@@ -33,6 +33,34 @@ const Feed = (props) => {
     return Promise.all(results);
   };
 
+  // assume time is type Date
+  const calculateTimeDiffFromNow = (time) => {
+    var seconds = Math.floor((new Date() - time) / 1000);
+    var interval = seconds / 31536000;
+
+    if (interval > 1) {
+      return Math.floor(interval) + "y";
+    }
+    interval = seconds / 2592000;
+    if (interval > 1) {
+      return Math.floor(interval) + "mo";
+    }
+    interval = seconds / 86400;
+    if (interval > 1) {
+      return Math.floor(interval) + "d";
+    }
+    interval = seconds / 3600;
+    if (interval > 1) {
+      return Math.floor(interval) + "h";
+    }
+    interval = seconds / 60;
+    if (interval > 1) {
+      return Math.floor(interval) + "m";
+    }
+
+    return Math.floor(seconds) + "s";
+  };
+
   const refreshThoughts = () => {
     fetchThoughts().then((thoughts) => {
       fetchUsers(thoughts).then((users) => {
@@ -44,7 +72,7 @@ const Feed = (props) => {
             id: doc.id,
             name: user.data().name,
             //   name: "Kevin Jiang",
-            time: "4m",
+            time: calculateTimeDiffFromNow(doc.data().time.toDate()),
             collabs: [],
             reactions: 5,
             thought: doc.data().thought,
