@@ -20,4 +20,6 @@ Think.js is the component for typing in thoughts when you swipe up the Bottom Sh
 
 Thought.js is the component for the actual thought you have. Feed.js uses Thought components to display each item.
 
+Phone.js is the component for the "Enter your phone number" screen in the login process. haven't figured out yet how to deal with the order, so i just made it a working component for now.
+
 Screens is the folder that will eventually include all screens (to make the code structure more modular). right now, only LoginScreen is there. i haven't quite figured out how to actually best code the transitions between all the screens yet (stack navigator? do a bunch of if else checks in App.js [i.e. go to home screen after successful login]? something else?).
