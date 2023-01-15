@@ -44,7 +44,9 @@ const Think = ({ swiped }) => {
 
   const inputRef = React.createRef();
 
-  const onSubmit = () => {};
+  const onSubmit = () => {
+    console.log("about to submit ", thought);
+  };
 
   const hide = {
     opacity: swiped ? 1 : 0,

@@ -28,6 +28,7 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { useAssets } from "expo-asset";
+// import LoginScreen from "./screens/LoginScreen";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -112,6 +113,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
+      {/* <LoginScreen /> */}
       <StatusBar barStyle={"light-content"} />
       <View style={styles.header}>
         <Text style={styles.title}>App Name</Text>
@@ -126,7 +128,6 @@ export default function App() {
       </View>
       <Feed></Feed>
 
-      {/* <TouchableOpacity onPress={onPressSheet} style={styles.touchable}> */}
       <BottomSheet
         ref={bottomSheetRef}
         snapPoints={snapPoints}
@@ -144,13 +145,8 @@ export default function App() {
           />
         )} // WHYYY? TODO @RAPH
       >
-        {/* <Pressable onPress={onPressSheet} style={{ flex: 1 }} /> */}
-        {/* WHY??? */}
-        {/* <View style={styles.contentContainer}> */}
         <Think swiped={!swiped}></Think>
-        {/* </View> */}
       </BottomSheet>
-      {/* </TouchableOpacity> */}
     </SafeAreaView>
   );
 }

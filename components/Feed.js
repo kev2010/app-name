@@ -33,6 +33,31 @@ const Feed = (props) => {
     return Promise.all(results);
   };
 
+  const refreshThoughts = () => {
+    fetchThoughts().then((thoughts) => {
+      fetchUsers(thoughts).then((users) => {
+        var data = {};
+        for (var i = 0; i < thoughts.size; i++) {
+          const doc = thoughts.docs[i];
+          const user = users[i];
+          data[doc.id] = {
+            id: doc.id,
+            name: user.data().name,
+            time: calculateTimeDiffFromNow(doc.data().time.toDate()),
+            collabs: [],
+            reactions: 5,
+            thought: doc.data().thought,
+          };
+        }
+        setData(data);
+      });
+    });
+  };
+
+  useEffect(() => {
+    refreshThoughts();
+  }, []);
+
   // assume time is type Date
   const calculateTimeDiffFromNow = (time) => {
     var seconds = Math.floor((new Date() - time) / 1000);
@@ -60,32 +85,6 @@ const Feed = (props) => {
 
     return Math.floor(seconds) + "s";
   };
-
-  const refreshThoughts = () => {
-    fetchThoughts().then((thoughts) => {
-      fetchUsers(thoughts).then((users) => {
-        var data = {};
-        for (var i = 0; i < thoughts.size; i++) {
-          const doc = thoughts.docs[i];
-          const user = users[i];
-          data[doc.id] = {
-            id: doc.id,
-            name: user.data().name,
-            //   name: "Kevin Jiang",
-            time: calculateTimeDiffFromNow(doc.data().time.toDate()),
-            collabs: [],
-            reactions: 5,
-            thought: doc.data().thought,
-          };
-        }
-        setData(data);
-      });
-    });
-  };
-
-  useEffect(() => {
-    refreshThoughts();
-  }, []);
 
   //   const thoughtsRef = firebase.firestore().collection("thoughts");
 
