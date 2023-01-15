@@ -1,9 +1,15 @@
-import { Image, Animated } from "react-native";
+import {
+  Image,
+  Animated,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect } from "react";
 
 const chevron = require("../assets/handleIndicator.png");
 
-const Handle = ({ swiped, animatedIndex, animatedPosition }) => {
+const Handle = ({ swiped, onPress }) => {
   const rotate = new Animated.Value(swiped ? 180 : 0);
 
   const imageStyle = {
@@ -33,25 +39,17 @@ const Handle = ({ swiped, animatedIndex, animatedPosition }) => {
     }).start();
   }, [swiped]);
 
-  return <Animated.Image source={chevron} style={imageStyle} />;
-
-  //   return (
-  //     <Image
-  //       source={chevron}
-  //       style={{
-  //         transform: [
-  //           {
-  //             rotate: swiped ? "180deg" : "0deg",
-  //           },
-  //         ],
-  //         width: 32,
-  //         height: 18,
-  //         marginTop: 12,
-  //         marginBottom: 16,
-  //         alignSelf: "center",
-  //       }}
-  //     />
-  //   );
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.handleContainer}>
+      <Animated.Image source={chevron} style={imageStyle} />
+    </TouchableOpacity>
+  );
 };
+
+const styles = StyleSheet.create({
+  handleContainer: {
+    // backgroundColor: "green",
+  },
+});
 
 export default Handle;

@@ -1,84 +1,88 @@
-import React, { useState } from "react";
-import { StyleSheet, FlatList } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, FlatList, TouchableOpacity, Text } from "react-native";
 import Thought from "./Thought";
+import { db } from "../firebaseConfig";
+import {
+  collection,
+  getDocs,
+  getFirestore,
+  getDoc,
+  query,
+  QuerySnapshot,
+} from "firebase/firestore";
+// import { TouchableOpacity, Text, View } from "react-native-web";
 
 const Feed = (props) => {
-  const DATA = [
-    {
-      id: 0,
-      name: "Kevin Jiang",
-      time: "4m",
-      collabs: ["NAME1"],
-      reactions: 5,
-      thought: "Some cool text here. Some interesting insights. Yee haw.",
-    },
-    {
-      id: 1,
-      name: "Kevin Jiang",
-      time: "12m",
-      collabs: ["NAME1", "NAME2", "new"],
-      reactions: 3,
-      thought:
-        "Some cool text here. Some interesting insights. Yee haw. Some cool text here. Some interesting insights. Yee haw. Some cool text here. Some interesting insights. Yee haw. Some cool text here. Some interesting insights. Yee haw.",
-    },
-    {
-      id: 2,
-      name: "Kevin Jiang",
-      time: "1h",
-      collabs: [],
-      reactions: 0,
-      thought:
-        "Some cool text here. Some interesting insights. Yee haw. Yee haw. Yee haw. Yee haw. Yee haw. Yee",
-    },
-    {
-      id: 3,
-      name: "Kevin Jiang",
-      time: "13h",
-      collabs: ["NAME1", "Name2"],
-      reactions: 12,
-      thought: "Some cool text here. Some interesting insights. Yee haw.",
-    },
-    {
-      id: 4,
-      name: "Kevin Jiang",
-      time: "1d",
-      collabs: ["NAME1"],
-      reactions: 5,
-      thought: "Some cool text here. Some interesting insights. Yee haw.",
-    },
-    {
-      id: 5,
-      name: "Kevin Jiang",
-      time: "1d",
-      collabs: ["NAME1"],
-      reactions: 5,
-      thought: "Some cool text here. Some interesting insights. Yee haw.",
-    },
-    {
-      id: 6,
-      name: "Kevin Jiang",
-      time: "1d",
-      collabs: ["NAME1"],
-      reactions: 5,
-      thought: "Some cool text here. Some interesting insights. Yee haw.",
-    },
-  ];
+  // TODO: add loading hook?
+  const [data, setData] = useState({});
+
+  async function fetchThoughts() {
+    try {
+      return getDocs(collection(db, "thoughts"));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const fetchUsers = (thoughts) => {
+    var results = [];
+    thoughts.forEach(function (doc) {
+      // push promise from get into results
+      results.push(getDoc(doc.data().name));
+    });
+    return Promise.all(results);
+  };
+
+  const refreshThoughts = () => {
+    fetchThoughts().then((thoughts) => {
+      fetchUsers(thoughts).then((users) => {
+        var data = {};
+        for (var i = 0; i < thoughts.size; i++) {
+          const doc = thoughts.docs[i];
+          const user = users[i];
+          data[doc.id] = {
+            id: doc.id,
+            name: user.data().name,
+            //   name: "Kevin Jiang",
+            time: "4m",
+            collabs: [],
+            reactions: 5,
+            thought: doc.data().thought,
+          };
+        }
+        setData(data);
+      });
+    });
+  };
+
+  useEffect(() => {
+    refreshThoughts();
+  }, []);
+
+  //   const thoughtsRef = firebase.firestore().collection("thoughts");
+
+  // const querySnapshot = await getDocs(collection(db, "users"));
 
   return (
-    <FlatList
-      contentContainerStyle={styles.thoughts}
-      data={DATA}
-      renderItem={({ item }) => (
-        <Thought
-          name={item.name}
-          time={item.time}
-          collabs={item.collabs}
-          reactions={item.reactions}
-          thought={item.thought}
-        ></Thought>
-      )}
-      keyExtractor={(item) => item.id}
-    />
+    <>
+      <FlatList
+        contentContainerStyle={styles.thoughts}
+        data={Object.values(data)}
+        renderItem={({ item }) => (
+          <Thought
+            name={item.name}
+            time={item.time}
+            collabs={item.collabs}
+            reactions={item.reactions}
+            thought={item.thought}
+          ></Thought>
+        )}
+        keyExtractor={(item) => item.id}
+      />
+      <TouchableOpacity onPress={refreshThoughts}>
+        <Text>refresh</Text>
+      </TouchableOpacity>
+    </>
   );
 };
 

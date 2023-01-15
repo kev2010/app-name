@@ -77,8 +77,8 @@ export default function App() {
   };
 
   const onPressSheet = () => {
-    bottomSheetRef.current.snapToIndex(1);
-    console.log("hello");
+    bottomSheetRef.current.snapToIndex(!swiped ? 0 : 1);
+    console.log("hello", swiped);
   };
 
   const handleBottomSheetSwipe = () => {
@@ -112,6 +112,7 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
+      <StatusBar barStyle={"light-content"} />
       <View style={styles.header}>
         <Text style={styles.title}>App Name</Text>
         <View style={styles.feed}>
@@ -138,6 +139,7 @@ export default function App() {
           <Handle
             // animatedIndex={animatedIndex}
             // animatedPosition={animatedPosition}
+            onPress={onPressSheet}
             swiped={!swiped}
           />
         )} // WHYYY? TODO @RAPH
@@ -193,11 +195,13 @@ const styles = StyleSheet.create({
   },
   touchable: {
     flex: 1,
-    padding: 24,
+    paddingRight: 20,
+    width: "100%",
+    height: 10,
   },
   sheet: {
     backgroundColor: colors.almost_white,
-    shadowColor: "#000",
+    shadowColor: colors.gray_5,
     shadowOffset: {
       width: 0,
       height: -4,
