@@ -17,7 +17,7 @@ import CountryPicker from "react-native-country-picker-modal";
 // TODO LATER: rn only pressing on the flag works vs. pressing on the number
 const Phone = ({}) => {
   const [countryCode, setCountryCode] = useState("FR");
-  const [country, setCountry] = useState(null);
+  const [country, setCountry] = useState("3");
   const [number, setNumber] = useState("");
   const inputRef = React.createRef();
   const continueStyle = useContinueStyle(number);
