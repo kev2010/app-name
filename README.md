@@ -19,3 +19,5 @@ Handle.js is the custom component for the Bottom Sheet handle (Bottom Sheet impo
 Think.js is the component for typing in thoughts when you swipe up the Bottom Sheet in App.js
 
 Thought.js is the component for the actual thought you have. Feed.js uses Thought components to display each item.
+
+Screens is the folder that will eventually include all screens (to make the code structure more modular). right now, only LoginScreen is there. i haven't quite figured out how to actually best code the transitions between all the screens yet (stack navigator? do a bunch of if else checks in App.js [i.e. go to home screen after successful login]? something else?).
