@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import colors from "../assets/colors";
 
-const LoginScreen = ({}) => {
+const NameScreen = ({}) => {
   const [fullName, setfullName] = useState("");
   const inputRef = React.createRef();
   const continueStyle = useContinueStyle(fullName);
@@ -125,4 +125,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default NameScreen;

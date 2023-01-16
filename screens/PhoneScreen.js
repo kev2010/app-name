@@ -15,9 +15,17 @@ import colors from "../assets/colors";
 import CountryPicker from "react-native-country-picker-modal";
 
 // TODO LATER: rn only pressing on the flag works vs. pressing on the number
-const Phone = ({}) => {
-  const [countryCode, setCountryCode] = useState("FR");
-  const [country, setCountry] = useState("3");
+const PhoneScreen = ({}) => {
+  const [countryCode, setCountryCode] = useState("US");
+  const [country, setCountry] = useState({
+    callingCode: ["1"],
+    cca2: "US",
+    currency: ["USD"],
+    flag: "flag-us",
+    name: "United States",
+    region: "Americas",
+    subregion: "North America",
+  });
   const [number, setNumber] = useState("");
   const inputRef = React.createRef();
   const continueStyle = useContinueStyle(number);
@@ -171,4 +179,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Phone;
+export default PhoneScreen;
