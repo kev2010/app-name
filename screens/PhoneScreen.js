@@ -11,11 +11,13 @@ import {
   KeyboardAvoidingView,
   View,
 } from "react-native";
+import { useRecoilState } from "recoil";
+import { phoneNumberState, fullNameState } from "../globalState";
 import colors from "../assets/colors";
 import CountryPicker from "react-native-country-picker-modal";
 
 // TODO LATER: rn only pressing on the flag works vs. pressing on the number
-const PhoneScreen = ({}) => {
+const PhoneScreen = ({ navigation }) => {
   const [countryCode, setCountryCode] = useState("US");
   const [country, setCountry] = useState({
     callingCode: ["1"],
@@ -26,6 +28,10 @@ const PhoneScreen = ({}) => {
     region: "Americas",
     subregion: "North America",
   });
+  const [disable, setDisable] = useState(false);
+  const [globalPhoneNumber, setGlobalPhoneNumber] =
+    useRecoilState(phoneNumberState);
+  const [globalFullName, setGlobalFullName] = useRecoilState(fullNameState);
   const [number, setNumber] = useState("");
   const inputRef = React.createRef();
   const continueStyle = useContinueStyle(number);
@@ -35,13 +41,24 @@ const PhoneScreen = ({}) => {
 
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
 
+  // TODO: GENERALIZE
+  const checkLength = (number) => {
+    setDisable(number.length <= 3);
+  };
+
   const onSubmit = () => {
-    console.log("about to submit ", number);
+    // console.log("about to submit ", number);
+    setGlobalPhoneNumber(number);
+    navigation.navigate("Phone");
+    // console.log("harhar", globalPhoneNumber);
+    // console.log("huh", phoneNumberState);
+    // console.log("reee", globalFullName);
   };
 
   const onSelectCountry = (country) => {
     setCountryCode(country.cca2);
     setCountry(country);
+    inputRef.current.focus();
     console.log(countryCode);
     console.log(country);
   };
@@ -66,7 +83,9 @@ const PhoneScreen = ({}) => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle={"light-content"} />
       <Text style={styles.title}>App Name</Text>
-      <Text style={styles.subtitle}>Enter your phone number 📱</Text>
+      <Text style={styles.subtitle}>
+        Hey {globalFullName.split(" ")[0]}! Enter your number 📱
+      </Text>
       <View style={styles.number}>
         <View style={styles.border}>
           <CountryPicker
@@ -92,7 +111,10 @@ const PhoneScreen = ({}) => {
           placeholderTextColor={colors.gray_3}
           placeholder="Your Phone"
           value={number}
-          onChangeText={(text) => setNumber(text)}
+          onChangeText={(text) => {
+            setNumber(text);
+            checkLength(text);
+          }}
         />
       </View>
       {/* <KeyboardAvoidingView
@@ -106,7 +128,7 @@ const PhoneScreen = ({}) => {
           // backgroundColor: "purple",
         }}
       >
-        <TouchableOpacity onPress={onSubmit}>
+        <TouchableOpacity onPress={onSubmit} disabled={disable}>
           <Text style={[styles.continue, continueStyle]}>Continue</Text>
         </TouchableOpacity>
       </Animated.View>

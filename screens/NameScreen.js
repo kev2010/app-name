@@ -10,22 +10,33 @@ import {
   Keyboard,
   KeyboardAvoidingView,
 } from "react-native";
+import { useRecoilState } from "recoil";
+import { fullNameState } from "../globalState";
 import colors from "../assets/colors";
 
-const NameScreen = ({}) => {
+const NameScreen = ({ navigation }) => {
   const [fullName, setfullName] = useState("");
+  const [disable, setDisable] = useState(false);
+  const [globalFullName, setGlobalFullName] = useRecoilState(fullNameState);
   const inputRef = React.createRef();
   const continueStyle = useContinueStyle(fullName);
   const [textContainerBottom, setTextContainerBottom] = useState(
     new Animated.Value(0)
   );
 
-  console.log("looking into name");
-
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
 
+  const checkLength = (text) => {
+    setDisable(text.length <= 2);
+  };
+
   const onSubmit = () => {
-    console.log("about to submit ", fullName);
+    // console.log("about to submit ", fullName);
+    setGlobalFullName(fullName);
+    navigation.navigate("Phone");
+    // There seems to be a delay between the local variable and global state update?
+    // console.log("harhar", globalFullName);
+    // console.log("huh", fullNameState);
   };
 
   useEffect(() => {
@@ -59,7 +70,10 @@ const NameScreen = ({}) => {
         placeholderTextColor={colors.gray_3}
         placeholder="Your Name"
         value={fullName}
-        onChangeText={(text) => setfullName(text)}
+        onChangeText={(text) => {
+          setfullName(text);
+          checkLength(text);
+        }}
       />
       {/* <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -72,7 +86,7 @@ const NameScreen = ({}) => {
           // backgroundColor: "purple",
         }}
       >
-        <TouchableOpacity onPress={onSubmit}>
+        <TouchableOpacity onPress={onSubmit} disabled={disable}>
           <Text style={[styles.continue, continueStyle]}>Continue</Text>
         </TouchableOpacity>
       </Animated.View>
