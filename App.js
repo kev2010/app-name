@@ -1,16 +1,28 @@
 import { StatusBar } from "expo-status-bar";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { SafeAreaView, StyleSheet, View } from "react-native";
 import React, { useCallback } from "react";
 import colors from "./assets/colors";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import HomeScreen from "./screens/HomeScreen";
 import { useAssets } from "expo-asset";
+import {
+  RecoilRoot,
+  atom,
+  selector,
+  useRecoilState,
+  useRecoilValue,
+} from "recoil";
 
+//TODO: fix the fonts and assets loading problem
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   // TODO: handle might be screwed lol
+  // const fontSizeState = atom({
+  //   key: "fontSizeState",
+  //   default: 14,
+  // });
 
   const [fontsLoaded] = useFonts({
     "Nunito-Black": require("./assets/fonts/Nunito-Black.ttf"),
@@ -27,8 +39,10 @@ export default function App() {
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded && !!assets) {
+      console.log("whats going on");
       await SplashScreen.hideAsync();
     }
+    console.log("ok");
   }, [fontsLoaded, !!assets]);
 
   if (!fontsLoaded || !assets) {
@@ -36,7 +50,9 @@ export default function App() {
   }
 
   return (
-    <HomeScreen onLayout={onLayoutRootView} />
+    // <RecoilRoot>
+    <HomeScreen />
+    // </RecoilRoot>
     // <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
     //
     // </SafeAreaView>

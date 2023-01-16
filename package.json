@@ -30,6 +30,7 @@
     "react-native-screens": "~3.18.0",
     "react-native-vector-icons": "^9.2.0",
     "react-native-web": "~0.18.9",
+    "recoil": "^0.7.6",
     "world-countries": "^4.0.0"
   },
   "devDependencies": {
