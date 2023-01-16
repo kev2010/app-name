@@ -50,7 +50,7 @@ const PhoneScreen = ({}) => {
     inputRef.current.focus();
     const keyboardDidShow = (event) => {
       const { endCoordinates } = event;
-      const spacing = endCoordinates.height; // TODO Why is this not right on top of the keyboard?
+      const spacing = endCoordinates.height + 16;
       setTextContainerBottom(spacing);
     };
     setKeyboardDidShowListener(
@@ -130,6 +130,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   title: {
+    marginTop: 4,
     color: colors.primary_5,
     fontFamily: "Nunito-Bold",
     fontSize: 24,

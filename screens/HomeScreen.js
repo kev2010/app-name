@@ -29,7 +29,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { useAssets } from "expo-asset";
 
-SplashScreen.preventAutoHideAsync();
+// SplashScreen.preventAutoHideAsync();
 
 const HomeScreen = ({}) => {
   // const [refreshing, setRefreshing] = React.useState(false);
@@ -87,31 +87,32 @@ const HomeScreen = ({}) => {
     console.log("logs", swiped);
   };
 
-  const [fontsLoaded] = useFonts({
-    "Nunito-Black": require("../assets/fonts/Nunito-Black.ttf"),
-    "Nunito-Bold": require("../assets/fonts/Nunito-Bold.ttf"),
-    "Nunito-ExtraBold": require("../assets/fonts/Nunito-ExtraBold.ttf"),
-    "Nunito-ExtraLight": require("../assets/fonts/Nunito-ExtraLight.ttf"),
-    "Nunito-Light": require("../assets/fonts/Nunito-Light.ttf"),
-    "Nunito-Medium": require("../assets/fonts/Nunito-Medium.ttf"),
-    "Nunito-Regular": require("../assets/fonts/Nunito-Regular.ttf"),
-    "Nunito-SemiBold": require("../assets/fonts/Nunito-SemiBold.ttf"),
-  });
-
-  const [assets, error] = useAssets([require("../assets/handleIndicator.png")]);
-
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded && !!assets) {
-      await SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, !!assets]);
-
-  if (!fontsLoaded || !assets) {
-    return null;
-  }
+  //   const [fontsLoaded] = useFonts({
+  //     "Nunito-Black": require("../assets/fonts/Nunito-Black.ttf"),
+  //     "Nunito-Bold": require("../assets/fonts/Nunito-Bold.ttf"),
+  //     "Nunito-ExtraBold": require("../assets/fonts/Nunito-ExtraBold.ttf"),
+  //     "Nunito-ExtraLight": require("../assets/fonts/Nunito-ExtraLight.ttf"),
+  //     "Nunito-Light": require("../assets/fonts/Nunito-Light.ttf"),
+  //     "Nunito-Medium": require("../assets/fonts/Nunito-Medium.ttf"),
+  //     "Nunito-Regular": require("../assets/fonts/Nunito-Regular.ttf"),
+  //     "Nunito-SemiBold": require("../assets/fonts/Nunito-SemiBold.ttf"),
+  //   });
+  //
+  //   const [assets, error] = useAssets([require("../assets/handleIndicator.png")]);
+  //
+  //   const onLayoutRootView = useCallback(async () => {
+  //     if (fontsLoaded && !!assets) {
+  //       await SplashScreen.hideAsync();
+  //     }
+  //   }, [fontsLoaded, !!assets]);
+  //
+  //   if (!fontsLoaded || !assets) {
+  //     return null;
+  //   }
 
   return (
-    <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
+    // <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
+    <SafeAreaView style={styles.container}>
       <StatusBar barStyle={"light-content"} />
       <View style={styles.header}>
         <Text style={styles.title}>App Name</Text>

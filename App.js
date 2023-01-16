@@ -4,25 +4,16 @@ import React, { useCallback } from "react";
 import colors from "./assets/colors";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import HomeScreen from "./screens/HomeScreen";
 import { useAssets } from "expo-asset";
-import {
-  RecoilRoot,
-  atom,
-  selector,
-  useRecoilState,
-  useRecoilValue,
-} from "recoil";
+import { RecoilRoot } from "recoil";
+import Nav from "./Nav";
 
 //TODO: fix the fonts and assets loading problem
-SplashScreen.preventAutoHideAsync();
+
+// SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   // TODO: handle might be screwed lol
-  // const fontSizeState = atom({
-  //   key: "fontSizeState",
-  //   default: 14,
-  // });
 
   const [fontsLoaded] = useFonts({
     "Nunito-Black": require("./assets/fonts/Nunito-Black.ttf"),
@@ -50,19 +41,13 @@ export default function App() {
   }
 
   return (
-    // <RecoilRoot>
-    <HomeScreen />
-    // </RecoilRoot>
+    <RecoilRoot>
+      <Nav onLayout={onLayoutRootView} />
+    </RecoilRoot>
     // <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
     //
     // </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.gray_1,
-    alignItems: "center",
-  },
-});
+const styles = StyleSheet.create({});

@@ -20,6 +20,8 @@ const NameScreen = ({}) => {
     new Animated.Value(0)
   );
 
+  console.log("looking into name");
+
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
 
   const onSubmit = () => {
@@ -30,7 +32,7 @@ const NameScreen = ({}) => {
     inputRef.current.focus();
     const keyboardDidShow = (event) => {
       const { endCoordinates } = event;
-      const spacing = endCoordinates.height; // TODO Why is this not right on top of the keyboard?
+      const spacing = endCoordinates.height + 16;
       setTextContainerBottom(spacing);
     };
     setKeyboardDidShowListener(
@@ -99,6 +101,7 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito-Bold",
     fontSize: 24,
     marginBottom: 64,
+    marginTop: 4,
   },
   subtitle: {
     color: colors.primary_9,
