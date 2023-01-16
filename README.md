@@ -9,8 +9,7 @@ this code is react native and runs with expo (you can google to figure out how t
 
 <img width="1284" alt="image" src="https://user-images.githubusercontent.com/46427633/212521339-95eb0d99-579c-49ba-abac-3beb3dbb1e53.png">
 
-
-App.js is the main file for now with the supporting components under the components folder. App.js contains code for the main screen and any key iteractions.
+To navigate between screens, React Native Navigation is used. Recoil is used for global state management (currently just whether the user is logged in or not). The Nav file contains the navigation stack, which is a child of App.js because the Recoil Root needs to be a parent. globalState.js contains the global state.
 
 Feed.js is the component for the thought feed (calls the Firebase Firestore - this part was a nightmare lmao).
 
@@ -22,4 +21,4 @@ Thought.js is the component for the actual thought you have. Feed.js uses Though
 
 Phone.js is the component for the "Enter your phone number" screen in the login process. haven't figured out yet how to deal with the order, so i just made it a working component for now.
 
-Screens is the folder that will eventually include all screens (to make the code structure more modular). right now, only LoginScreen is there. i haven't quite figured out how to actually best code the transitions between all the screens yet (stack navigator? do a bunch of if else checks in App.js [i.e. go to home screen after successful login]? something else?).
+Screens is the folder that includes the different screens.
