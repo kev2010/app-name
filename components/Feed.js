@@ -14,6 +14,7 @@ import {
 
 const Feed = (props) => {
   // TODO: add loading hook?
+  // TODO: get rid of TouchableOpacity "refresh"
   const [data, setData] = useState({});
 
   async function fetchThoughts() {

@@ -8,13 +8,7 @@ import { useAssets } from "expo-asset";
 import { RecoilRoot } from "recoil";
 import Nav from "./Nav";
 
-//TODO: fix the fonts and assets loading problem
-
-// SplashScreen.preventAutoHideAsync();
-
 export default function App() {
-  // TODO: handle might be screwed lol
-
   const [fontsLoaded] = useFonts({
     "Nunito-Black": require("./assets/fonts/Nunito-Black.ttf"),
     "Nunito-Bold": require("./assets/fonts/Nunito-Bold.ttf"),
@@ -44,9 +38,6 @@ export default function App() {
     <RecoilRoot>
       <Nav onLayout={onLayoutRootView} />
     </RecoilRoot>
-    // <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
-    //
-    // </SafeAreaView>
   );
 }
 
