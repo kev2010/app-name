@@ -10,7 +10,7 @@ export const fullNameState = atom({
   default: "",
 });
 
-export const phoneNumberState = atom({
-  key: "phoneNumberState",
+export const verificationState = atom({
+  key: "verificationState",
   default: "",
 });

@@ -1,11 +1,12 @@
 import React from "react";
 import HomeScreen from "./screens/HomeScreen";
 import NameScreen from "./screens/NameScreen";
+import PhoneScreen from "./screens/PhoneScreen";
+import VerificationScreen from "./screens/VerificationScreen";
 import { useRecoilState } from "recoil";
 import { userLoginState } from "./globalState";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import PhoneScreen from "./screens/PhoneScreen";
 
 const Nav = ({}) => {
   const [userLogin, setUserLogin] = useRecoilState(userLoginState);
@@ -25,6 +26,7 @@ const Nav = ({}) => {
           <>
             <Stack.Screen name="Name" component={NameScreen} />
             <Stack.Screen name="Phone" component={PhoneScreen} />
+            <Stack.Screen name="Verification" component={VerificationScreen} />
           </>
         )}
       </Stack.Navigator>

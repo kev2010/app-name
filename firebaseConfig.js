@@ -23,7 +23,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 // console.log("WHAT THE FUCK");
 export const db = getFirestore(app);
 // console.log("uh", getDocs(collection(db, "thoughts")));

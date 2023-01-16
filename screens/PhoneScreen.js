@@ -12,12 +12,31 @@ import {
   View,
 } from "react-native";
 import { useRecoilState } from "recoil";
-import { phoneNumberState, fullNameState } from "../globalState";
+import { verificationState, fullNameState } from "../globalState";
 import colors from "../assets/colors";
 import CountryPicker from "react-native-country-picker-modal";
+import {
+  FirebaseRecaptchaVerifierModal,
+  FirebaseRecaptchaBanner,
+} from "expo-firebase-recaptcha";
+import { getAuth, PhoneAuthProvider } from "firebase/auth";
+import { app } from "../firebaseConfig";
+
+const auth = getAuth(app);
+
+// Double-check that we can run the example
+if (!app?.options || Platform.OS === "web") {
+  throw new Error(
+    "This example only works on Android or iOS, and requires a valid Firebase config."
+  );
+}
 
 // TODO LATER: rn only pressing on the flag works vs. pressing on the number
 const PhoneScreen = ({ navigation }) => {
+  const recaptchaVerifier = React.useRef(null);
+  const firebaseConfig = app ? app.options : undefined;
+  const attemptInvisibleVerification = true;
+
   const [countryCode, setCountryCode] = useState("US");
   const [country, setCountry] = useState({
     callingCode: ["1"],
@@ -29,9 +48,8 @@ const PhoneScreen = ({ navigation }) => {
     subregion: "North America",
   });
   const [disable, setDisable] = useState(false);
-  const [globalPhoneNumber, setGlobalPhoneNumber] =
-    useRecoilState(phoneNumberState);
   const [globalFullName, setGlobalFullName] = useRecoilState(fullNameState);
+  const [verificationId, setVerificationId] = useRecoilState(verificationState);
   const [number, setNumber] = useState("");
   const inputRef = React.createRef();
   const continueStyle = useContinueStyle(number);
@@ -46,13 +64,30 @@ const PhoneScreen = ({ navigation }) => {
     setDisable(number.length <= 3);
   };
 
-  const onSubmit = () => {
-    // console.log("about to submit ", number);
-    setGlobalPhoneNumber(number);
-    navigation.navigate("Phone");
+  const onSubmit = async () => {
+    console.log("about to submit ", number);
+    const fullNumber = `+${country.callingCode}${number}`;
+    navigation.navigate("Verification");
+    // navigation.navigate("Phone");
     // console.log("harhar", globalPhoneNumber);
     // console.log("huh", phoneNumberState);
     // console.log("reee", globalFullName);
+
+    // The FirebaseRecaptchaVerifierModal ref implements the
+    // FirebaseAuthApplicationVerifier interface and can be
+    // passed directly to `verifyPhoneNumber`.
+    try {
+      const phoneProvider = new PhoneAuthProvider(auth);
+      console.log("cool", fullNumber);
+      const verificationId = await phoneProvider.verifyPhoneNumber(
+        fullNumber,
+        recaptchaVerifier.current
+      );
+      setVerificationId(verificationId);
+      console.log("IDDDDD", verificationId);
+    } catch (err) {
+      console.log(`Error: ${err.message}`);
+    }
   };
 
   const onSelectCountry = (country) => {
@@ -81,10 +116,15 @@ const PhoneScreen = ({ navigation }) => {
   return (
     // maybe use Safe Area view instead?
     <SafeAreaView style={styles.container}>
+      <FirebaseRecaptchaVerifierModal
+        ref={recaptchaVerifier}
+        firebaseConfig={firebaseConfig}
+        attemptInvisibleVerification={attemptInvisibleVerification}
+      />
       <StatusBar barStyle={"light-content"} />
       <Text style={styles.title}>App Name</Text>
       <Text style={styles.subtitle}>
-        Hey {globalFullName.split(" ")[0]}! Enter your number 📱
+        Hey {globalFullName.split(" ")[0]}! Enter your number📱
       </Text>
       <View style={styles.number}>
         <View style={styles.border}>
@@ -129,7 +169,7 @@ const PhoneScreen = ({ navigation }) => {
         }}
       >
         <TouchableOpacity onPress={onSubmit} disabled={disable}>
-          <Text style={[styles.continue, continueStyle]}>Continue</Text>
+          <Text style={[styles.continue, continueStyle]}>Send Code</Text>
         </TouchableOpacity>
       </Animated.View>
       {/* </KeyboardAvoidingView> */}
