@@ -12,15 +12,17 @@ import {
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import colors from "../assets/colors";
-import { createUser } from "../api";
+import { createUser, checkUniqueUsername } from "../api";
 
 // TODO: HANDLE LOGIC WHERE USER W/ PHONE NUMBER ALREADY EXISTS
 const UsernameScreen = ({ route, navigation }) => {
   const [user, setUser] = useRecoilState(userState);
   const [username, setUsername] = useState("");
   const [disable, setDisable] = useState(false);
+  const [error, setError] = useState(false);
   const inputRef = React.createRef();
   const continueStyle = useContinueStyle(username);
+  const errorStyle = useErrorStyle(error);
   const [textContainerBottom, setTextContainerBottom] = useState(
     new Animated.Value(0)
   );
@@ -32,10 +34,17 @@ const UsernameScreen = ({ route, navigation }) => {
   };
 
   const onSubmit = () => {
+    setError(false);
     // TODO: CHECK USERNAME UNIQUENESS
-    // TODO: DISABLE BUTTON WHILE WAITING
-    createUser(user.uid, user.displayName, username);
-    setUser({ ...user, username: username });
+    // TODO: Check for username characters only
+    checkUniqueUsername(username).then((unique) => {
+      if (unique) {
+        createUser(user.uid, user.displayName, username);
+        setUser({ ...user, username: username });
+      } else {
+        setError(true);
+      }
+    });
   };
 
   useEffect(() => {
@@ -74,6 +83,7 @@ const UsernameScreen = ({ route, navigation }) => {
           checkLength(text);
         }}
       />
+      <Text style={[styles.error, errorStyle]}>Username taken 😔</Text>
       {/* <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       > */}
@@ -98,6 +108,15 @@ const useContinueStyle = (name) => {
   return {
     backgroundColor: name.length > 2 ? colors.primary_5 : colors.gray_2,
     color: name.length > 2 ? colors.almost_white : colors.gray_1,
+  };
+};
+
+const useErrorStyle = (error) => {
+  return {
+    color: colors.primary_6,
+    fontFamily: "Nunito-Regular",
+    fontSize: 16,
+    opacity: error ? 1 : 0,
   };
 };
 
@@ -129,6 +148,7 @@ const styles = StyleSheet.create({
     fontSize: 36,
     // This doesn't seem right...?
     marginHorizontal: 24,
+    marginBottom: 8,
   },
   continue: {
     fontFamily: "Nunito-SemiBold",
