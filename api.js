@@ -49,3 +49,22 @@ export async function getUsersOfThoughts(thoughts) {
   });
   return Promise.all(results);
 }
+
+export async function getUsersFromRefList(refs) {
+  var results = [];
+  refs.forEach(function (doc) {
+    results.push(getDoc(doc));
+  });
+  return Promise.all(results);
+}
+
+export async function getCollabsOfThoughts(thoughts) {
+  var results = [];
+  thoughts.forEach(function (doc) {
+    // doc.data().collabs = [ref1, ref2, ...]
+    // Key thing to remember is to push promises, otherwise things will NOT return in the right order!
+    results.push(getUsersFromRefList(doc.data().collabs));
+  });
+  // results = [[obj1, obj2], [obj3], ...]
+  return Promise.all(results);
+}

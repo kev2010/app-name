@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, FlatList, TouchableOpacity, Text } from "react-native";
 import Thought from "./Thought";
-import { getThoughts, getUsersOfThoughts } from "../api";
+import { getThoughts, getUsersOfThoughts, getCollabsOfThoughts } from "../api";
 
 const Feed = (props) => {
   // TODO: add loading hook?
@@ -11,20 +11,27 @@ const Feed = (props) => {
   const refreshThoughts = () => {
     getThoughts().then((thoughts) => {
       getUsersOfThoughts(thoughts).then((users) => {
-        var data = {};
-        for (var i = 0; i < thoughts.size; i++) {
-          const doc = thoughts.docs[i];
-          const user = users[i];
-          data[doc.id] = {
-            id: doc.id,
-            name: user.data().name,
-            time: calculateTimeDiffFromNow(doc.data().time.toDate()),
-            collabs: [],
-            reactions: 5,
-            thought: doc.data().thought,
-          };
-        }
-        setData(data);
+        getCollabsOfThoughts(thoughts).then((thoughtCollabs) => {
+          // thoughtCollabs = [[obj1, obj2], [obj3], ...]
+          var data = {};
+          for (var i = 0; i < thoughts.size; i++) {
+            const doc = thoughts.docs[i];
+            const user = users[i];
+            // Grab first name of each collaborator
+            const collabs = thoughtCollabs[i].map(
+              (user) => user.data().name.split(" ")[0]
+            );
+            data[doc.id] = {
+              id: doc.id,
+              name: user.data().name,
+              time: calculateTimeDiffFromNow(doc.data().time.toDate()),
+              collabs: collabs,
+              reactions: 5,
+              thought: doc.data().thought,
+            };
+          }
+          setData(data);
+        });
       });
     });
   };
