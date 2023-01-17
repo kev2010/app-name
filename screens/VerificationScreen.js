@@ -1,21 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { StatusBar } from "expo-status-bar";
+import React, { useState } from "react";
 import { StyleSheet, Text, SafeAreaView, TouchableOpacity } from "react-native";
 import { useRecoilState } from "recoil";
-import { verificationState } from "../globalState";
+import { verificationState, userState } from "../globalState";
 import { app } from "../firebaseConfig";
 import {
   getAuth,
   signInWithCredential,
   PhoneAuthProvider,
 } from "firebase/auth";
+import { dummyCall } from "../api";
 
 const auth = getAuth(app);
 
-const VerificationScreen = ({ navigation }) => {
+const VerificationScreen = ({ navigation, route }) => {
+  const [user, setUser] = useRecoilState(userState);
   const [verificationId, setVerificationId] = useRecoilState(verificationState);
-  const [verificationCode, setVerificationCode] = React.useState();
-  console.log(verificationId);
+  const [verificationCode, setVerificationCode] = useState(111111);
+
+  dummyCall();
 
   const onSubmit = async () => {
     try {
@@ -23,7 +25,23 @@ const VerificationScreen = ({ navigation }) => {
         verificationId,
         verificationCode
       );
-      await signInWithCredential(auth, credential);
+      await signInWithCredential(auth, credential).then((userCredential) => {
+        // Signed in
+        // TODO: Remove?
+        setUser({ ...userCredential.user, displayName: route.params.paramKey });
+        /*  user: 
+            - email
+            - uid
+            - displayName
+            - emailVerified
+            - phoneNumber
+            - photoURL
+            - metadata
+            ...
+       
+        */
+        navigation.navigate("Username");
+      });
       console.log("Phone authentication successful 👍");
     } catch (err) {
       console.log(`Error: ${err.message}`);

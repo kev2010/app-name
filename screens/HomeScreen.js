@@ -5,31 +5,16 @@ import {
   Text,
   View,
   TouchableOpacity,
-  RefreshControl,
-  Image,
-  TextInput,
   Keyboard,
-  TouchableWithoutFeedback,
   Pressable,
 } from "react-native";
-import React, {
-  useState,
-  useCallback,
-  useMemo,
-  useRef,
-  useEffect,
-} from "react";
+import React, { useState, useMemo, useRef } from "react";
 import colors from "../assets/colors";
 import Handle from "../components/Handle";
 import Think from "../components/Think";
 import BottomSheet from "@gorhom/bottom-sheet";
 import Feed from "../components/Feed";
-import { useFonts } from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
 import { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
-import { useAssets } from "expo-asset";
-
-// SplashScreen.preventAutoHideAsync();
 
 const HomeScreen = ({}) => {
   // const [refreshing, setRefreshing] = React.useState(false);

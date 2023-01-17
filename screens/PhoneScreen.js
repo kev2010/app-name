@@ -8,12 +8,11 @@ import {
   TouchableOpacity,
   Animated,
   Keyboard,
-  KeyboardAvoidingView,
   View,
 } from "react-native";
-import { useRecoilState } from "recoil";
-import { verificationState, fullNameState } from "../globalState";
 import colors from "../assets/colors";
+import { useRecoilState } from "recoil";
+import { verificationState } from "../globalState";
 import CountryPicker from "react-native-country-picker-modal";
 import {
   FirebaseRecaptchaVerifierModal,
@@ -32,7 +31,7 @@ if (!app?.options || Platform.OS === "web") {
 }
 
 // TODO LATER: rn only pressing on the flag works vs. pressing on the number
-const PhoneScreen = ({ navigation }) => {
+const PhoneScreen = ({ navigation, route }) => {
   const recaptchaVerifier = React.useRef(null);
   const firebaseConfig = app ? app.options : undefined;
   const attemptInvisibleVerification = true;
@@ -47,8 +46,7 @@ const PhoneScreen = ({ navigation }) => {
     region: "Americas",
     subregion: "North America",
   });
-  const [disable, setDisable] = useState(false);
-  const [globalFullName, setGlobalFullName] = useRecoilState(fullNameState);
+  const [disable, setDisable] = useState(true);
   const [verificationId, setVerificationId] = useRecoilState(verificationState);
   const [number, setNumber] = useState("");
   const inputRef = React.createRef();
@@ -67,7 +65,9 @@ const PhoneScreen = ({ navigation }) => {
   const onSubmit = async () => {
     console.log("about to submit ", number);
     const fullNumber = `+${country.callingCode}${number}`;
-    navigation.navigate("Verification");
+    navigation.navigate("Verification", {
+      paramKey: route.params.paramKey,
+    });
     // navigation.navigate("Phone");
     // console.log("harhar", globalPhoneNumber);
     // console.log("huh", phoneNumberState);
@@ -124,7 +124,7 @@ const PhoneScreen = ({ navigation }) => {
       <StatusBar barStyle={"light-content"} />
       <Text style={styles.title}>App Name</Text>
       <Text style={styles.subtitle}>
-        Hey {globalFullName.split(" ")[0]}! Enter your number📱
+        Hey {route.params.paramKey.split(" ")[0]}! Enter your number📱
       </Text>
       <View style={styles.number}>
         <View style={styles.border}>

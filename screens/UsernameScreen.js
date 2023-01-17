@@ -9,13 +9,18 @@ import {
   Animated,
   Keyboard,
 } from "react-native";
+import { useRecoilState } from "recoil";
+import { userState } from "../globalState";
 import colors from "../assets/colors";
+import { createUser } from "../api";
 
-const NameScreen = ({ navigation }) => {
-  const [fullName, setfullName] = useState("");
-  const [disable, setDisable] = useState(true);
+// TODO: HANDLE LOGIC WHERE USER W/ PHONE NUMBER ALREADY EXISTS
+const UsernameScreen = ({ route, navigation }) => {
+  const [user, setUser] = useRecoilState(userState);
+  const [username, setUsername] = useState("");
+  const [disable, setDisable] = useState(false);
   const inputRef = React.createRef();
-  const continueStyle = useContinueStyle(fullName);
+  const continueStyle = useContinueStyle(username);
   const [textContainerBottom, setTextContainerBottom] = useState(
     new Animated.Value(0)
   );
@@ -27,12 +32,10 @@ const NameScreen = ({ navigation }) => {
   };
 
   const onSubmit = () => {
-    navigation.navigate("Phone", {
-      paramKey: fullName,
-    });
-    // There seems to be a delay between the local variable and global state update?
-    // console.log("harhar", globalFullName);
-    // console.log("huh", fullNameState);
+    // TODO: CHECK USERNAME UNIQUENESS
+    // TODO: DISABLE BUTTON WHILE WAITING
+    createUser(user.uid, user.displayName, username);
+    setUser({ ...user, username: username });
   };
 
   useEffect(() => {
@@ -55,7 +58,7 @@ const NameScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle={"light-content"} />
       <Text style={styles.title}>App Name</Text>
-      <Text style={styles.subtitle}>Welcome! What's your name?</Text>
+      <Text style={styles.subtitle}>Finally, choose a unique username!</Text>
       <TextInput
         ref={inputRef}
         // autoFocus={swiped}
@@ -64,10 +67,10 @@ const NameScreen = ({ navigation }) => {
         textAlign="center"
         selectionColor={colors.primary_4}
         placeholderTextColor={colors.gray_3}
-        placeholder="Your Name"
-        value={fullName}
+        placeholder="username"
+        value={username}
         onChangeText={(text) => {
-          setfullName(text);
+          setUsername(text);
           checkLength(text);
         }}
       />
@@ -138,4 +141,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NameScreen;
+export default UsernameScreen;
