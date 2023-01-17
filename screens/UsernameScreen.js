@@ -16,10 +16,15 @@ import { createUser, checkUniqueUsername } from "../api";
 
 // TODO: HANDLE LOGIC WHERE USER W/ PHONE NUMBER ALREADY EXISTS
 const UsernameScreen = ({ route, navigation }) => {
+  const validUsernameChars = /^[a-zA-Z0-9_]+$/;
   const [user, setUser] = useRecoilState(userState);
   const [username, setUsername] = useState("");
   const [disable, setDisable] = useState(false);
   const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const duplicateUsernameErrorMessage = "Username taken 😔";
+  const invalidCharsErrorMessage =
+    "Username can only contain letters, numbers, and underscores.";
   const inputRef = React.createRef();
   const continueStyle = useContinueStyle(username);
   const errorStyle = useErrorStyle(error);
@@ -29,22 +34,31 @@ const UsernameScreen = ({ route, navigation }) => {
 
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
 
+  const validateUsername = (text) => {
+    // Regular expression to check for valid characters
+    return validUsernameChars.test(text);
+  };
+
   const checkLength = (text) => {
     setDisable(text.length <= 2);
   };
 
   const onSubmit = () => {
     setError(false);
-    // TODO: CHECK USERNAME UNIQUENESS
-    // TODO: Check for username characters only
-    checkUniqueUsername(username).then((unique) => {
-      if (unique) {
-        createUser(user.uid, user.displayName, username);
-        setUser({ ...user, username: username });
-      } else {
-        setError(true);
-      }
-    });
+    if (validateUsername(username)) {
+      checkUniqueUsername(username).then((unique) => {
+        if (unique) {
+          createUser(user.uid, user.displayName, username);
+          setUser({ ...user, username: username });
+        } else {
+          setError(true);
+          setErrorMessage(duplicateUsernameErrorMessage);
+        }
+      });
+    } else {
+      setError(true);
+      setErrorMessage(invalidCharsErrorMessage);
+    }
   };
 
   useEffect(() => {
@@ -83,7 +97,7 @@ const UsernameScreen = ({ route, navigation }) => {
           checkLength(text);
         }}
       />
-      <Text style={[styles.error, errorStyle]}>Username taken 😔</Text>
+      <Text style={errorStyle}>{errorMessage}</Text>
       {/* <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       > */}
@@ -116,6 +130,8 @@ const useErrorStyle = (error) => {
     color: colors.primary_6,
     fontFamily: "Nunito-Regular",
     fontSize: 16,
+    width: "80%",
+    textAlign: "center",
     opacity: error ? 1 : 0,
   };
 };
