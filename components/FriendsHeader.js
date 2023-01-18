@@ -8,8 +8,8 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import colors from "../assets/colors";
-import FriendsIcon from "./FriendsIcon";
 
+// TODO: Provide lazy tapping buffer (if people miss their thumbs slightly)
 const FriendsHeader = ({ goBack, numRequests }) => {
   const [requestsTab, setRequestsTab] = useState(false);
   const [friendsTab, setFriendsTab] = useState(true);
@@ -82,7 +82,6 @@ const useRequestNumberStyle = (requestNumber) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: colors.gray_1,
     alignItems: "center",
   },

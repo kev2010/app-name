@@ -20,7 +20,11 @@ export default function App() {
     "Nunito-SemiBold": require("./assets/fonts/Nunito-SemiBold.ttf"),
   });
 
-  const [assets, error] = useAssets([require("./assets/handleIndicator.png")]);
+  const [assets, error] = useAssets([
+    require("./assets/handleIndicator.png"),
+    require("./assets/back.png"),
+    require("./assets/searchIcon.png"),
+  ]);
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded && !!assets) {
