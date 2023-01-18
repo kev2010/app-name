@@ -68,3 +68,7 @@ export async function getCollabsOfThoughts(thoughts) {
   // results = [[obj1, obj2], [obj3], ...]
   return Promise.all(results);
 }
+
+export async function getFriendRequests(uid) {
+  return [1, 2];
+}

@@ -26,6 +26,7 @@ const Feed = (props) => {
               name: user.data().name,
               time: calculateTimeDiffFromNow(doc.data().time.toDate()),
               collabs: collabs,
+              // TODO: reactions
               reactions: 5,
               thought: doc.data().thought,
             };

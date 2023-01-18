@@ -7,16 +7,18 @@ import {
   TouchableOpacity,
   Keyboard,
   Pressable,
+  Image,
 } from "react-native";
 import React, { useState, useMemo, useRef } from "react";
 import colors from "../assets/colors";
 import Handle from "../components/Handle";
 import Think from "../components/Think";
+import FriendsIcon from "../components/FriendsIcon";
 import BottomSheet from "@gorhom/bottom-sheet";
 import Feed from "../components/Feed";
 import { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 
-const HomeScreen = ({}) => {
+const HomeScreen = ({ navigation }) => {
   // const [refreshing, setRefreshing] = React.useState(false);
 
   // const onRefresh = () => {
@@ -45,6 +47,10 @@ const HomeScreen = ({}) => {
       setGlobal(false);
       setFriends(true);
     }
+  };
+
+  const goToFriendsScreen = () => {
+    navigation.navigate("Friends");
   };
 
   // ref
@@ -77,6 +83,15 @@ const HomeScreen = ({}) => {
       <StatusBar barStyle={"light-content"} />
       <View style={styles.header}>
         <Text style={styles.title}>App Name</Text>
+        <View style={styles.top}>
+          <Image
+            style={styles.profile}
+            source={require("../assets/fbprofile.jpg")}
+          />
+          <TouchableOpacity onPress={goToFriendsScreen}>
+            <FriendsIcon hasNotification={true} style={styles.friend} />
+          </TouchableOpacity>
+        </View>
         <View style={styles.feed}>
           <TouchableOpacity onPress={onPressGlobal}>
             <Text style={[styles.type, globalStyle]}>Global</Text>
@@ -134,12 +149,28 @@ const styles = StyleSheet.create({
   header: {
     alignItems: "center",
     marginTop: 4,
+    width: "90%",
+  },
+  top: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    // backgroundColor: "pink",
+    width: "100%",
+    position: "absolute",
   },
   title: {
     color: colors.primary_5,
     fontFamily: "Nunito-Bold",
     fontSize: 24,
+    justifyContent: "center",
   },
+  profile: {
+    width: 24,
+    height: 24,
+    borderRadius: 100,
+    alignSelf: "center",
+  },
+  friend: {},
   feed: {
     marginTop: 16,
     marginBottom: 16,
