@@ -8,30 +8,9 @@ import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import SearchBar from "react-native-dynamic-search-bar";
 
-const FriendsScreen = ({ navigation }) => {
+const FriendsScreen = ({ navigation, route }) => {
   const [clear, setClear] = useState(false);
   const clearStyle = useClearStyle(clear);
-  const [user, setUser] = useRecoilState(userState);
-  const [requests, setRequests] = useState([]);
-  const [friends, setFriends] = useState([]);
-
-  const getRequestsAndFriends = () => {
-    getUser(user.uid).then((currentUser) => {
-      setRequests(currentUser.data().friendRequests);
-      setFriends(currentUser.data().friends);
-      // TODO: Maybe initialize local state of user with friends and friendRequest?
-      console.log("requests", requests);
-      console.log("friends", friends);
-    });
-    // getFriendRequests(user.uid).then((allRequests) => {
-    //   console.log("requests", allRequests);
-    //   setRequests(allRequests);
-    // });
-  };
-
-  useEffect(() => {
-    getRequestsAndFriends();
-  }, []);
 
   const goBack = () => {
     navigation.navigate("Home");
@@ -40,7 +19,10 @@ const FriendsScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle={"light-content"} />
-      <FriendsHeader goBack={goBack} numRequests={requests.length} />
+      <FriendsHeader
+        goBack={goBack}
+        numRequests={route.params.requests.length}
+      />
       <SearchBar
         placeholder="Add or search for friends!"
         placeholderTextColor={colors.gray_3}

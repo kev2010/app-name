@@ -9,7 +9,7 @@ import {
   Pressable,
   Image,
 } from "react-native";
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import colors from "../assets/colors";
 import Handle from "../components/Handle";
 import Think from "../components/Think";
@@ -17,6 +17,9 @@ import FriendsIcon from "../components/FriendsIcon";
 import BottomSheet from "@gorhom/bottom-sheet";
 import Feed from "../components/Feed";
 import { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import { useRecoilState } from "recoil";
+import { getUser } from "../api";
+import { userState } from "../globalState";
 
 const HomeScreen = ({ navigation }) => {
   // const [refreshing, setRefreshing] = React.useState(false);
@@ -34,6 +37,27 @@ const HomeScreen = ({ navigation }) => {
   const globalStyle = useGlobalStyle(globalFeed);
   const friendsStyle = useFriendsStyle(friendsFeed);
   const [swiped, setSwipe] = useState(false);
+  const [user, setUser] = useRecoilState(userState);
+  const [requests, setRequests] = useState([]);
+  const [friends, setFriendsList] = useState([]);
+
+  const getFriendsData = () => {
+    getUser(user.uid).then((currentUser) => {
+      setRequests(currentUser.data().friendRequests);
+      setFriendsList(currentUser.data().friends);
+      // TODO: Maybe initialize local state of user with friends and friendRequest?
+      console.log("requests", requests);
+      console.log("friends", friends);
+    });
+    // getFriendRequests(user.uid).then((allRequests) => {
+    //   console.log("requests", allRequests);
+    //   setRequests(allRequests);
+    // });
+  };
+
+  useEffect(() => {
+    getFriendsData();
+  }, []);
 
   const onPressGlobal = () => {
     if (!globalFeed) {
@@ -50,7 +74,10 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const goToFriendsScreen = () => {
-    navigation.navigate("Friends");
+    navigation.navigate("Friends", {
+      friends: friends,
+      requests: requests,
+    });
   };
 
   // ref
@@ -89,7 +116,10 @@ const HomeScreen = ({ navigation }) => {
             source={require("../assets/fbprofile.jpg")}
           />
           <TouchableOpacity onPress={goToFriendsScreen}>
-            <FriendsIcon hasNotification={true} style={styles.friend} />
+            <FriendsIcon
+              hasNotification={requests.length > 0}
+              style={styles.friend}
+            />
           </TouchableOpacity>
         </View>
         <View style={styles.feed}>
