@@ -16,7 +16,7 @@ import { createUser, checkUniqueUsername } from "../api";
 
 // TODO: HANDLE LOGIC WHERE USER W/ PHONE NUMBER ALREADY EXISTS
 const UsernameScreen = ({ route, navigation }) => {
-  const validUsernameChars = /^[a-zA-Z0-9_]+$/;
+  const validUsernameChars = /^[a-z0-9_]+$/;
   const [user, setUser] = useRecoilState(userState);
   const [username, setUsername] = useState("");
   const [disable, setDisable] = useState(false);
@@ -24,15 +24,15 @@ const UsernameScreen = ({ route, navigation }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const duplicateUsernameErrorMessage = "Username taken 😔";
   const invalidCharsErrorMessage =
-    "Username can only contain letters, numbers, and underscores.";
+    "Username can only contain lowercase letters, numbers, and underscores.";
   const inputRef = React.createRef();
   const continueStyle = useContinueStyle(username);
   const errorStyle = useErrorStyle(error);
-  const [textContainerBottom, setTextContainerBottom] = useState(
-    new Animated.Value(0)
-  );
-
-  const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
+  //   const [textContainerBottom, setTextContainerBottom] = useState(
+  //     new Animated.Value(0)
+  //   );
+  //
+  //   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
 
   const validateUsername = (text) => {
     // Regular expression to check for valid characters
@@ -63,17 +63,17 @@ const UsernameScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     inputRef.current.focus();
-    const keyboardDidShow = (event) => {
-      const { endCoordinates } = event;
-      const spacing = endCoordinates.height + 16;
-      setTextContainerBottom(spacing);
-    };
-    setKeyboardDidShowListener(
-      Keyboard.addListener("keyboardDidShow", keyboardDidShow)
-    );
-    return () => {
-      if (keyboardDidShowListener) keyboardDidShowListener.remove();
-    };
+    // const keyboardDidShow = (event) => {
+    //   const { endCoordinates } = event;
+    //   const spacing = endCoordinates.height + 16;
+    //   setTextContainerBottom(spacing);
+    // };
+    // setKeyboardDidShowListener(
+    //   Keyboard.addListener("keyboardDidShow", keyboardDidShow)
+    // );
+    // return () => {
+    //   if (keyboardDidShowListener) keyboardDidShowListener.remove();
+    // };
   }, []);
 
   return (
@@ -101,14 +101,7 @@ const UsernameScreen = ({ route, navigation }) => {
       {/* <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       > */}
-      <Animated.View
-        style={{
-          position: "absolute",
-          bottom: textContainerBottom,
-          alignSelf: "center",
-          // backgroundColor: "purple",
-        }}
-      >
+      <Animated.View>
         <TouchableOpacity onPress={onSubmit} disabled={disable}>
           <Text style={[styles.continue, continueStyle]}>Continue</Text>
         </TouchableOpacity>
@@ -142,7 +135,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "pink",
     alignItems: "center",
     // justifyContent: "space-between",
-    marginTop: 4,
+    marginTop: 24,
   },
   title: {
     color: colors.primary_5,
@@ -174,6 +167,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 128,
     paddingVertical: 12,
     margin: 0,
+    marginTop: 32,
   },
 });
 

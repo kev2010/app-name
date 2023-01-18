@@ -51,11 +51,11 @@ const PhoneScreen = ({ navigation, route }) => {
   const [number, setNumber] = useState("");
   const inputRef = React.createRef();
   const continueStyle = useContinueStyle(number);
-  const [textContainerBottom, setTextContainerBottom] = useState(
-    new Animated.Value(0)
-  );
-
-  const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
+  //   const [textContainerBottom, setTextContainerBottom] = useState(
+  //     new Animated.Value(0)
+  //   );
+  //
+  //   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
 
   // TODO: GENERALIZE
   const checkLength = (number) => {
@@ -100,17 +100,17 @@ const PhoneScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     inputRef.current.focus();
-    const keyboardDidShow = (event) => {
-      const { endCoordinates } = event;
-      const spacing = endCoordinates.height + 16;
-      setTextContainerBottom(spacing);
-    };
-    setKeyboardDidShowListener(
-      Keyboard.addListener("keyboardDidShow", keyboardDidShow)
-    );
-    return () => {
-      if (keyboardDidShowListener) keyboardDidShowListener.remove();
-    };
+    // const keyboardDidShow = (event) => {
+    //   const { endCoordinates } = event;
+    //   const spacing = endCoordinates.height + 16;
+    //   setTextContainerBottom(spacing);
+    // };
+    // setKeyboardDidShowListener(
+    //   Keyboard.addListener("keyboardDidShow", keyboardDidShow)
+    // );
+    // return () => {
+    //   if (keyboardDidShowListener) keyboardDidShowListener.remove();
+    // };
   }, []);
 
   return (
@@ -119,6 +119,7 @@ const PhoneScreen = ({ navigation, route }) => {
       <FirebaseRecaptchaVerifierModal
         ref={recaptchaVerifier}
         firebaseConfig={firebaseConfig}
+        androidLayerType="software"
         attemptInvisibleVerification={attemptInvisibleVerification}
       />
       <StatusBar barStyle={"light-content"} />
@@ -146,10 +147,10 @@ const PhoneScreen = ({ navigation, route }) => {
           style={styles.input}
           // multiline={true}
           keyboardType={"phone-pad"}
-          textAlign="center"
+          textAlign="left"
           selectionColor={colors.primary_4}
           placeholderTextColor={colors.gray_3}
-          placeholder="Your Phone"
+          placeholder="Your number"
           value={number}
           onChangeText={(text) => {
             setNumber(text);
@@ -160,14 +161,7 @@ const PhoneScreen = ({ navigation, route }) => {
       {/* <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       > */}
-      <Animated.View
-        style={{
-          position: "absolute",
-          bottom: textContainerBottom,
-          alignSelf: "center",
-          // backgroundColor: "purple",
-        }}
-      >
+      <Animated.View>
         <TouchableOpacity onPress={onSubmit} disabled={disable}>
           <Text style={[styles.continue, continueStyle]}>Send Code</Text>
         </TouchableOpacity>
@@ -189,7 +183,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    marginTop: 4,
+    marginTop: 24,
   },
   title: {
     marginTop: 4,
@@ -227,6 +221,9 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   input: {
+    // alignSelf: "stretch",
+    // backgroundColor: "pink",
+    padding: 0,
     color: colors.primary_9,
     fontFamily: "Nunito-Bold",
     fontSize: 36,
@@ -239,6 +236,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 128,
     paddingVertical: 12,
     margin: 0,
+    marginTop: 32,
   },
 });
 

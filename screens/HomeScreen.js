@@ -145,6 +145,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.gray_1,
     alignItems: "center",
+    marginTop: 24,
   },
   header: {
     alignItems: "center",

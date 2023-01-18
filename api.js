@@ -10,6 +10,7 @@ import {
 import { db } from "./firebaseConfig";
 
 // TODO: Needed because of dumb bug of "add document" after Firebase phone number authentication. So to circumvent it, we do a dummy call BEFORE we've been signed in and then add the user during "onSubmit" in UsernameScreen. Why does this work? I don't know bro.
+// TODO: Test if only doing a read instead of a write first works
 export async function dummyCall() {
   await setDoc(doc(db, "users", "a"), {});
 }
@@ -30,7 +31,17 @@ export async function createUser(uid, displayName, username) {
   await setDoc(doc(db, "users", uid), {
     name: displayName,
     username: username,
+    friends: [],
+    friendRequests: [],
   });
+}
+
+export async function getUser(uid) {
+  try {
+    return getDoc(doc(db, "users", uid));
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export async function getThoughts() {
@@ -67,8 +78,4 @@ export async function getCollabsOfThoughts(thoughts) {
   });
   // results = [[obj1, obj2], [obj3], ...]
   return Promise.all(results);
-}
-
-export async function getFriendRequests(uid) {
-  return [1, 2];
 }

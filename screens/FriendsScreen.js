@@ -3,7 +3,7 @@ import { SafeAreaView, StyleSheet } from "react-native";
 import React, { useState, useEffect } from "react";
 import colors from "../assets/colors";
 import FriendsHeader from "../components/FriendsHeader";
-import { getFriendRequests } from "../api";
+import { getUser } from "../api";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import SearchBar from "react-native-dynamic-search-bar";
@@ -13,16 +13,24 @@ const FriendsScreen = ({ navigation }) => {
   const clearStyle = useClearStyle(clear);
   const [user, setUser] = useRecoilState(userState);
   const [requests, setRequests] = useState([]);
+  const [friends, setFriends] = useState([]);
 
-  const getRequests = () => {
-    getFriendRequests(user.uid).then((allRequests) => {
-      console.log("requests", allRequests);
-      setRequests(allRequests);
+  const getRequestsAndFriends = () => {
+    getUser(user.uid).then((currentUser) => {
+      setRequests(currentUser.data().friendRequests);
+      setFriends(currentUser.data().friends);
+      // TODO: Maybe initialize local state of user with friends and friendRequest?
+      console.log("requests", requests);
+      console.log("friends", friends);
     });
+    // getFriendRequests(user.uid).then((allRequests) => {
+    //   console.log("requests", allRequests);
+    //   setRequests(allRequests);
+    // });
   };
 
   useEffect(() => {
-    getRequests();
+    getRequestsAndFriends();
   }, []);
 
   const goBack = () => {
@@ -69,6 +77,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.gray_1,
     alignItems: "center",
+    marginTop: 24,
   },
   search: {
     // backgroundColor: "pink",

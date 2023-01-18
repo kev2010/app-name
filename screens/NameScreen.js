@@ -16,11 +16,14 @@ const NameScreen = ({ navigation }) => {
   const [disable, setDisable] = useState(true);
   const inputRef = React.createRef();
   const continueStyle = useContinueStyle(fullName);
-  const [textContainerBottom, setTextContainerBottom] = useState(
-    new Animated.Value(0)
-  );
 
-  const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
+  // TODO: Issue where the button lies right above the keyboard on iphone, but somehow gets bolted up on android? Temporary fix is to just place the buttons right below the text input
+
+  // const [textContainerBottom, setTextContainerBottom] = useState(
+  //   new Animated.Value(0)
+  // );
+
+  // const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
 
   const checkLength = (text) => {
     setDisable(text.length <= 2);
@@ -37,17 +40,17 @@ const NameScreen = ({ navigation }) => {
 
   useEffect(() => {
     inputRef.current.focus();
-    const keyboardDidShow = (event) => {
-      const { endCoordinates } = event;
-      const spacing = endCoordinates.height + 16;
-      setTextContainerBottom(spacing);
-    };
-    setKeyboardDidShowListener(
-      Keyboard.addListener("keyboardDidShow", keyboardDidShow)
-    );
-    return () => {
-      if (keyboardDidShowListener) keyboardDidShowListener.remove();
-    };
+    // const keyboardDidShow = (event) => {
+    //   const { endCoordinates } = event;
+    //   const spacing = endCoordinates.height + 16;
+    //   setTextContainerBottom(spacing);
+    // };
+    // setKeyboardDidShowListener(
+    //   Keyboard.addListener("keyboardDidShow", keyboardDidShow)
+    // );
+    // return () => {
+    //   if (keyboardDidShowListener) keyboardDidShowListener.remove();
+    // };
   }, []);
 
   return (
@@ -71,22 +74,11 @@ const NameScreen = ({ navigation }) => {
           checkLength(text);
         }}
       />
-      {/* <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      > */}
-      <Animated.View
-        style={{
-          position: "absolute",
-          bottom: textContainerBottom,
-          alignSelf: "center",
-          // backgroundColor: "purple",
-        }}
-      >
+      <Animated.View>
         <TouchableOpacity onPress={onSubmit} disabled={disable}>
           <Text style={[styles.continue, continueStyle]}>Continue</Text>
         </TouchableOpacity>
       </Animated.View>
-      {/* </KeyboardAvoidingView> */}
     </SafeAreaView>
   );
 };
@@ -104,7 +96,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "pink",
     alignItems: "center",
     // justifyContent: "space-between",
-    marginTop: 4,
+    marginTop: 24,
   },
   title: {
     color: colors.primary_5,
@@ -120,12 +112,15 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   input: {
+    alignSelf: "stretch",
     color: colors.primary_9,
     // backgroundColor: "green",
     fontFamily: "Nunito-Bold",
     fontSize: 36,
     // This doesn't seem right...?
     marginHorizontal: 24,
+    // padding: 0,
+    // margin: 0,
   },
   continue: {
     fontFamily: "Nunito-SemiBold",
@@ -135,6 +130,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 128,
     paddingVertical: 12,
     margin: 0,
+    marginTop: 32,
   },
 });
 
