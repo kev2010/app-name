@@ -43,16 +43,13 @@ const HomeScreen = ({ navigation }) => {
 
   const getFriendsData = () => {
     getUser(user.uid).then((currentUser) => {
+      console.log("current user", currentUser);
       setRequests(currentUser.data().friendRequests);
       setFriendsList(currentUser.data().friends);
       // TODO: Maybe initialize local state of user with friends and friendRequest?
       console.log("requests", requests);
       console.log("friends", friends);
     });
-    // getFriendRequests(user.uid).then((allRequests) => {
-    //   console.log("requests", allRequests);
-    //   setRequests(allRequests);
-    // });
   };
 
   useEffect(() => {
@@ -74,6 +71,7 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const goToFriendsScreen = () => {
+    // TODO: This throws a "Non-serializable values were found in the navigation state" error since we're passing an array of firebase user references
     navigation.navigate("Friends", {
       friends: friends,
       requests: requests,

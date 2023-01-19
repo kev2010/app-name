@@ -1,11 +1,9 @@
 import { StatusBar } from "expo-status-bar";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { View, SafeAreaView, StyleSheet } from "react-native";
 import React, { useState, useEffect } from "react";
 import colors from "../assets/colors";
 import FriendsHeader from "../components/FriendsHeader";
-import { getUser } from "../api";
-import { useRecoilState } from "recoil";
-import { userState } from "../globalState";
+import FriendsDisplay from "../components/FriendsDisplay";
 import SearchBar from "react-native-dynamic-search-bar";
 
 const FriendsScreen = ({ navigation, route }) => {
@@ -42,6 +40,9 @@ const FriendsScreen = ({ navigation, route }) => {
         }}
         clearIconImageStyle={clearStyle}
       />
+      <View style={styles.display}>
+        <FriendsDisplay friends={route.params.friends} />
+      </View>
     </SafeAreaView>
   );
 };
@@ -56,7 +57,7 @@ const useClearStyle = (clear) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     backgroundColor: colors.gray_1,
     alignItems: "center",
     marginTop: 24,
@@ -78,6 +79,9 @@ const styles = StyleSheet.create({
   },
   clear: {
     opacity: 0,
+  },
+  display: {
+    width: "85%",
   },
 });
 

@@ -15,6 +15,14 @@ export async function dummyCall() {
   await setDoc(doc(db, "users", "a"), {});
 }
 
+export async function getDocument(ref) {
+  try {
+    return getDoc(ref);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function checkUniqueUsername(username) {
   const querySnapshot = await getDocs(
     query(collection(db, "users"), where("username", "==", username))
@@ -38,6 +46,7 @@ export async function createUser(uid, displayName, username) {
 
 export async function getUser(uid) {
   try {
+    console.log("fetching", uid);
     return getDoc(doc(db, "users", uid));
   } catch (error) {
     console.log(error);
@@ -79,3 +88,5 @@ export async function getCollabsOfThoughts(thoughts) {
   // results = [[obj1, obj2], [obj3], ...]
   return Promise.all(results);
 }
+
+export async function removeFriend(uid, friendUID) {}
