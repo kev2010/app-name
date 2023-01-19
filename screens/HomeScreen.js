@@ -38,17 +38,23 @@ const HomeScreen = ({ navigation }) => {
   const friendsStyle = useFriendsStyle(friendsFeed);
   const [swiped, setSwipe] = useState(false);
   const [user, setUser] = useRecoilState(userState);
-  const [requests, setRequests] = useState([]);
-  const [friends, setFriendsList] = useState([]);
 
   const getFriendsData = () => {
+    // TODO: Figure out why the heck I can't set recoil state user with list of firebase userrefs (throws "FIRESTORE (9.15.0) INTERNAL ASSERTION FAILED: Unexpected state" & others)
+    // Temporary workaround/fix is to store the document IDs (the UID of friends) instead of the firebase userRef
     getUser(user.uid).then((currentUser) => {
-      console.log("current user", currentUser);
-      setRequests(currentUser.data().friendRequests);
-      setFriendsList(currentUser.data().friends);
-      // TODO: Maybe initialize local state of user with friends and friendRequest?
-      console.log("requests", requests);
-      console.log("friends", friends);
+      const userFriends = currentUser.data().friends.map((userRef) => {
+        return userRef.id;
+      });
+      const userRequests = currentUser.data().friendRequests.map((userRef) => {
+        return userRef.id;
+      });
+
+      setUser((user) => ({
+        ...user,
+        friends: userFriends,
+        friendRequests: userRequests,
+      }));
     });
   };
 
@@ -71,11 +77,8 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const goToFriendsScreen = () => {
-    // TODO: This throws a "Non-serializable values were found in the navigation state" error since we're passing an array of firebase user references
-    navigation.navigate("Friends", {
-      friends: friends,
-      requests: requests,
-    });
+    getFriendsData();
+    navigation.navigate("Friends");
   };
 
   // ref
@@ -115,7 +118,7 @@ const HomeScreen = ({ navigation }) => {
           />
           <TouchableOpacity onPress={goToFriendsScreen}>
             <FriendsIcon
-              hasNotification={requests.length > 0}
+              hasNotification={user.friendRequests.length > 0}
               style={styles.friend}
             />
           </TouchableOpacity>

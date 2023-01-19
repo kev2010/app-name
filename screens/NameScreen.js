@@ -19,6 +19,8 @@ const NameScreen = ({ navigation }) => {
 
   // TODO: Issue where the button lies right above the keyboard on iphone, but somehow gets bolted up on android? Temporary fix is to just place the buttons right below the text input
 
+  // TODO: For android devices with a notch: https://stackoverflow.com/questions/51289587/how-to-use-safeareaview-for-android-notch-devices
+
   // const [textContainerBottom, setTextContainerBottom] = useState(
   //   new Animated.Value(0)
   // );

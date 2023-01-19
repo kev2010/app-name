@@ -8,9 +8,8 @@ import {
   Alert,
 } from "react-native";
 import colors from "../assets/colors";
-import { removeFriend } from "../api";
 
-const FriendElement = ({ name, username }) => {
+const FriendElement = ({ name, username, uid, remove }) => {
   const onRemove = () => {
     Alert.alert(
       "Confirm Friend Removal",
@@ -25,8 +24,8 @@ const FriendElement = ({ name, username }) => {
         {
           text: "Remove",
           onPress: () => {
-            console.log("DELETEE");
-            removeFriend();
+            console.log("DELETEE", uid);
+            remove(uid);
           },
           style: "destructive",
         },
@@ -34,7 +33,6 @@ const FriendElement = ({ name, username }) => {
     );
   };
 
-  // TODO: Add confirmation message on remove friend
   return (
     <View style={styles.container}>
       <View style={styles.left}>

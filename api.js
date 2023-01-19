@@ -4,6 +4,8 @@ import {
   setDoc,
   getDocs,
   getDoc,
+  updateDoc,
+  arrayRemove,
   query,
   where,
 } from "firebase/firestore";
@@ -15,22 +17,10 @@ export async function dummyCall() {
   await setDoc(doc(db, "users", "a"), {});
 }
 
-export async function getDocument(ref) {
-  try {
-    return getDoc(ref);
-  } catch (error) {
-    console.log(error);
-  }
-}
-
 export async function checkUniqueUsername(username) {
   const querySnapshot = await getDocs(
     query(collection(db, "users"), where("username", "==", username))
   );
-  querySnapshot.forEach((doc) => {
-    // doc.data() is never undefined for query doc snapshots
-    console.log(doc.id, " => ", doc.data());
-  });
   return querySnapshot.size == 0;
 }
 
@@ -89,4 +79,11 @@ export async function getCollabsOfThoughts(thoughts) {
   return Promise.all(results);
 }
 
-export async function removeFriend(uid, friendUID) {}
+export async function removeFriend(uid, friendUID) {
+  console.log("name", friendUID);
+  const friendRef = doc(db, "users", friendUID);
+  console.log("reference", friendRef);
+  await updateDoc(doc(db, "users", uid), {
+    friends: arrayRemove(friendRef),
+  });
+}

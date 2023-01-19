@@ -13,7 +13,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 const Nav = ({}) => {
   const [user, setUser] = useRecoilState(userState);
   const Stack = createNativeStackNavigator();
-  console.log("looking into nav", user);
   return (
     <NavigationContainer>
       <Stack.Navigator

@@ -5,10 +5,13 @@ import colors from "../assets/colors";
 import FriendsHeader from "../components/FriendsHeader";
 import FriendsDisplay from "../components/FriendsDisplay";
 import SearchBar from "react-native-dynamic-search-bar";
+import { useRecoilState } from "recoil";
+import { userState } from "../globalState";
 
-const FriendsScreen = ({ navigation, route }) => {
+const FriendsScreen = ({ navigation }) => {
   const [clear, setClear] = useState(false);
   const clearStyle = useClearStyle(clear);
+  const [user, setUser] = useRecoilState(userState);
 
   const goBack = () => {
     navigation.navigate("Home");
@@ -17,10 +20,7 @@ const FriendsScreen = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle={"light-content"} />
-      <FriendsHeader
-        goBack={goBack}
-        numRequests={route.params.requests.length}
-      />
+      <FriendsHeader goBack={goBack} numRequests={user.friendRequests.length} />
       <SearchBar
         placeholder="Add or search for friends!"
         placeholderTextColor={colors.gray_3}
@@ -41,7 +41,7 @@ const FriendsScreen = ({ navigation, route }) => {
         clearIconImageStyle={clearStyle}
       />
       <View style={styles.display}>
-        <FriendsDisplay friends={route.params.friends} />
+        <FriendsDisplay friends={user.friends} />
       </View>
     </SafeAreaView>
   );

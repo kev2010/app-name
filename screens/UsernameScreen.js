@@ -49,7 +49,12 @@ const UsernameScreen = ({ route, navigation }) => {
       checkUniqueUsername(username).then((unique) => {
         if (unique) {
           createUser(user.uid, user.displayName, username);
-          setUser({ ...user, username: username });
+          setUser({
+            ...user,
+            username: username,
+            friends: [],
+            friendRequests: [],
+          });
         } else {
           setError(true);
           setErrorMessage(duplicateUsernameErrorMessage);
