@@ -8,6 +8,8 @@ import {
   arrayRemove,
   query,
   where,
+  orderBy,
+  limit,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
@@ -86,4 +88,17 @@ export async function removeFriend(uid, friendUID) {
   await updateDoc(doc(db, "users", uid), {
     friends: arrayRemove(friendRef),
   });
+}
+
+export async function getUsernamesStartingWith(text, resultLimit) {
+  const querySnapshot = await getDocs(
+    query(
+      collection(db, "users"),
+      where("username", ">=", text),
+      where("username", "<=", text + "\uf8ff"),
+      orderBy("username"),
+      limit(resultLimit)
+    )
+  );
+  return querySnapshot;
 }

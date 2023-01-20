@@ -13,6 +13,7 @@ import {
 import colors from "../assets/colors";
 
 const Think = ({ swiped }) => {
+  // TODO: disable keyboard when the bottom sheet is deactivated (currently can click on the "hidden" component and keyboard will come up)
   const [thought, setThought] = useState("");
   const audioStyle = useAudioStyle(thought);
 

@@ -9,6 +9,7 @@ import { RecoilRoot } from "recoil";
 import Nav from "./Nav";
 
 export default function App() {
+  // TODO: Either write out a whole ass test suite OR make a checklist of manual runs
   const [fontsLoaded] = useFonts({
     "Nunito-Black": require("./assets/fonts/Nunito-Black.ttf"),
     "Nunito-Bold": require("./assets/fonts/Nunito-Bold.ttf"),
@@ -26,6 +27,7 @@ export default function App() {
     require("./assets/searchIcon.png"),
     require("./assets/fbprofile.jpg"),
     require("./assets/remove.png"),
+    require("./assets/friendsIcon.png"),
   ]);
 
   const onLayoutRootView = useCallback(async () => {

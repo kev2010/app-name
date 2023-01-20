@@ -4,10 +4,12 @@ import React, { useState, useEffect } from "react";
 import colors from "../assets/colors";
 import FriendsHeader from "../components/FriendsHeader";
 import FriendsDisplay from "../components/FriendsDisplay";
+import OutsideUsersDisplay from "../components/OutsideUsersDisplay";
 import SearchBar from "react-native-dynamic-search-bar";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 
+// TODO: Fix that tapping outside of the keyboard doesn't make the keyboard go away
 const FriendsScreen = ({ navigation }) => {
   const [clear, setClear] = useState(false);
   const clearStyle = useClearStyle(clear);
@@ -27,7 +29,6 @@ const FriendsScreen = ({ navigation }) => {
         placeholderTextColor={colors.gray_3}
         // onPress={() => alert("onPress")}
         onChangeText={(text) => {
-          console.log(text);
           setClear(text.length > 0);
           setFilter(text);
         }}
@@ -38,12 +39,15 @@ const FriendsScreen = ({ navigation }) => {
         clearIconImageSource={require("../assets/clear.png")}
         onClearPress={() => {
           setClear(false);
+          setFilter("");
         }}
         clearIconImageStyle={clearStyle}
       />
       <View style={styles.display}>
-        <Text style={styles.header}>My Friends (69)</Text>
         <FriendsDisplay friends={user.friends} filter={filter} />
+        {filter.length >= 3 ? (
+          <OutsideUsersDisplay friends={user.friends} text={filter} />
+        ) : null}
       </View>
     </SafeAreaView>
   );
@@ -84,7 +88,7 @@ const styles = StyleSheet.create({
   },
   display: {
     width: "85%",
-    height: "100%",
+    // height: "100%",
     marginTop: 24,
   },
   header: {

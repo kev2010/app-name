@@ -24,14 +24,15 @@ import { userState } from "../globalState";
 const HomeScreen = ({ navigation }) => {
   // const [refreshing, setRefreshing] = React.useState(false);
 
+  // TODO: Allow refresh of feed
   // const onRefresh = () => {
   //   setRefreshing(true);
   //   setItems([...Items, { key: 69, item: "item 69" }]);
   //   setRefreshing(false);
   // };
-
-  // TODO: Functions to load different screens
   // TODO: Empty state of feed
+  // TODO: Make keyboard go away when you switch between screens - for some reason it defaults to being active
+
   const [globalFeed, setGlobal] = useState(false);
   const [friendsFeed, setFriends] = useState(true);
   const globalStyle = useGlobalStyle(globalFeed);

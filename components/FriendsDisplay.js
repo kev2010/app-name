@@ -1,10 +1,12 @@
-import { StyleSheet, FlatList } from "react-native";
+import { StyleSheet, FlatList, Text } from "react-native";
 import React, { useState, useEffect } from "react";
-import FriendElement from "../components/FriendElement";
+import FriendElement from "./FriendElement";
 import { getUser, removeFriend } from "../api";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
+import colors from "../assets/colors";
 
+// TODO: Do alphabetic sorting
 const FriendsDisplay = ({ friends, filter }) => {
   const [user, setUser] = useRecoilState(userState);
   const [data, setData] = useState([]);
@@ -14,9 +16,10 @@ const FriendsDisplay = ({ friends, filter }) => {
   });
 
   const getFriendsInfo = (friends) => {
-    // TODO: Decide whether we should be doing this logic (converting array of userRefs to array of user objects) in the home screen or here)
+    // TODO: Decide whether we should be doing this logic (converting array of userRefs to array of user objects) in the home screen, friends screen, or here)
     friends.forEach((uid) => {
       getUser(uid).then((user) => {
+        console.log("friendsGetInfo", user);
         const found = data.some((friend) => friend.name === user.data().name);
         if (!found) {
           // IMPORTANT: Need to use a function to create a new array since state updates are asynchronous or sometimes batched.
@@ -51,23 +54,39 @@ const FriendsDisplay = ({ friends, filter }) => {
   };
 
   return (
-    <FlatList
-      onLayout={(event) => setLayout(event.nativeEvent.layout)}
-      data={data.filter(
+    <>
+      {data.filter(
         (item) => item.name.includes(filter) || item.username.includes(filter)
-      )}
-      renderItem={({ item }) => (
-        <FriendElement
-          name={item.name}
-          username={item.username}
-          uid={item.uid}
-          remove={removeFriendInstances}
-          layout={layout}
-        />
-      )}
-      keyExtractor={(item) => item.uid}
-    />
+      ).length > 0 ? (
+        <Text style={styles.header}>My Friends (69)</Text>
+      ) : null}
+      <FlatList
+        onLayout={(event) => setLayout(event.nativeEvent.layout)}
+        data={data.filter(
+          (item) => item.name.includes(filter) || item.username.includes(filter)
+        )}
+        renderItem={({ item }) => (
+          <FriendElement
+            name={item.name}
+            username={item.username}
+            uid={item.uid}
+            remove={removeFriendInstances}
+            layout={layout}
+          />
+        )}
+        keyExtractor={(item) => item.uid}
+      />
+    </>
   );
 };
+
+const styles = StyleSheet.create({
+  header: {
+    color: colors.gray_3,
+    fontFamily: "Nunito-SemiBold",
+    fontSize: 16,
+    marginBottom: 16,
+  },
+});
 
 export default FriendsDisplay;
