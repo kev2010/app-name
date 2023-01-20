@@ -8,6 +8,10 @@ import { userState } from "../globalState";
 const FriendsDisplay = ({ friends }) => {
   const [user, setUser] = useRecoilState(userState);
   const [data, setData] = useState([]);
+  const [layout, setLayout] = useState({
+    width: 0,
+    height: 0,
+  });
 
   const getFriendsInfo = (friends) => {
     // TODO: Decide whether we should be doing this logic (converting array of userRefs to array of user objects) in the home screen or here)
@@ -48,7 +52,7 @@ const FriendsDisplay = ({ friends }) => {
 
   return (
     <FlatList
-      contentContainerStyle={styles.display}
+      onLayout={(event) => setLayout(event.nativeEvent.layout)}
       data={data}
       renderItem={({ item }) => (
         <FriendElement
@@ -56,19 +60,12 @@ const FriendsDisplay = ({ friends }) => {
           username={item.username}
           uid={item.uid}
           remove={removeFriendInstances}
+          layout={layout}
         />
       )}
       keyExtractor={(item) => item.uid}
     />
   );
 };
-
-const styles = StyleSheet.create({
-  display: {
-    alignItems: "center",
-    backgroundColor: "purple",
-    // width: "100%",
-  },
-});
 
 export default FriendsDisplay;

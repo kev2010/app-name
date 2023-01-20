@@ -16,33 +16,3 @@ export const verificationState = atom({
   key: "verificationState",
   default: "",
 });
-
-// export const userFriendsState = selector({
-//   key: "userFriendsState",
-//   get: async ({ get }) => {
-//     const user = get(userState);
-//     const friends = Promise.all(
-//       user.friends.map(async (uid) => {
-//         await getUser(uid).then((user) => {
-//           return {
-//             uid: uid,
-//             name: user.data().name,
-//             username: user.data().username,
-//           };
-//         });
-//       })
-//     );
-//     console.log("wtfff", friends[0]);
-//     return friends;
-//   },
-// });
-
-// const userFriendRequestsState = selector({
-//   key: "userFriendRequestsState",
-//   get: ({ get }) => {
-//     const fontSize = get(fontSizeState);
-//     const unit = "px";
-//
-//     return `${fontSize}${unit}`;
-//   },
-// });

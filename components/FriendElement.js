@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import colors from "../assets/colors";
 
-const FriendElement = ({ name, username, uid, remove }) => {
+const FriendElement = ({ name, username, uid, layout, remove }) => {
   const onRemove = () => {
     Alert.alert(
       "Confirm Friend Removal",
@@ -34,7 +34,14 @@ const FriendElement = ({ name, username, uid, remove }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          width: layout.width,
+        },
+      ]}
+    >
       <View style={styles.left}>
         <Image
           style={styles.profileImage}
@@ -58,12 +65,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 16,
-    backgroundColor: "pink",
-    width: "72%",
   },
   left: {
     flexDirection: "row",
-    backgroundColor: "blue",
   },
   profileImage: {
     width: 48,

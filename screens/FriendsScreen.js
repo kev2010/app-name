@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { View, SafeAreaView, StyleSheet } from "react-native";
+import { View, SafeAreaView, StyleSheet, Text } from "react-native";
 import React, { useState, useEffect } from "react";
 import colors from "../assets/colors";
 import FriendsHeader from "../components/FriendsHeader";
@@ -41,6 +41,7 @@ const FriendsScreen = ({ navigation }) => {
         clearIconImageStyle={clearStyle}
       />
       <View style={styles.display}>
+        <Text style={styles.header}>My Friends (69)</Text>
         <FriendsDisplay friends={user.friends} />
       </View>
     </SafeAreaView>
@@ -82,6 +83,14 @@ const styles = StyleSheet.create({
   },
   display: {
     width: "85%",
+    height: "100%",
+    marginTop: 24,
+  },
+  header: {
+    color: colors.gray_3,
+    fontFamily: "Nunito-SemiBold",
+    fontSize: 16,
+    marginBottom: 16,
   },
 });
 
