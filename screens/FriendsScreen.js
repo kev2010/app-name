@@ -12,6 +12,7 @@ const FriendsScreen = ({ navigation }) => {
   const [clear, setClear] = useState(false);
   const clearStyle = useClearStyle(clear);
   const [user, setUser] = useRecoilState(userState);
+  const [filter, setFilter] = useState("");
 
   const goBack = () => {
     navigation.navigate("Home");
@@ -28,6 +29,7 @@ const FriendsScreen = ({ navigation }) => {
         onChangeText={(text) => {
           console.log(text);
           setClear(text.length > 0);
+          setFilter(text);
         }}
         style={styles.search}
         textInputStyle={styles.searchText}
@@ -35,14 +37,13 @@ const FriendsScreen = ({ navigation }) => {
         searchIconImageSource={require("../assets/searchIcon.png")}
         clearIconImageSource={require("../assets/clear.png")}
         onClearPress={() => {
-          console.log("what");
           setClear(false);
         }}
         clearIconImageStyle={clearStyle}
       />
       <View style={styles.display}>
         <Text style={styles.header}>My Friends (69)</Text>
-        <FriendsDisplay friends={user.friends} />
+        <FriendsDisplay friends={user.friends} filter={filter} />
       </View>
     </SafeAreaView>
   );

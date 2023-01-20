@@ -5,7 +5,7 @@ import { getUser, removeFriend } from "../api";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 
-const FriendsDisplay = ({ friends }) => {
+const FriendsDisplay = ({ friends, filter }) => {
   const [user, setUser] = useRecoilState(userState);
   const [data, setData] = useState([]);
   const [layout, setLayout] = useState({
@@ -53,7 +53,9 @@ const FriendsDisplay = ({ friends }) => {
   return (
     <FlatList
       onLayout={(event) => setLayout(event.nativeEvent.layout)}
-      data={data}
+      data={data.filter(
+        (item) => item.name.includes(filter) || item.username.includes(filter)
+      )}
       renderItem={({ item }) => (
         <FriendElement
           name={item.name}
