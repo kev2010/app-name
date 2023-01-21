@@ -46,7 +46,12 @@ const FriendsScreen = ({ navigation }) => {
       <View style={styles.display}>
         <FriendsDisplay friends={user.friends} filter={filter} />
         {filter.length >= 3 ? (
-          <OutsideUsersDisplay friends={user.friends} text={filter} />
+          <OutsideUsersDisplay
+            friends={user.friends}
+            friendRequests={user.friendRequests}
+            sent={user.sentRequests}
+            text={filter}
+          />
         ) : null}
       </View>
     </SafeAreaView>

@@ -5,33 +5,25 @@ import {
   View,
   Image,
   TouchableOpacity,
-  Alert,
+  ActivityIndicator,
 } from "react-native";
 import colors from "../assets/colors";
 
-const OutsideUserElement = ({ name, username, uid, layout }) => {
-  //   const onRemove = () => {
-  //     Alert.alert(
-  //       "Confirm Friend Removal",
-  //       `Are you sure you want to no longer be friends with ${name}? You can't see ${name}'s thoughts anymore and yours will no longer be visible.`,
-  //       [
-  //         {
-  //           text: "Cancel",
-  //           onPress: () => {
-  //             console.log("CANCELLED");
-  //           },
-  //         },
-  //         {
-  //           text: "Remove",
-  //           onPress: () => {
-  //             console.log("DELETEE", uid);
-  //             remove(uid);
-  //           },
-  //           style: "destructive",
-  //         },
-  //       ]
-  //     );
-  //   };
+const OutsideUserElement = ({
+  name,
+  username,
+  uid,
+  addFriend,
+  sent,
+  layout,
+}) => {
+  const [loading, setLoading] = useState(false);
+  const onAdd = () => {
+    setLoading(true);
+    addFriend(uid).then(() => {
+      setLoading(false);
+    });
+  };
 
   return (
     <View
@@ -52,9 +44,15 @@ const OutsideUserElement = ({ name, username, uid, layout }) => {
           <Text style={styles.username}>{username}</Text>
         </View>
       </View>
-      {/* <TouchableOpacity onPress={onRemove}>
-        <Image style={styles.remove} source={require("../assets/remove.png")} />
-      </TouchableOpacity> */}
+      {loading ? (
+        <ActivityIndicator size="small" color={colors.primary_5} />
+      ) : sent.indexOf(uid) === -1 ? (
+        <TouchableOpacity onPress={onAdd}>
+          <Text style={styles.add}>Add</Text>
+        </TouchableOpacity>
+      ) : (
+        <Text style={styles.sent}>Sent</Text>
+      )}
     </View>
   );
 };
@@ -89,9 +87,20 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito-Regular",
     fontSize: 14,
   },
-  remove: {
-    width: 12,
-    height: 12,
+  add: {
+    color: colors.gray_7,
+    fontFamily: "Nunito-SemiBold",
+    fontSize: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    borderRadius: 10,
+    borderColor: colors.gray_5,
+    borderWidth: 1,
+  },
+  sent: {
+    color: colors.gray_3,
+    fontFamily: "Nunito-SemiBold",
+    fontSize: 14,
   },
 });
 

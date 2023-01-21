@@ -50,11 +50,15 @@ const HomeScreen = ({ navigation }) => {
       const userRequests = currentUser.data().friendRequests.map((userRef) => {
         return userRef.id;
       });
+      const userSent = currentUser.data().sentRequests.map((userRef) => {
+        return userRef.id;
+      });
 
       setUser((user) => ({
         ...user,
         friends: userFriends,
         friendRequests: userRequests,
+        sentRequests: userSent,
       }));
     });
   };

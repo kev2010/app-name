@@ -8,6 +8,7 @@ export const userState = atom({
     username: "kev2018",
     friends: [],
     friendRequests: [],
+    sentRequests: [],
   },
   // default: {},
 });

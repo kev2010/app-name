@@ -5,8 +5,11 @@ import { getUsernamesStartingWith } from "../api";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import colors from "../assets/colors";
+import { sendFriendRequest } from "../api";
 
-const OutsideUsersDisplay = ({ friends, text }) => {
+// TODO: Fix bug where first press on screen makes the keyboard disappear, and then second press interacts
+// TODO: UX where your current friend requests DON'T show up in "OutsideUsersDisplay" not exactly intuitive, but easy to implement code wise lol. Eventually, should show friend requests in a seperate table in same screen.
+const OutsideUsersDisplay = ({ friends, friendRequests, sent, text }) => {
   const [user, setUser] = useRecoilState(userState);
   const [data, setData] = useState([]);
   const [layout, setLayout] = useState({
@@ -21,7 +24,15 @@ const OutsideUsersDisplay = ({ friends, text }) => {
           (other) => other.name === otherUser.data().name
         );
         const foundFriend = friends.some((friend) => friend === otherUser.id);
-        if (!found && !foundFriend && otherUser.id != user.uid) {
+        const foundRequest = friendRequests.some(
+          (request) => request === otherUser.id
+        );
+        if (
+          !found &&
+          !foundFriend &&
+          !foundRequest &&
+          otherUser.id != user.uid
+        ) {
           console.log("outsidersINfo", user);
           setData((data) => [
             ...data,
@@ -40,7 +51,26 @@ const OutsideUsersDisplay = ({ friends, text }) => {
     getOutsidersInfo(text);
   }, [text]);
 
-  const addUserAsFriend = (uid) => {};
+  const addUserAsFriend = (friendUID) => {
+    return new Promise((resolve, reject) => {
+      console.log("we're adding friend", friendUID);
+      console.log("for debugging", user.friendRequests);
+      console.log("next", user.friendRequests.indexOf(friendUID));
+      // Push friend request to everywhere only if it doesn't exist yet
+      if (user.friendRequests.indexOf(friendUID) === -1) {
+        console.log("doesn't exist yet");
+        sendFriendRequest(user.uid, friendUID).then(() => {
+          console.log("time to set the user");
+          // Update global user state to show that user sent a friend request
+          setUser((user) => ({
+            ...user,
+            sentRequests: [...user.sentRequests, friendUID],
+          }));
+          resolve(true);
+        });
+      }
+    });
+  };
 
   return (
     <>
@@ -53,7 +83,8 @@ const OutsideUsersDisplay = ({ friends, text }) => {
             name={item.name}
             username={item.username}
             uid={item.uid}
-            //   remove={removeFriendInstances}
+            addFriend={addUserAsFriend}
+            sent={sent}
             layout={layout}
           />
         )}

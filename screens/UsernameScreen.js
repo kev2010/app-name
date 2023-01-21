@@ -54,6 +54,7 @@ const UsernameScreen = ({ route, navigation }) => {
             username: username,
             friends: [],
             friendRequests: [],
+            sentRequests: [],
           });
         } else {
           setError(true);

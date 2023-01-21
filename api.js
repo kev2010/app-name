@@ -10,6 +10,7 @@ import {
   where,
   orderBy,
   limit,
+  arrayUnion,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
@@ -33,6 +34,7 @@ export async function createUser(uid, displayName, username) {
     username: username,
     friends: [],
     friendRequests: [],
+    sentRequests: [],
   });
 }
 
@@ -81,10 +83,22 @@ export async function getCollabsOfThoughts(thoughts) {
   return Promise.all(results);
 }
 
+export async function sendFriendRequest(uid, friendUID) {
+  const currentUserRef = doc(db, "users", uid);
+  const sentToUserRef = doc(db, "users", friendUID);
+  // First update the friendRequests field of the user the request is sent to
+  // Then update the sentRequests field of the original user
+  await updateDoc(sentToUserRef, {
+    friendRequests: arrayUnion(currentUserRef),
+  }).then(
+    updateDoc(currentUserRef, {
+      sentRequests: arrayUnion(sentToUserRef),
+    })
+  );
+}
+
 export async function removeFriend(uid, friendUID) {
-  console.log("name", friendUID);
   const friendRef = doc(db, "users", friendUID);
-  console.log("reference", friendRef);
   await updateDoc(doc(db, "users", uid), {
     friends: arrayRemove(friendRef),
   });
