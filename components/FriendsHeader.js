@@ -10,7 +10,12 @@ import React, { useState } from "react";
 import colors from "../assets/colors";
 
 // TODO: Provide lazy tapping buffer (if people miss their thumbs slightly)
-const FriendsHeader = ({ goBack, numRequests }) => {
+const FriendsHeader = ({
+  goBack,
+  displayFriends,
+  displayRequests,
+  numRequests,
+}) => {
   const [requestsTab, setRequestsTab] = useState(false);
   const [friendsTab, setFriendsTab] = useState(true);
   const requestsStyle = useRequestsStyle(requestsTab);
@@ -21,6 +26,7 @@ const FriendsHeader = ({ goBack, numRequests }) => {
     if (!friendsTab) {
       setFriendsTab(true);
       setRequestsTab(false);
+      displayFriends();
     }
   };
 
@@ -28,6 +34,7 @@ const FriendsHeader = ({ goBack, numRequests }) => {
     if (!requestsTab) {
       setFriendsTab(false);
       setRequestsTab(true);
+      displayRequests();
     }
   };
 

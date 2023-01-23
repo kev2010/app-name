@@ -1,13 +1,13 @@
 import { StyleSheet, FlatList, Text } from "react-native";
 import React, { useState, useEffect } from "react";
-import FriendElement from "./FriendElement";
-import { getUser, removeFriend } from "../api";
+import RequestElement from "./RequestElement";
+import { getUser, addFriend, deleteFriendRequest } from "../api";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import colors from "../assets/colors";
 
 // TODO: Do alphabetic sorting
-const FriendsDisplay = ({ friends, filter }) => {
+const RequestsDisplay = ({ requests }) => {
   const [user, setUser] = useRecoilState(userState);
   const [data, setData] = useState([]);
   const [layout, setLayout] = useState({
@@ -15,12 +15,12 @@ const FriendsDisplay = ({ friends, filter }) => {
     height: 0,
   });
 
-  const getFriendsInfo = (friends) => {
+  // TODO: This is basically a duplicate of the FriendsDisplay function. At some point, there might be a cleaner solution here to not repeat the code
+  const getRequestsInfo = (requests) => {
     // TODO: Decide whether we should be doing this logic (converting array of userRefs to array of user objects) in the home screen, friends screen, or here)
-    friends.forEach((uid) => {
+    requests.forEach((uid) => {
       getUser(uid).then((user) => {
-        console.log("friendsGetInfo", user);
-        const found = data.some((friend) => friend.name === user.data().name);
+        const found = data.some((request) => request.name === user.data().name);
         if (!found) {
           // IMPORTANT: Need to use a function to create a new array since state updates are asynchronous or sometimes batched.
           // This also assumes that the document ID (the user document) is the user's UID
@@ -38,39 +38,51 @@ const FriendsDisplay = ({ friends, filter }) => {
   };
 
   useEffect(() => {
-    getFriendsInfo(friends);
+    getRequestsInfo(requests);
   }, []);
 
-  const removeFriendInstances = (uid) => {
-    // Have to Firebase list AND delete display friends list AND global user state's friends list
-    // Not sure if this is the best logic to handle it (I tried with Recoil selectors, but the async "getUser" calls are messy)
-    removeFriend(user.uid, uid).then(() => {
+  const acceptRequest = (uid) => {
+    // Remove the friend request (and sent friend request) and add the friend (for both users) to both the global user state AND Firebase state AND local data variable
+    return new Promise((resolve, reject) => {
+      addFriend(uid, user.uid).then(
+        deleteFriendRequest(uid, user.uid).then(() => {
+          setUser((user) => ({
+            ...user,
+            friends: [...user.friends, uid],
+            friendRequests: user.friendRequests.filter((id) => id !== uid),
+          }));
+          setData(data.filter((item) => item.uid !== uid));
+          resolve(true);
+        })
+      );
+    });
+  };
+
+  const rejectRequest = (uid) => {
+    // Remove the friend request (and sent friend request) to both the global user state AND Firebase state AND local data variable
+    deleteFriendRequest(uid, user.uid).then(() => {
       setUser((user) => ({
         ...user,
-        friends: user.friends.filter((id) => id !== uid),
+        friendRequests: user.friendRequests.filter((id) => id !== uid),
       }));
       setData(data.filter((item) => item.uid !== uid));
     });
   };
 
   return (
+    // TODO: Set up a default display when there are 0 friend requests
     <>
-      {data.filter(
-        (item) => item.name.includes(filter) || item.username.includes(filter)
-      ).length > 0 ? (
-        <Text style={styles.header}>My Friends ({data.length})</Text>
-      ) : null}
+      {/* <Text style={styles.header}>All Requests</Text> */}
       <FlatList
         onLayout={(event) => setLayout(event.nativeEvent.layout)}
-        data={data.filter(
-          (item) => item.name.includes(filter) || item.username.includes(filter)
-        )}
+        data={data}
         renderItem={({ item }) => (
-          <FriendElement
+          <RequestElement
             name={item.name}
             username={item.username}
             uid={item.uid}
-            remove={removeFriendInstances}
+            acceptRequest={acceptRequest}
+            rejectRequest={rejectRequest}
             layout={layout}
           />
         )}
@@ -89,4 +101,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FriendsDisplay;
+export default RequestsDisplay;

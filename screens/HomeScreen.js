@@ -139,6 +139,7 @@ const HomeScreen = ({ navigation }) => {
       </View>
       <Feed></Feed>
 
+      {/* TODO: The think backdrop has a sliver of a white border on the very top */}
       <BottomSheet
         ref={bottomSheetRef}
         snapPoints={snapPoints}

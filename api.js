@@ -97,11 +97,45 @@ export async function sendFriendRequest(uid, friendUID) {
   );
 }
 
+// For now delete the request from both users (maybe in the future only delete the current request and not alert the friend that their request has been removed). This is for the direction of you, uid, sent a request to a potential friend, the friendUID
+export async function deleteFriendRequest(uid, friendUID) {
+  const currentUserRef = doc(db, "users", uid);
+  const sentToUserRef = doc(db, "users", friendUID);
+  // First update the friendRequests field of the user the request is sent to
+  // Then update the sentRequests field of the original user
+  await updateDoc(sentToUserRef, {
+    friendRequests: arrayRemove(currentUserRef),
+  }).then(
+    updateDoc(currentUserRef, {
+      sentRequests: arrayRemove(sentToUserRef),
+    })
+  );
+}
+
+// Make sure to add friends for both users
+export async function addFriend(uid, friendUID) {
+  const currentUserRef = doc(db, "users", uid);
+  const friendRef = doc(db, "users", friendUID);
+  await updateDoc(doc(db, "users", uid), {
+    friends: arrayUnion(friendRef),
+  }).then(
+    updateDoc(doc(db, "users", friendUID), {
+      friends: arrayUnion(currentUserRef),
+    })
+  );
+}
+
+// Make sure to remove friends from both the original user and the friend user
 export async function removeFriend(uid, friendUID) {
+  const currentUserRef = doc(db, "users", uid);
   const friendRef = doc(db, "users", friendUID);
   await updateDoc(doc(db, "users", uid), {
     friends: arrayRemove(friendRef),
-  });
+  }).then(
+    updateDoc(doc(db, "users", friendUID), {
+      friends: arrayRemove(currentUserRef),
+    })
+  );
 }
 
 export async function getUsernamesStartingWith(text, resultLimit) {

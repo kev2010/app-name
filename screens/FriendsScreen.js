@@ -8,6 +8,7 @@ import OutsideUsersDisplay from "../components/OutsideUsersDisplay";
 import SearchBar from "react-native-dynamic-search-bar";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
+import RequestsDisplay from "../components/RequestsDisplay";
 
 // TODO: Fix that tapping outside of the keyboard doesn't make the keyboard go away
 const FriendsScreen = ({ navigation }) => {
@@ -15,45 +16,67 @@ const FriendsScreen = ({ navigation }) => {
   const clearStyle = useClearStyle(clear);
   const [user, setUser] = useRecoilState(userState);
   const [filter, setFilter] = useState("");
+  const [showFriends, setShowFriends] = useState(true);
 
   const goBack = () => {
     navigation.navigate("Home");
   };
 
+  const displayFriends = () => {
+    setShowFriends(true);
+  };
+
+  const displayRequests = () => {
+    setShowFriends(false);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle={"light-content"} />
-      <FriendsHeader goBack={goBack} numRequests={user.friendRequests.length} />
-      <SearchBar
-        placeholder="Add or search for friends!"
-        placeholderTextColor={colors.gray_3}
-        // onPress={() => alert("onPress")}
-        onChangeText={(text) => {
-          setClear(text.length > 0);
-          setFilter(text);
-        }}
-        style={styles.search}
-        textInputStyle={styles.searchText}
-        searchIconImageStyle={styles.searchIcon}
-        searchIconImageSource={require("../assets/searchIcon.png")}
-        clearIconImageSource={require("../assets/clear.png")}
-        onClearPress={() => {
-          setClear(false);
-          setFilter("");
-        }}
-        clearIconImageStyle={clearStyle}
+      <FriendsHeader
+        goBack={goBack}
+        displayFriends={displayFriends}
+        displayRequests={displayRequests}
+        numRequests={user.friendRequests.length}
       />
-      <View style={styles.display}>
-        <FriendsDisplay friends={user.friends} filter={filter} />
-        {filter.length >= 3 ? (
-          <OutsideUsersDisplay
-            friends={user.friends}
-            friendRequests={user.friendRequests}
-            sent={user.sentRequests}
-            text={filter}
+      {showFriends ? (
+        <>
+          <SearchBar
+            placeholder="Add or search for friends!"
+            placeholderTextColor={colors.gray_3}
+            // onPress={() => alert("onPress")}
+            onChangeText={(text) => {
+              setClear(text.length > 0);
+              setFilter(text);
+            }}
+            style={styles.search}
+            textInputStyle={styles.searchText}
+            searchIconImageStyle={styles.searchIcon}
+            searchIconImageSource={require("../assets/searchIcon.png")}
+            clearIconImageSource={require("../assets/clear.png")}
+            onClearPress={() => {
+              setClear(false);
+              setFilter("");
+            }}
+            clearIconImageStyle={clearStyle}
           />
-        ) : null}
-      </View>
+          <View style={styles.display}>
+            <FriendsDisplay friends={user.friends} filter={filter} />
+            {filter.length >= 3 ? (
+              <OutsideUsersDisplay
+                friends={user.friends}
+                friendRequests={user.friendRequests}
+                sent={user.sentRequests}
+                text={filter}
+              />
+            ) : null}
+          </View>
+        </>
+      ) : (
+        <View style={styles.display}>
+          <RequestsDisplay requests={user.friendRequests} />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
