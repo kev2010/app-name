@@ -1,5 +1,4 @@
 const { atom, selector } = require("recoil");
-import { getUser } from "./api";
 
 export const userState = atom({
   key: "userState",

@@ -16,10 +16,10 @@ const Think = ({ swiped }) => {
   // TODO: disable keyboard when the bottom sheet is deactivated (currently can click on the "hidden" component and keyboard will come up)
   const [thought, setThought] = useState("");
   const audioStyle = useAudioStyle(thought);
-
   const [textContainerBottom, setTextContainerBottom] = useState(
     new Animated.Value(0)
   );
+  const thinkStyle = useThinkStyle(textContainerBottom);
 
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
 
@@ -32,7 +32,7 @@ const Think = ({ swiped }) => {
     }
     const keyboardDidShow = (event) => {
       const { endCoordinates } = event;
-      const spacing = endCoordinates.height + 12;
+      const spacing = endCoordinates.height + 16;
       setTextContainerBottom(spacing);
     };
     setKeyboardDidShowListener(
@@ -70,13 +70,7 @@ const Think = ({ swiped }) => {
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <Animated.View
-          style={{
-            position: "absolute",
-            bottom: textContainerBottom,
-            alignSelf: "center",
-          }}
-        >
+        <Animated.View style={[thinkStyle]}>
           <Image
             style={[styles.audio, audioStyle]}
             source={require("../assets/audio.png")}
@@ -98,6 +92,23 @@ const useAudioStyle = (thought) => {
   };
 };
 
+// Android and iOS have weird behaviors with trying to set buttons right above the keyboard! It looks like Android automatically does it while iOS doesn't
+const useThinkStyle = (textContainerBottom) => {
+  if (Platform.OS === "ios") {
+    return {
+      position: "absolute",
+      bottom: textContainerBottom,
+      alignSelf: "center",
+    };
+  } else {
+    // Android - this assumption might break
+    return {
+      alignSelf: "center",
+      marginBottom: 16,
+    };
+  }
+};
+
 const styles = StyleSheet.create({
   thinkContainer: {
     flex: 1,
@@ -109,6 +120,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     // This doesn't seem right...?
     marginHorizontal: 24,
+    // Much needed for android - not well documented. See https://github.com/facebook/react-native/issues/13897
+    textAlignVertical: "top",
   },
   audio: {
     width: 20,

@@ -94,7 +94,12 @@ const HomeScreen = ({ navigation }) => {
 
   const renderBackdrop = (props) => {
     return (
-      <BottomSheetBackdrop {...props} pressBehavior={"collapse"} opacity={0.25}>
+      <BottomSheetBackdrop
+        {...props}
+        pressBehavior={"collapse"}
+        opacity={0.25}
+        style={styles.backdrop}
+      >
         <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }} />
       </BottomSheetBackdrop>
     );
@@ -223,6 +228,9 @@ const styles = StyleSheet.create({
     paddingRight: 20,
     width: "100%",
     height: 10,
+  },
+  backdrop: {
+    marginTop: 0,
   },
   sheet: {
     backgroundColor: colors.almost_white,

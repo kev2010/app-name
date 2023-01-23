@@ -51,11 +51,12 @@ const PhoneScreen = ({ navigation, route }) => {
   const [number, setNumber] = useState("");
   const inputRef = React.createRef();
   const continueStyle = useContinueStyle(number);
-  //   const [textContainerBottom, setTextContainerBottom] = useState(
-  //     new Animated.Value(0)
-  //   );
-  //
-  //   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
+  const [textContainerBottom, setTextContainerBottom] = useState(
+    new Animated.Value(0)
+  );
+  const positionStyle = usePositionStyle(textContainerBottom);
+
+  const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
 
   // TODO: GENERALIZE
   const checkLength = (number) => {
@@ -100,68 +101,70 @@ const PhoneScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     inputRef.current.focus();
-    // const keyboardDidShow = (event) => {
-    //   const { endCoordinates } = event;
-    //   const spacing = endCoordinates.height + 16;
-    //   setTextContainerBottom(spacing);
-    // };
-    // setKeyboardDidShowListener(
-    //   Keyboard.addListener("keyboardDidShow", keyboardDidShow)
-    // );
-    // return () => {
-    //   if (keyboardDidShowListener) keyboardDidShowListener.remove();
-    // };
+    const keyboardDidShow = (event) => {
+      const { endCoordinates } = event;
+      const spacing = endCoordinates.height + 16;
+      setTextContainerBottom(spacing);
+    };
+    setKeyboardDidShowListener(
+      Keyboard.addListener("keyboardDidShow", keyboardDidShow)
+    );
+    return () => {
+      if (keyboardDidShowListener) keyboardDidShowListener.remove();
+    };
   }, []);
 
   return (
     // maybe use Safe Area view instead?
     <SafeAreaView style={styles.container}>
-      <FirebaseRecaptchaVerifierModal
-        ref={recaptchaVerifier}
-        firebaseConfig={firebaseConfig}
-        androidLayerType="software"
-        attemptInvisibleVerification={attemptInvisibleVerification}
-      />
-      <StatusBar barStyle={"light-content"} />
-      <Text style={styles.title}>App Name</Text>
-      <Text style={styles.subtitle}>
-        Hey {route.params.paramKey.split(" ")[0]}! Enter your number📱
-      </Text>
-      <View style={styles.number}>
-        <View style={styles.border}>
-          <CountryPicker
-            countryCode={countryCode}
-            withFlag={true}
-            withCallingCode={true}
-            withEmoji={true}
-            onSelect={onSelectCountry}
-            theme={{
-              flagSizeButton: 24,
+      <View>
+        <FirebaseRecaptchaVerifierModal
+          ref={recaptchaVerifier}
+          firebaseConfig={firebaseConfig}
+          androidLayerType="software"
+          attemptInvisibleVerification={attemptInvisibleVerification}
+        />
+        <StatusBar barStyle={"light-content"} />
+        <Text style={styles.title}>App Name</Text>
+        <Text style={styles.subtitle}>
+          Hey {route.params.paramKey.split(" ")[0]}! Enter your number📱
+        </Text>
+        <View style={styles.number}>
+          <View style={styles.border}>
+            <CountryPicker
+              countryCode={countryCode}
+              withFlag={true}
+              withCallingCode={true}
+              withEmoji={true}
+              onSelect={onSelectCountry}
+              theme={{
+                flagSizeButton: 24,
+              }}
+            />
+            <Text style={styles.countryCode}>+{country.callingCode}</Text>
+          </View>
+          <TextInput
+            ref={inputRef}
+            // autoFocus={swiped}
+            style={styles.input}
+            // multiline={true}
+            keyboardType={"phone-pad"}
+            textAlign="left"
+            selectionColor={colors.primary_4}
+            placeholderTextColor={colors.gray_3}
+            placeholder="Your number"
+            value={number}
+            onChangeText={(text) => {
+              setNumber(text);
+              checkLength(text);
             }}
           />
-          <Text style={styles.countryCode}>+{country.callingCode}</Text>
         </View>
-        <TextInput
-          ref={inputRef}
-          // autoFocus={swiped}
-          style={styles.input}
-          // multiline={true}
-          keyboardType={"phone-pad"}
-          textAlign="left"
-          selectionColor={colors.primary_4}
-          placeholderTextColor={colors.gray_3}
-          placeholder="Your number"
-          value={number}
-          onChangeText={(text) => {
-            setNumber(text);
-            checkLength(text);
-          }}
-        />
-      </View>
-      {/* <KeyboardAvoidingView
+        {/* <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       > */}
-      <Animated.View>
+      </View>
+      <Animated.View style={[positionStyle]}>
         <TouchableOpacity onPress={onSubmit} disabled={disable}>
           <Text style={[styles.continue, continueStyle]}>Send Code</Text>
         </TouchableOpacity>
@@ -179,10 +182,28 @@ const useContinueStyle = (number) => {
   };
 };
 
+// Android and iOS have weird behaviors with trying to set buttons right above the keyboard! It looks like Android automatically does it while iOS doesn't
+const usePositionStyle = (textContainerBottom) => {
+  if (Platform.OS === "ios") {
+    return {
+      position: "absolute",
+      bottom: textContainerBottom,
+      alignSelf: "center",
+    };
+  } else {
+    // Android - this assumption might break
+    return {
+      alignSelf: "center",
+      marginBottom: 16,
+    };
+  }
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    justifyContent: "space-between",
     marginTop: 24,
   },
   title: {
@@ -191,12 +212,14 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito-Bold",
     fontSize: 24,
     marginBottom: 64,
+    alignSelf: "center",
   },
   subtitle: {
     color: colors.primary_9,
     fontFamily: "Nunito-SemiBold",
     fontSize: 16,
     marginBottom: 24,
+    alignSelf: "center",
   },
   number: {
     flexDirection: "row",

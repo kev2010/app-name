@@ -15,7 +15,7 @@ const auth = getAuth(app);
 const VerificationScreen = ({ navigation, route }) => {
   const [user, setUser] = useRecoilState(userState);
   const [verificationId, setVerificationId] = useRecoilState(verificationState);
-  const [verificationCode, setVerificationCode] = useState(795621);
+  const [verificationCode, setVerificationCode] = useState(111111);
 
   dummyCall();
 
