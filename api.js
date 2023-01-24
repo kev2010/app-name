@@ -58,10 +58,22 @@ export async function getUser(uid) {
   }
 }
 
-export async function getThoughts() {
+// TODO: Figure out if we want to display user's own thoughts in the feed
+export async function getThoughts(uid) {
   try {
-    const q = query(collection(db, "thoughts"), orderBy("time", "desc"));
-    return getDocs(q);
+    return new Promise((resolve, reject) => {
+      const currentUserRef = doc(db, "users", uid);
+      getUser(uid).then((currentUser) => {
+        const allValid = [...currentUser.data().friends, currentUserRef];
+        console.log("allvalid", allValid);
+        const q = query(
+          collection(db, "thoughts"),
+          where("name", "in", allValid),
+          orderBy("time", "desc")
+        );
+        resolve(getDocs(q));
+      });
+    });
   } catch (error) {
     console.log(error);
   }

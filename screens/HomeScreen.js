@@ -133,10 +133,7 @@ const HomeScreen = ({ navigation }) => {
             />
           </TouchableOpacity>
           <TouchableOpacity onPress={goToFriendsScreen}>
-            <FriendsIcon
-              hasNotification={user.friendRequests.length > 0}
-              style={styles.friend}
-            />
+            <FriendsIcon hasNotification={user.friendRequests.length > 0} />
           </TouchableOpacity>
         </View>
         <View style={styles.feed}>
@@ -148,7 +145,9 @@ const HomeScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-      <Feed></Feed>
+      <View style={styles.displayFeed}>
+        <Feed uid={user.uid}></Feed>
+      </View>
 
       {/* TODO: The think backdrop has a sliver of a white border on the very top */}
       <BottomSheet
@@ -219,7 +218,10 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     alignSelf: "center",
   },
-  friend: {},
+  displayFeed: {
+    width: "95%",
+    // alignItems: "center",
+  },
   feed: {
     marginTop: 16,
     marginBottom: 16,

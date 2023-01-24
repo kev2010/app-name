@@ -3,13 +3,14 @@ import { StyleSheet, FlatList, TouchableOpacity, Text } from "react-native";
 import Thought from "./Thought";
 import { getThoughts, getUsersOfThoughts, getCollabsOfThoughts } from "../api";
 
-const Feed = (props) => {
+const Feed = ({ uid }) => {
   // TODO: add loading hook?
   // TODO: get rid of TouchableOpacity "refresh"
+  // TODO: grab thoughts as you scroll vs. all at once
   const [data, setData] = useState({});
 
   const refreshThoughts = () => {
-    getThoughts().then((thoughts) => {
+    getThoughts(uid).then((thoughts) => {
       getUsersOfThoughts(thoughts).then((users) => {
         getCollabsOfThoughts(thoughts).then((thoughtCollabs) => {
           // thoughtCollabs = [[obj1, obj2], [obj3], ...]
