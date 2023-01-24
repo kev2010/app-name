@@ -94,12 +94,7 @@ const HomeScreen = ({ navigation }) => {
 
   const renderBackdrop = (props) => {
     return (
-      <BottomSheetBackdrop
-        {...props}
-        pressBehavior={"collapse"}
-        opacity={0.25}
-        style={styles.backdrop}
-      >
+      <BottomSheetBackdrop {...props} pressBehavior={"collapse"} opacity={0.25}>
         <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }} />
       </BottomSheetBackdrop>
     );
@@ -110,6 +105,11 @@ const HomeScreen = ({ navigation }) => {
     console.log("hello", swiped);
   };
 
+  const submitted = () => {
+    bottomSheetRef.current.snapToIndex(0);
+    setSwipe(false);
+  };
+
   const handleBottomSheetSwipe = () => {
     Keyboard.dismiss;
     setSwipe(!swiped);
@@ -118,8 +118,8 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle={"light-content"} />
       <View style={styles.header}>
+        <StatusBar barStyle={"light-content"} />
         <Text style={styles.title}>App Name</Text>
         <View style={styles.top}>
           <Image
@@ -162,7 +162,7 @@ const HomeScreen = ({ navigation }) => {
           />
         )} // WHYYY? TODO @RAPH
       >
-        <Think swiped={!swiped}></Think>
+        <Think swiped={!swiped} submitted={submitted}></Think>
       </BottomSheet>
     </SafeAreaView>
   );
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
     height: 10,
   },
   backdrop: {
-    marginTop: 0,
+    // marginTop: 0,
   },
   sheet: {
     backgroundColor: colors.almost_white,

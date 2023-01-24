@@ -2,6 +2,7 @@ import {
   collection,
   doc,
   setDoc,
+  addDoc,
   getDocs,
   getDoc,
   updateDoc,
@@ -11,6 +12,7 @@ import {
   orderBy,
   limit,
   arrayUnion,
+  serverTimestamp,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
@@ -28,7 +30,6 @@ export async function checkUniqueUsername(username) {
 }
 
 export async function createUser(uid, displayName, username) {
-  console.log("initializing", uid, displayName);
   await setDoc(doc(db, "users", uid), {
     name: displayName,
     username: username,
@@ -49,7 +50,8 @@ export async function getUser(uid) {
 
 export async function getThoughts() {
   try {
-    return getDocs(collection(db, "thoughts"));
+    const q = query(collection(db, "thoughts"), orderBy("time", "desc"));
+    return getDocs(q);
   } catch (error) {
     console.log(error);
   }
@@ -81,6 +83,17 @@ export async function getCollabsOfThoughts(thoughts) {
   });
   // results = [[obj1, obj2], [obj3], ...]
   return Promise.all(results);
+}
+
+export async function addThought(uid, thought) {
+  const currentUserRef = doc(db, "users", uid);
+  await addDoc(collection(db, "thoughts"), {
+    collabs: [],
+    name: currentUserRef,
+    tags: [],
+    thought: thought,
+    time: serverTimestamp(),
+  });
 }
 
 export async function sendFriendRequest(uid, friendUID) {

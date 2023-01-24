@@ -9,17 +9,25 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Animated,
+  ActivityIndicator,
 } from "react-native";
+import { useRecoilState } from "recoil";
+import { addThought } from "../api";
 import colors from "../assets/colors";
+import { userState } from "../globalState";
 
-const Think = ({ swiped }) => {
+const Think = ({ swiped, submitted }) => {
   // TODO: disable keyboard when the bottom sheet is deactivated (currently can click on the "hidden" component and keyboard will come up)
   const [thought, setThought] = useState("");
   const audioStyle = useAudioStyle(thought);
+  const submitStyle = useSubmitStyle(thought);
+  const [user, setUser] = useRecoilState(userState);
+  const [loading, setLoading] = useState(false);
   const [textContainerBottom, setTextContainerBottom] = useState(
     new Animated.Value(0)
   );
   const thinkStyle = useThinkStyle(textContainerBottom);
+  const [disable, setDisable] = useState(true);
 
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
 
@@ -47,10 +55,20 @@ const Think = ({ swiped }) => {
 
   const onSubmit = () => {
     console.log("about to submit ", thought);
+    setLoading(true);
+    addThought(user.uid, thought).then(() => {
+      submitted();
+      setThought("");
+      setLoading(false);
+    });
   };
 
   const hide = {
     opacity: swiped ? 1 : 0,
+  };
+
+  const checkLength = (text) => {
+    setDisable(text.length === 0);
   };
 
   return (
@@ -65,7 +83,10 @@ const Think = ({ swiped }) => {
         placeholderTextColor={colors.gray_3}
         placeholder="What you thinking about? Keep it raw. Develop it as you go!"
         value={thought}
-        onChangeText={(text) => setThought(text)}
+        onChangeText={(text) => {
+          setThought(text);
+          checkLength(text);
+        }}
       />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -77,9 +98,13 @@ const Think = ({ swiped }) => {
             //   source={{uri: props.img}}
             //   resizeMode="stretch"
           />
-          <TouchableOpacity onPress={onSubmit}>
-            <Text style={styles.think}>Think</Text>
-          </TouchableOpacity>
+          {loading ? (
+            <ActivityIndicator size="small" color={colors.primary_5} />
+          ) : (
+            <TouchableOpacity onPress={onSubmit} disabled={disable}>
+              <Text style={[styles.think, submitStyle]}>Think</Text>
+            </TouchableOpacity>
+          )}
         </Animated.View>
       </KeyboardAvoidingView>
     </View>
@@ -89,6 +114,12 @@ const Think = ({ swiped }) => {
 const useAudioStyle = (thought) => {
   return {
     opacity: thought.length > 0 ? 0 : 1,
+  };
+};
+
+const useSubmitStyle = (thought) => {
+  return {
+    backgroundColor: thought.length > 0 ? colors.primary_5 : colors.primary_2,
   };
 };
 
@@ -137,7 +168,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 12,
     paddingVertical: 4,
-    backgroundColor: colors.primary_5,
     margin: 0,
   },
 });
