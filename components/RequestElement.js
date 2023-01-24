@@ -76,7 +76,7 @@ const RequestElement = ({
             <Text style={styles.accept}>Accept</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity onPress={onReject}>
+        <TouchableOpacity onPress={onReject} style={styles.smallTouchable}>
           <Image
             style={styles.reject}
             source={require("../assets/reject.png")}
@@ -132,6 +132,10 @@ const styles = StyleSheet.create({
     borderColor: colors.accent1_3,
     borderWidth: 1,
     overflow: "hidden",
+  },
+  smallTouchable: {
+    backgroundColor: "pink",
+    paddingVertical: 8,
   },
   reject: {
     marginLeft: 24,

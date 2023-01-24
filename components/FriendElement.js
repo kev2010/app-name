@@ -52,7 +52,7 @@ const FriendElement = ({ name, username, uid, layout, remove }) => {
           <Text style={styles.username}>{username}</Text>
         </View>
       </View>
-      <TouchableOpacity onPress={onRemove}>
+      <TouchableOpacity onPress={onRemove} style={styles.button}>
         <Image style={styles.remove} source={require("../assets/remove.png")} />
       </TouchableOpacity>
     </View>
@@ -88,6 +88,11 @@ const styles = StyleSheet.create({
     color: colors.gray_5,
     fontFamily: "Nunito-Regular",
     fontSize: 14,
+  },
+  // TODO: This is not perfect - if the user taps slightly to the right, it will not register
+  button: {
+    paddingVertical: 12,
+    paddingLeft: 12,
   },
   remove: {
     width: 12,

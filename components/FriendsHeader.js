@@ -43,7 +43,7 @@ const FriendsHeader = ({
       <View style={styles.header}>
         <Text style={styles.title}>App Name</Text>
         <View style={styles.top}>
-          <TouchableOpacity onPress={goBack}>
+          <TouchableOpacity onPress={goBack} style={styles.button}>
             <Image style={styles.back} source={require("../assets/back.png")} />
           </TouchableOpacity>
         </View>
@@ -109,6 +109,10 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito-Bold",
     fontSize: 24,
     justifyContent: "center",
+  },
+  button: {
+    paddingRight: 16,
+    paddingBottom: 16,
   },
   back: {
     width: 10.85,
