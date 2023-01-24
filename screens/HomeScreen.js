@@ -81,6 +81,10 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
+  const goToProfileScreen = () => {
+    navigation.navigate("Profile");
+  };
+
   const goToFriendsScreen = () => {
     getFriendsData();
     navigation.navigate("Friends");
@@ -122,10 +126,12 @@ const HomeScreen = ({ navigation }) => {
         <StatusBar barStyle={"light-content"} />
         <Text style={styles.title}>App Name</Text>
         <View style={styles.top}>
-          <Image
-            style={styles.profile}
-            source={require("../assets/fbprofile.jpg")}
-          />
+          <TouchableOpacity onPress={goToProfileScreen}>
+            <Image
+              style={styles.profile}
+              source={require("../assets/fbprofile.jpg")}
+            />
+          </TouchableOpacity>
           <TouchableOpacity onPress={goToFriendsScreen}>
             <FriendsIcon
               hasNotification={user.friendRequests.length > 0}

@@ -29,6 +29,16 @@ export async function checkUniqueUsername(username) {
   return querySnapshot.size == 0;
 }
 
+export async function checkUserExists(uid) {
+  const docRef = doc(db, "users", uid);
+  const docSnap = await getDoc(docRef);
+  console.log("checking here", docSnap);
+  return {
+    exists: docSnap.exists(),
+    data: docSnap.data(),
+  };
+}
+
 export async function createUser(uid, displayName, username) {
   await setDoc(doc(db, "users", uid), {
     name: displayName,

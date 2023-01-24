@@ -83,6 +83,7 @@ const Think = ({ swiped, submitted }) => {
         placeholderTextColor={colors.gray_3}
         placeholder="What you thinking about? Keep it raw. Develop it as you go!"
         value={thought}
+        editable={swiped}
         onChangeText={(text) => {
           setThought(text);
           checkLength(text);

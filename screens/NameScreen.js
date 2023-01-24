@@ -136,6 +136,7 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito-SemiBold",
     fontSize: 16,
     marginBottom: 24,
+    alignSelf: "center",
   },
   input: {
     alignSelf: "stretch",

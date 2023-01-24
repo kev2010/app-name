@@ -8,14 +8,14 @@ import {
   signInWithCredential,
   PhoneAuthProvider,
 } from "firebase/auth";
-import { dummyCall } from "../api";
+import { dummyCall, checkUserExists } from "../api";
 
 const auth = getAuth(app);
 
 const VerificationScreen = ({ navigation, route }) => {
   const [user, setUser] = useRecoilState(userState);
   const [verificationId, setVerificationId] = useRecoilState(verificationState);
-  const [verificationCode, setVerificationCode] = useState(111111);
+  const [verificationCode, setVerificationCode] = useState(363403);
 
   dummyCall();
 
@@ -26,10 +26,8 @@ const VerificationScreen = ({ navigation, route }) => {
         verificationCode
       );
       await signInWithCredential(auth, credential).then((userCredential) => {
-        // Signed in
-        // TODO: Remove?
-        setUser({ ...userCredential.user, displayName: route.params.paramKey });
-        /*  user: 
+        // Signed in -- set the user depending on first time or returning
+        /*  userCredential.user: 
             - email
             - uid
             - displayName
@@ -40,7 +38,35 @@ const VerificationScreen = ({ navigation, route }) => {
             ...
        
         */
-        navigation.navigate("Username");
+        checkUserExists(userCredential.user.uid).then((snapshot) => {
+          if (snapshot.exists) {
+            console.log("snapshot exists!", snapshot);
+            console.log("user beforehand", user);
+
+            // The reason for this complication is explain in the duplicate code in HomeScreen.js
+            const userFriends = snapshot.data.friends.map((userRef) => {
+              return userRef.id;
+            });
+            const userRequests = snapshot.data.friendRequests.map((userRef) => {
+              return userRef.id;
+            });
+            const userSent = snapshot.data.sentRequests.map((userRef) => {
+              return userRef.id;
+            });
+
+            setUser({
+              ...snapshot.data,
+              uid: userCredential.user.uid,
+              friends: userFriends,
+              friendRequests: userRequests,
+              sentRequests: userSent,
+            });
+          } else {
+            // TODO: Remove?
+            setUser({ ...userCredential.user, name: route.params.paramKey });
+            navigation.navigate("Username");
+          }
+        });
       });
       console.log("Phone authentication successful 👍");
     } catch (err) {
