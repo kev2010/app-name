@@ -221,6 +221,7 @@ const styles = StyleSheet.create({
   displayFeed: {
     width: "95%",
     // alignItems: "center",
+    height: "100%",
   },
   feed: {
     marginTop: 16,

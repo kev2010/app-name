@@ -1,15 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, FlatList, TouchableOpacity, Text } from "react-native";
+import {
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Text,
+  RefreshControl,
+} from "react-native";
 import Thought from "./Thought";
 import { getThoughts, getUsersOfThoughts, getCollabsOfThoughts } from "../api";
+import colors from "../assets/colors";
 
 const Feed = ({ uid }) => {
   // TODO: add loading hook?
   // TODO: get rid of TouchableOpacity "refresh"
   // TODO: grab thoughts as you scroll vs. all at once
   const [data, setData] = useState({});
+  const [refreshing, setRefreshing] = useState(false);
 
   const refreshThoughts = () => {
+    setRefreshing(true);
     getThoughts(uid).then((thoughts) => {
       getUsersOfThoughts(thoughts).then((users) => {
         getCollabsOfThoughts(thoughts).then((thoughtCollabs) => {
@@ -33,6 +42,7 @@ const Feed = ({ uid }) => {
             };
           }
           setData(data);
+          setRefreshing(false);
         });
       });
     });
@@ -89,10 +99,15 @@ const Feed = ({ uid }) => {
           ></Thought>
         )}
         keyExtractor={(item) => item.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={refreshThoughts}
+            colors={[colors.primary_5]}
+            tintColor={colors.primary_3}
+          />
+        }
       />
-      <TouchableOpacity onPress={refreshThoughts}>
-        <Text>refresh</Text>
-      </TouchableOpacity>
     </>
   );
 };
