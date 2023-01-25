@@ -121,17 +121,24 @@ export async function addThought(uid, thought) {
 
 export async function getReactions(thoughtUID) {
   return new Promise((resolve, reject) => {
-    const originalThoughtRef = doc(db, "thoughts", thoughtUID);
-    getDocs(
-      query(
-        collectionGroup(db, "reactions"),
-        where("originalThought", "==", originalThoughtRef),
-        orderBy("time", "desc")
-      )
-    ).then((result) => {
+    const reactionsRef = collection(db, `thoughts/${thoughtUID}/reactions`);
+    getDocs(query(reactionsRef, orderBy("time", "desc"))).then((result) => {
       resolve(result);
     });
   });
+}
+
+export async function getReactionsSizeOfThoughts(thoughts) {
+  var results = [];
+  // IMPORTANT: Can't do await on forEach, so make sure to do a regular for loop
+  for (const doc of thoughts.docs) {
+    // Key thing to remember is to push promises, otherwise things will NOT return in the right order!
+    await getReactions(doc.id).then((reactions) => {
+      results.push(reactions.size);
+    });
+  }
+
+  return Promise.all(results);
 }
 
 export async function sendFriendRequest(uid, friendUID) {

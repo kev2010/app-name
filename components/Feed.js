@@ -7,7 +7,12 @@ import {
   RefreshControl,
 } from "react-native";
 import Thought from "./Thought";
-import { getThoughts, getUsersOfThoughts, getCollabsOfThoughts } from "../api";
+import {
+  getThoughts,
+  getUsersOfThoughts,
+  getCollabsOfThoughts,
+  getReactionsSizeOfThoughts,
+} from "../api";
 import colors from "../assets/colors";
 
 const Feed = ({ navigation, uid }) => {
@@ -22,27 +27,28 @@ const Feed = ({ navigation, uid }) => {
     getThoughts(uid).then((thoughts) => {
       getUsersOfThoughts(thoughts).then((users) => {
         getCollabsOfThoughts(thoughts).then((thoughtCollabs) => {
-          // thoughtCollabs = [[obj1, obj2], [obj3], ...]
-          var data = {};
-          for (var i = 0; i < thoughts.size; i++) {
-            const doc = thoughts.docs[i];
-            const user = users[i];
-            // Grab first name of each collaborator
-            const collabs = thoughtCollabs[i].map(
-              (user) => user.data().name.split(" ")[0]
-            );
-            data[doc.id] = {
-              id: doc.id,
-              name: user.data().name,
-              time: calculateTimeDiffFromNow(doc.data().time.toDate()),
-              collabs: collabs,
-              // TODO: reactions
-              reactions: 5,
-              thought: doc.data().thought,
-            };
-          }
-          setData(data);
-          setRefreshing(false);
+          getReactionsSizeOfThoughts(thoughts).then((reactionSizes) => {
+            // thoughtCollabs = [[obj1, obj2], [obj3], ...]
+            var data = {};
+            for (var i = 0; i < thoughts.size; i++) {
+              const doc = thoughts.docs[i];
+              const user = users[i];
+              // Grab first name of each collaborator
+              const collabs = thoughtCollabs[i].map(
+                (user) => user.data().name.split(" ")[0]
+              );
+              data[doc.id] = {
+                id: doc.id,
+                name: user.data().name,
+                time: calculateTimeDiffFromNow(doc.data().time.toDate()),
+                collabs: collabs,
+                reactions: reactionSizes[i],
+                thought: doc.data().thought,
+              };
+            }
+            setData(data);
+            setRefreshing(false);
+          });
         });
       });
     });

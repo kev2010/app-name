@@ -27,7 +27,7 @@ const Thought = (props) => {
       <View
         style={[
           styles.row2,
-          { marginBottom: props.collabs.length > 0 ? 16 : 8 },
+          { marginBottom: props.collabs.length > 0 ? 16 : 12 },
         ]}
       >
         <Text style={styles.text}>{props.thought}</Text>
