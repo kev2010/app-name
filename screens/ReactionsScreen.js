@@ -18,10 +18,13 @@ import ReactionSection from "../components/ReactionSection";
 import GiveComment from "../components/GiveComment";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
+import { getUser, getReactions } from "../api";
+import { calculateTimeDiffFromNow } from "../helpers";
 
 // TODO: Fix that tapping outside of the keyboard doesn't make the keyboard go away
 const ReactionsScreen = ({ navigation, route }) => {
   const [swiped, setSwipe] = useState(false);
+  const [data, setData] = useState([]);
   const [initialLoading, setInitialLoading] = useState(true);
   // TODO: Make sure that going back to home doesn't reset the thread and scroll up
   // TODO: Unclutter like in HomeScreen by moving bottom sheet to a separate
@@ -32,16 +35,47 @@ const ReactionsScreen = ({ navigation, route }) => {
   // TODO: This is an extremely hacky solution. For some reason, the Bottom Sheet component I used online (screw outside components holy crap) calls onChange on render, which is why we have to pass in !swiped instead of swiped. E.g. if we pass "swiped" (initialized to false) to the components, then, ON RENDER, onChange is fired, which calls "handleBottomSheetSwipe" immediately, which then changed swiped to true. This means that the page effectively loads with swiped=true so the keyboard pops up.
   // But the problem with just passing !swiped is that the keyboard is initially set to true (because !swiped = true is being passed in to GiveComment), so the keyboard initially pops up before the render onChange is fired and !swiped becomes false, so the keyboard goes back down. My temporary hack to fix this keyboard popping up in the beginning is to just add a "loading" thing for 450ms that hides everything (giving swiped a chance to change around)before showing everything. Should definitely fix in the future!
   useEffect(() => {
+    refreshReactions();
     setTimeout(() => {
       setInitialLoading(false);
     }, 450);
   }, []);
+
+  const refreshReactions = () => {
+    getReactions(route.params.id).then((reactions) => {
+      reactions.forEach((reactionDoc) => {
+        getUser(reactionDoc.data().name.id).then((user) => {
+          const found = data.some((reaction) => reaction.id === reactionDoc.id);
+          if (!found) {
+            // IMPORTANT: Need to use a function to create a new array since state updates are asynchronous or sometimes batched.
+            setData((data) => [
+              ...data,
+              {
+                id: reactionDoc.id,
+                name: user.data().name,
+                text: reactionDoc.data().text,
+                time: calculateTimeDiffFromNow(
+                  reactionDoc.data().time.toDate()
+                ),
+              },
+            ]);
+          }
+        });
+      });
+    });
+  };
 
   // ref
   const bottomSheetRef = useRef(null);
 
   // variables
   const snapPoints = useMemo(() => ["10.5%", "70%"], []);
+
+  const submitted = () => {
+    refreshReactions();
+    bottomSheetRef.current.snapToIndex(0);
+    setSwipe(false);
+  };
 
   const renderBackdrop = (props) => {
     return (
@@ -103,7 +137,7 @@ const ReactionsScreen = ({ navigation, route }) => {
           />
         </View>
         <View style={styles.reactions}>
-          <ReactionSection uid={route.params.id} />
+          <ReactionSection data={data} uid={route.params.id} />
         </View>
         {/* TODO: The think backdrop has a sliver of a white border on the very top */}
         <BottomSheet
@@ -123,7 +157,12 @@ const ReactionsScreen = ({ navigation, route }) => {
             />
           )} // WHYYY? TODO @RAPH
         >
-          <GiveComment swiped={!swiped} initialLoading={initialLoading} />
+          <GiveComment
+            thoughtUID={route.params.id}
+            swiped={!swiped}
+            submitted={submitted}
+            initialLoading={initialLoading}
+          />
         </BottomSheet>
       </SafeAreaView>
     </>

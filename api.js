@@ -119,6 +119,18 @@ export async function addThought(uid, thought) {
   });
 }
 
+export async function addComment(thoughtUID, userUID, comment) {
+  const currentUserRef = doc(db, "users", userUID);
+  const originalThoughtRef = doc(db, "thoughts", thoughtUID);
+  const reactionsRef = collection(db, `thoughts/${thoughtUID}/reactions`);
+  await addDoc(reactionsRef, {
+    name: currentUserRef,
+    originalThought: originalThoughtRef,
+    text: comment,
+    time: serverTimestamp(),
+  });
+}
+
 export async function getReactions(thoughtUID) {
   return new Promise((resolve, reject) => {
     const reactionsRef = collection(db, `thoughts/${thoughtUID}/reactions`);

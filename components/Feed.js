@@ -14,6 +14,7 @@ import {
   getReactionsSizeOfThoughts,
 } from "../api";
 import colors from "../assets/colors";
+import { calculateTimeDiffFromNow } from "../helpers";
 
 const Feed = ({ navigation, uid }) => {
   // TODO: add loading hook?
@@ -57,34 +58,6 @@ const Feed = ({ navigation, uid }) => {
   useEffect(() => {
     refreshThoughts();
   }, []);
-
-  // assume time is type Date
-  const calculateTimeDiffFromNow = (time) => {
-    var seconds = Math.floor((new Date() - time) / 1000);
-    var interval = seconds / 31536000;
-
-    if (interval > 1) {
-      return Math.floor(interval) + "y";
-    }
-    interval = seconds / 2592000;
-    if (interval > 1) {
-      return Math.floor(interval) + "mo";
-    }
-    interval = seconds / 86400;
-    if (interval > 1) {
-      return Math.floor(interval) + "d";
-    }
-    interval = seconds / 3600;
-    if (interval > 1) {
-      return Math.floor(interval) + "h";
-    }
-    interval = seconds / 60;
-    if (interval > 1) {
-      return Math.floor(interval) + "m";
-    }
-
-    return Math.floor(seconds) + "s";
-  };
 
   //   const thoughtsRef = firebase.firestore().collection("thoughts");
 

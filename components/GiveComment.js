@@ -12,12 +12,12 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRecoilState } from "recoil";
-import { addThought } from "../api";
+import { addComment } from "../api";
 import colors from "../assets/colors";
 import { userState } from "../globalState";
 
 // Extremely similar to Think.js - maybe there's a way to reduce reused code?
-const GiveComment = ({ swiped, submitted, initialLoading }) => {
+const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
   // TODO: disable keyboard when the bottom sheet is deactivated (currently can click on the "hidden" component and keyboard will come up)
   const [thought, setThought] = useState("");
   const audioStyle = useAudioStyle(thought);
@@ -57,7 +57,7 @@ const GiveComment = ({ swiped, submitted, initialLoading }) => {
   const onSubmit = () => {
     console.log("about to submit ", thought);
     setLoading(true);
-    addThought(user.uid, thought).then(() => {
+    addComment(thoughtUID, user.uid, thought).then(() => {
       submitted();
       setThought("");
       setLoading(false);

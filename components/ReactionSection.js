@@ -12,70 +12,10 @@ import Comment from "./Comment";
 import { getUser, getReactions } from "../api";
 import colors from "../assets/colors";
 
-const ReactionSection = ({ uid }) => {
+const ReactionSection = ({ data }) => {
   // TODO: add loading hook?
-  // TODO: get rid of TouchableOpacity "refresh"
   // TODO: grab thoughts as you scroll vs. all at once
   // TODO: have a default thing shown for no reactions
-  const [data, setData] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
-
-  const refreshReactions = () => {
-    getReactions(uid).then((reactions) => {
-      reactions.forEach((reactionDoc) => {
-        getUser(reactionDoc.data().name.id).then((user) => {
-          const found = data.some((reaction) => reaction.id === reactionDoc.id);
-          if (!found) {
-            // IMPORTANT: Need to use a function to create a new array since state updates are asynchronous or sometimes batched.
-            setData((data) => [
-              ...data,
-              {
-                id: reactionDoc.id,
-                name: user.data().name,
-                text: reactionDoc.data().text,
-                time: calculateTimeDiffFromNow(
-                  reactionDoc.data().time.toDate()
-                ),
-              },
-            ]);
-          }
-        });
-      });
-    });
-  };
-
-  useEffect(() => {
-    refreshReactions();
-  }, []);
-
-  // assume time is type Date
-  // TODO: Put this function in some helper function file (used both here and in Feed.js)
-  const calculateTimeDiffFromNow = (time) => {
-    var seconds = Math.floor((new Date() - time) / 1000);
-    var interval = seconds / 31536000;
-
-    if (interval > 1) {
-      return Math.floor(interval) + "y";
-    }
-    interval = seconds / 2592000;
-    if (interval > 1) {
-      return Math.floor(interval) + "mo";
-    }
-    interval = seconds / 86400;
-    if (interval > 1) {
-      return Math.floor(interval) + "d";
-    }
-    interval = seconds / 3600;
-    if (interval > 1) {
-      return Math.floor(interval) + "h";
-    }
-    interval = seconds / 60;
-    if (interval > 1) {
-      return Math.floor(interval) + "m";
-    }
-
-    return Math.floor(seconds) + "s";
-  };
 
   return (
     <FlatList
