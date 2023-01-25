@@ -50,8 +50,8 @@ const Thought = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "space-around",
+    // flex: 1,
+    // justifyContent: "space-around",
     backgroundColor: colors.almost_white,
     borderRadius: 15,
     paddingHorizontal: 24,

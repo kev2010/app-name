@@ -6,6 +6,7 @@ import VerificationScreen from "./screens/VerificationScreen";
 import UsernameScreen from "./screens/UsernameScreen";
 import FriendsScreen from "./screens/FriendsScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import ReactionsScreen from "./screens/ReactionsScreen";
 import { useRecoilState } from "recoil";
 import { userState } from "./globalState";
 import { NavigationContainer } from "@react-navigation/native";
@@ -32,6 +33,7 @@ const Nav = ({}) => {
           // User is signed in
           <>
             <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Reactions" component={ReactionsScreen} />
             <Stack.Screen name="Friends" component={FriendsScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
           </>

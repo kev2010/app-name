@@ -20,6 +20,7 @@ const FriendsDisplay = ({ friends, filter }) => {
     friends.forEach((uid) => {
       getUser(uid).then((user) => {
         console.log("friendsGetInfo", user);
+        // TODO: Change to check if UID is found (in case friends have same name). Do the same for other "found" checks in the codebase
         const found = data.some((friend) => friend.name === user.data().name);
         if (!found) {
           // IMPORTANT: Need to use a function to create a new array since state updates are asynchronous or sometimes batched.

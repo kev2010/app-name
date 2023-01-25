@@ -32,6 +32,7 @@ const HomeScreen = ({ navigation }) => {
   // };
   // TODO: Empty state of feed
   // TODO: Make keyboard go away when you switch between screens - for some reason it defaults to being active
+  // TODO: Make BottomSheet a separate component to unclutter
 
   const [globalFeed, setGlobal] = useState(false);
   const [friendsFeed, setFriends] = useState(true);
@@ -146,7 +147,7 @@ const HomeScreen = ({ navigation }) => {
         </View>
       </View>
       <View style={styles.displayFeed}>
-        <Feed uid={user.uid}></Feed>
+        <Feed navigation={navigation} uid={user.uid}></Feed>
       </View>
 
       {/* TODO: The think backdrop has a sliver of a white border on the very top */}
@@ -202,7 +203,6 @@ const styles = StyleSheet.create({
   top: {
     flexDirection: "row",
     justifyContent: "space-between",
-    // backgroundColor: "pink",
     width: "100%",
     position: "absolute",
   },
@@ -219,9 +219,10 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   displayFeed: {
-    width: "95%",
-    // alignItems: "center",
-    height: "100%",
+    flex: 1,
+    width: "90%",
+    // Needed so that you can see the last element - a hacky solution
+    marginBottom: 32,
   },
   feed: {
     marginTop: 16,

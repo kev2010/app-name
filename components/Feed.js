@@ -10,7 +10,7 @@ import Thought from "./Thought";
 import { getThoughts, getUsersOfThoughts, getCollabsOfThoughts } from "../api";
 import colors from "../assets/colors";
 
-const Feed = ({ uid }) => {
+const Feed = ({ navigation, uid }) => {
   // TODO: add loading hook?
   // TODO: get rid of TouchableOpacity "refresh"
   // TODO: grab thoughts as you scroll vs. all at once
@@ -85,37 +85,43 @@ const Feed = ({ uid }) => {
   // const querySnapshot = await getDocs(collection(db, "users"));
 
   return (
-    <>
-      <FlatList
-        contentContainerStyle={styles.thoughts}
-        data={Object.values(data)}
-        renderItem={({ item }) => (
+    <FlatList
+      data={Object.values(data)}
+      renderItem={({ item, index }) => (
+        <TouchableOpacity
+          key={index.toString()}
+          onPress={() => {
+            console.log("just pressed", item);
+            navigation.navigate("Reactions", {
+              id: item.id,
+              name: item.name,
+              time: item.time,
+              collabs: item.collabs,
+              reactions: item.reactions,
+              thought: item.thought,
+            });
+          }}
+        >
           <Thought
             name={item.name}
             time={item.time}
             collabs={item.collabs}
             reactions={item.reactions}
             thought={item.thought}
-          ></Thought>
-        )}
-        keyExtractor={(item) => item.id}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={refreshThoughts}
-            colors={[colors.primary_5]}
-            tintColor={colors.primary_3}
           />
-        }
-      />
-    </>
+        </TouchableOpacity>
+      )}
+      keyExtractor={(item) => item.id}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={refreshThoughts}
+          colors={[colors.primary_5]}
+          tintColor={colors.primary_3}
+        />
+      }
+    />
   );
 };
-
-const styles = StyleSheet.create({
-  thoughts: {
-    marginHorizontal: 12,
-  },
-});
 
 export default Feed;

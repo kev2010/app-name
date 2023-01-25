@@ -13,6 +13,7 @@ import {
   limit,
   arrayUnion,
   serverTimestamp,
+  collectionGroup,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
@@ -115,6 +116,21 @@ export async function addThought(uid, thought) {
     tags: [],
     thought: thought,
     time: serverTimestamp(),
+  });
+}
+
+export async function getReactions(thoughtUID) {
+  return new Promise((resolve, reject) => {
+    const originalThoughtRef = doc(db, "thoughts", thoughtUID);
+    getDocs(
+      query(
+        collectionGroup(db, "reactions"),
+        where("originalThought", "==", originalThoughtRef),
+        orderBy("time", "desc")
+      )
+    ).then((result) => {
+      resolve(result);
+    });
   });
 }
 
