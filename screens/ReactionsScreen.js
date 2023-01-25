@@ -8,23 +8,34 @@ import {
   Image,
   Keyboard,
   Pressable,
+  ActivityIndicator,
 } from "react-native";
 import Handle from "../components/Handle";
-import React, { useState, useRef, useMemo } from "react";
+import React, { useState, useRef, useMemo, useEffect } from "react";
 import colors from "../assets/colors";
 import Thought from "../components/Thought";
 import ReactionSection from "../components/ReactionSection";
+import GiveComment from "../components/GiveComment";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 
 // TODO: Fix that tapping outside of the keyboard doesn't make the keyboard go away
 const ReactionsScreen = ({ navigation, route }) => {
   const [swiped, setSwipe] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   // TODO: Make sure that going back to home doesn't reset the thread and scroll up
   // TODO: Unclutter like in HomeScreen by moving bottom sheet to a separate
   const goBack = () => {
     navigation.navigate("Home");
   };
+
+  // TODO: This is an extremely hacky solution. For some reason, the Bottom Sheet component I used online (screw outside components holy crap) calls onChange on render, which is why we have to pass in !swiped instead of swiped. E.g. if we pass "swiped" (initialized to false) to the components, then, ON RENDER, onChange is fired, which calls "handleBottomSheetSwipe" immediately, which then changed swiped to true. This means that the page effectively loads with swiped=true so the keyboard pops up.
+  // But the problem with just passing !swiped is that the keyboard is initially set to true (because !swiped = true is being passed in to GiveComment), so the keyboard initially pops up before the render onChange is fired and !swiped becomes false, so the keyboard goes back down. My temporary hack to fix this keyboard popping up in the beginning is to just add a "loading" thing for 450ms that hides everything (giving swiped a chance to change around)before showing everything. Should definitely fix in the future!
+  useEffect(() => {
+    setTimeout(() => {
+      setInitialLoading(false);
+    }, 450);
+  }, []);
 
   // ref
   const bottomSheetRef = useRef(null);
@@ -43,7 +54,6 @@ const ReactionsScreen = ({ navigation, route }) => {
   const handleBottomSheetSwipe = () => {
     Keyboard.dismiss;
     setSwipe(!swiped);
-    console.log("logs", swiped);
   };
 
   const onPressSheet = () => {
@@ -52,47 +62,71 @@ const ReactionsScreen = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle={"light-content"} />
-      <View style={styles.header}>
-        <Text style={styles.title}>Thought</Text>
-        <View style={styles.top}>
-          <TouchableOpacity onPress={goBack} style={styles.button}>
-            <Image style={styles.back} source={require("../assets/back.png")} />
-          </TouchableOpacity>
+    <>
+      <ActivityIndicator
+        size="large"
+        color={colors.primary_3}
+        style={[
+          styles.loading,
+          {
+            opacity: initialLoading ? 1 : 0,
+          },
+        ]}
+      />
+      <SafeAreaView
+        style={[
+          styles.container,
+          {
+            opacity: initialLoading ? 0 : 1,
+          },
+        ]}
+      >
+        <StatusBar barStyle={"light-content"} />
+        <View style={styles.header}>
+          <Text style={styles.title}>Thought</Text>
+          <View style={styles.top}>
+            <TouchableOpacity onPress={goBack} style={styles.button}>
+              <Image
+                style={styles.back}
+                source={require("../assets/back.png")}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-      <View style={styles.original}>
-        <Thought
-          name={route.params.name}
-          time={route.params.time}
-          collabs={route.params.collabs}
-          reactions={route.params.reactions}
-          thought={route.params.thought}
-        />
-      </View>
-      <View style={styles.reactions}>
-        <ReactionSection uid={route.params.id} />
-      </View>
-      {/* TODO: The think backdrop has a sliver of a white border on the very top */}
-      <BottomSheet
-        ref={bottomSheetRef}
-        snapPoints={snapPoints}
-        onChange={handleBottomSheetSwipe}
-        backgroundStyle={styles.sheet}
-        backdropComponent={renderBackdrop}
-        enabledContentTapInteraction={true}
-        style={styles.sheet}
-        handleComponent={({ animatedIndex, animatedPosition }) => (
-          <Handle
-            // animatedIndex={animatedIndex}
-            // animatedPosition={animatedPosition}
-            onPress={onPressSheet}
-            swiped={!swiped}
+        <View style={styles.original}>
+          <Thought
+            name={route.params.name}
+            time={route.params.time}
+            collabs={route.params.collabs}
+            reactions={route.params.reactions}
+            thought={route.params.thought}
           />
-        )} // WHYYY? TODO @RAPH
-      ></BottomSheet>
-    </SafeAreaView>
+        </View>
+        <View style={styles.reactions}>
+          <ReactionSection uid={route.params.id} />
+        </View>
+        {/* TODO: The think backdrop has a sliver of a white border on the very top */}
+        <BottomSheet
+          ref={bottomSheetRef}
+          snapPoints={snapPoints}
+          onChange={handleBottomSheetSwipe}
+          backgroundStyle={styles.sheet}
+          backdropComponent={renderBackdrop}
+          enabledContentTapInteraction={true}
+          style={styles.sheet}
+          handleComponent={({ animatedIndex, animatedPosition }) => (
+            <Handle
+              // animatedIndex={animatedIndex}
+              // animatedPosition={animatedPosition}
+              onPress={onPressSheet}
+              swiped={!swiped}
+            />
+          )} // WHYYY? TODO @RAPH
+        >
+          <GiveComment swiped={!swiped} initialLoading={initialLoading} />
+        </BottomSheet>
+      </SafeAreaView>
+    </>
   );
 };
 
@@ -104,6 +138,11 @@ const styles = StyleSheet.create({
     marginTop: 24,
     alignSelf: "center",
     width: "100%",
+  },
+  loading: {
+    position: "absolute",
+    top: "50%",
+    alignSelf: "center",
   },
   header: {
     alignItems: "center",
@@ -144,6 +183,8 @@ const styles = StyleSheet.create({
     width: "90%",
     // Needed so that you can see the last element - a hacky solution
     marginBottom: 32,
+    borderRadius: 15,
+    overflow: "hidden",
   },
   sheet: {
     backgroundColor: colors.almost_white,
@@ -156,6 +197,7 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     flex: 1,
     elevation: 10,
+    borderRadius: 15,
   },
 });
 

@@ -16,7 +16,8 @@ import { addThought } from "../api";
 import colors from "../assets/colors";
 import { userState } from "../globalState";
 
-const Think = ({ swiped, submitted }) => {
+// Extremely similar to Think.js - maybe there's a way to reduce reused code?
+const GiveComment = ({ swiped, submitted, initialLoading }) => {
   // TODO: disable keyboard when the bottom sheet is deactivated (currently can click on the "hidden" component and keyboard will come up)
   const [thought, setThought] = useState("");
   const audioStyle = useAudioStyle(thought);
@@ -32,6 +33,7 @@ const Think = ({ swiped, submitted }) => {
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
 
   useEffect(() => {
+    console.log("looking for value", swiped);
     if (swiped) {
       inputRef.current.focus();
     } else {
@@ -62,25 +64,22 @@ const Think = ({ swiped, submitted }) => {
     });
   };
 
-  const hide = {
-    opacity: swiped ? 1 : 0,
-  };
-
   const checkLength = (text) => {
     setDisable(text.length === 0);
   };
 
-  return (
-    <View style={[styles.thinkContainer, hide]}>
+  return swiped ? (
+    <View style={styles.thinkContainer}>
       <TextInput
         ref={inputRef}
+        showSoftInputOnFocus={!initialLoading}
         autoFocus={swiped}
         style={styles.input}
         multiline={true}
         textAlign="left"
         selectionColor={colors.primary_4}
         placeholderTextColor={colors.gray_3}
-        placeholder="What you thinking about? Keep it raw. Develop it as you go!"
+        placeholder="Keep it constructive!"
         value={thought}
         editable={swiped}
         onChangeText={(text) => {
@@ -102,12 +101,14 @@ const Think = ({ swiped, submitted }) => {
             <ActivityIndicator size="small" color={colors.primary_5} />
           ) : (
             <TouchableOpacity onPress={onSubmit} disabled={disable}>
-              <Text style={[styles.think, submitStyle]}>Think</Text>
+              <Text style={[styles.think, submitStyle]}>Comment</Text>
             </TouchableOpacity>
           )}
         </Animated.View>
       </KeyboardAvoidingView>
     </View>
+  ) : (
+    <Text style={styles.default}>Think with others here!</Text>
   );
 };
 
@@ -170,6 +171,13 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     margin: 0,
   },
+  // TODO: Can't move the text up without it being covered by the handle (tried zIndex and transparent backgrounds, but doesn't seem to work!)
+  default: {
+    color: colors.gray_3,
+    fontFamily: "Nunito-Bold",
+    fontSize: 14,
+    alignSelf: "center",
+  },
 });
 
-export default Think;
+export default GiveComment;

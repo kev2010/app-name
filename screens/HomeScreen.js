@@ -223,6 +223,8 @@ const styles = StyleSheet.create({
     width: "90%",
     // Needed so that you can see the last element - a hacky solution
     marginBottom: 32,
+    borderRadius: 15,
+    overflow: "hidden",
   },
   feed: {
     marginTop: 16,
@@ -253,6 +255,7 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     flex: 1,
     elevation: 10,
+    borderRadius: 15,
   },
 });
 
