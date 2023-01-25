@@ -25,7 +25,8 @@ export default function App() {
     require("./assets/handleIndicator.png"),
     require("./assets/back.png"),
     require("./assets/searchIcon.png"),
-    require("./assets/fbprofile.jpg"),
+    require("./assets/default.jpeg"),
+    require("./assets/audio.png"),
     require("./assets/remove.png"),
     require("./assets/friendsIcon.png"),
   ]);

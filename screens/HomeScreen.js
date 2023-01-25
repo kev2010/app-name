@@ -130,7 +130,7 @@ const HomeScreen = ({ navigation }) => {
           <TouchableOpacity onPress={goToProfileScreen}>
             <Image
               style={styles.profile}
-              source={require("../assets/fbprofile.jpg")}
+              source={require("../assets/default.jpeg")}
             />
           </TouchableOpacity>
           <TouchableOpacity onPress={goToFriendsScreen}>

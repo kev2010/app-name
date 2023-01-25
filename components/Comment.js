@@ -9,7 +9,7 @@ const Comment = (props) => {
       <View style={styles.row1}>
         <Image
           style={styles.profileImage}
-          source={require("../assets/fbprofile.jpg")}
+          source={require("../assets/default.jpeg")}
           //   source={{uri: props.img}}
           //   resizeMode="stretch"
         />

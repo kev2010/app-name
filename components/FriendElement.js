@@ -45,7 +45,7 @@ const FriendElement = ({ name, username, uid, layout, remove }) => {
       <View style={styles.left}>
         <Image
           style={styles.profileImage}
-          source={require("../assets/fbprofile.jpg")}
+          source={require("../assets/default.jpeg")}
         />
         <View style={styles.information}>
           <Text style={styles.name}>{name}</Text>
