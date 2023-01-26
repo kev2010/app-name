@@ -40,6 +40,7 @@ const Feed = ({ navigation, uid }) => {
               );
               data[doc.id] = {
                 id: doc.id,
+                creatorID: user.id,
                 name: user.data().name,
                 time: calculateTimeDiffFromNow(doc.data().time.toDate()),
                 collabs: collabs,
@@ -70,8 +71,8 @@ const Feed = ({ navigation, uid }) => {
         <TouchableOpacity
           key={index.toString()}
           onPress={() => {
-            console.log("just pressed", item);
             navigation.navigate("Reactions", {
+              creatorID: item.creatorID,
               id: item.id,
               name: item.name,
               time: item.time,
@@ -82,6 +83,8 @@ const Feed = ({ navigation, uid }) => {
           }}
         >
           <Thought
+            navigation={navigation}
+            creatorID={item.creatorID}
             name={item.name}
             time={item.time}
             collabs={item.collabs}

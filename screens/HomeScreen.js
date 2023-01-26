@@ -82,8 +82,8 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
-  const goToProfileScreen = () => {
-    navigation.navigate("Profile");
+  const goToSettingsScreen = () => {
+    navigation.navigate("Settings");
   };
 
   const goToFriendsScreen = () => {
@@ -127,7 +127,7 @@ const HomeScreen = ({ navigation }) => {
         <StatusBar barStyle={"light-content"} />
         <Text style={styles.title}>App Name</Text>
         <View style={styles.top}>
-          <TouchableOpacity onPress={goToProfileScreen}>
+          <TouchableOpacity onPress={goToSettingsScreen}>
             <Image
               style={styles.profile}
               source={require("../assets/default.jpeg")}

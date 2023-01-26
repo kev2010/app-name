@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import {
   View,
   SafeAreaView,
@@ -8,47 +7,60 @@ import {
   Image,
   Alert,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import colors from "../assets/colors";
-import FriendsHeader from "../components/FriendsHeader";
-import FriendsDisplay from "../components/FriendsDisplay";
-import OutsideUsersDisplay from "../components/OutsideUsersDisplay";
-import SearchBar from "react-native-dynamic-search-bar";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
-import RequestsDisplay from "../components/RequestsDisplay";
-import { useResetRecoilState } from "recoil";
+import OutsideUserElement from "../components/OutsideUserElement.js";
+import { getUser, sendFriendRequest } from "../api";
 
 // TODO: Fix that tapping outside of the keyboard doesn't make the keyboard go away
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = ({ navigation, route }) => {
   const [user, setUser] = useRecoilState(userState);
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [layout, setLayout] = useState({
+    width: 0,
+    height: 0,
+  });
+
+  const getProfile = () => {
+    getUser(route.params.creatorID).then((profile) => {
+      setName(profile.data().name);
+      setUsername(profile.data().username);
+    });
+  };
+
+  const addUserAsFriend = (friendUID) => {
+    return new Promise((resolve, reject) => {
+      // Push friend request to everywhere only if it doesn't exist yet
+      if (user.friendRequests.indexOf(friendUID) === -1) {
+        sendFriendRequest(user.uid, friendUID).then(() => {
+          // Update global user state to show that user sent a friend request
+          setUser((user) => ({
+            ...user,
+            sentRequests: [...user.sentRequests, friendUID],
+          }));
+          resolve(true);
+        });
+      }
+    });
+  };
+
+  useEffect(() => {
+    getProfile();
+  }, []);
+
   const goBack = () => {
     navigation.navigate("Home");
   };
 
-  const onLogOut = () => {
-    Alert.alert("Log Out", "Are you sure you want to log out?", [
-      {
-        text: "Cancel",
-        onPress: () => {
-          console.log("CANCELLED");
-        },
-      },
-      {
-        text: "Log Out",
-        onPress: () => {
-          console.log("LOG OUT", user.uid);
-          setUser({});
-          navigation.navigate("Name");
-        },
-        style: "destructive",
-      },
-    ]);
-  };
-
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
+      <View
+        style={styles.header}
+        onLayout={(event) => setLayout(event.nativeEvent.layout)}
+      >
         <Text style={styles.title}>Profile</Text>
         <View style={styles.top}>
           <TouchableOpacity onPress={goBack} style={styles.button}>
@@ -56,19 +68,44 @@ const ProfileScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-      <Text style={styles.info}>
-        Logged in as {user.name} with username {user.username}
-      </Text>
-      <TouchableOpacity onPress={onLogOut}>
-        <Text style={styles.logOut}>Log Out</Text>
-      </TouchableOpacity>
+
+      {user.friends.indexOf(route.params.creatorID) === -1 ? (
+        <OutsideUserElement
+          name={name}
+          username={username}
+          uid={route.params.creatorID}
+          addFriend={addUserAsFriend}
+          sent={user.sentRequests}
+          layout={layout}
+        />
+      ) : (
+        <View
+          style={[
+            styles.cell,
+            {
+              width: layout.width,
+            },
+          ]}
+        >
+          <View style={styles.left}>
+            <Image
+              style={styles.profileImage}
+              source={require("../assets/default.jpeg")}
+            />
+            <View style={styles.information}>
+              <Text style={styles.name}>{name}</Text>
+              <Text style={styles.username}>{username}</Text>
+            </View>
+          </View>
+          <Text style={styles.friend}>Your Friend!</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     backgroundColor: colors.gray_1,
     alignItems: "center",
     marginTop: 24,
@@ -77,13 +114,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 4,
     width: "90%",
-  },
-  info: {
-    fontFamily: "Nunito-Regular",
-    fontSize: 16,
-    color: colors.primary_9,
-    marginTop: 24,
-    alignSelf: "center",
+    marginBottom: 32,
   },
   top: {
     flexDirection: "row",
@@ -110,17 +141,38 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     marginTop: 6,
   },
-  logOut: {
+  cell: {
+    justifyContent: "space-between",
+    flexDirection: "row",
+  },
+  left: {
+    flexDirection: "row",
+  },
+  profileImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 100,
+    marginRight: 8,
+  },
+  information: {
+    flexDirection: "column",
+    justifyContent: "center",
+  },
+  name: {
+    color: colors.gray_9,
     fontFamily: "Nunito-SemiBold",
-    fontSize: 18,
-    overflow: "hidden",
-    borderRadius: 10,
-    paddingHorizontal: 128,
-    paddingVertical: 12,
-    margin: 0,
-    marginTop: 32,
-    backgroundColor: colors.primary_1,
-    color: colors.primary_6,
+    fontSize: 14,
+  },
+  username: {
+    color: colors.gray_5,
+    fontFamily: "Nunito-Regular",
+    fontSize: 14,
+  },
+  friend: {
+    alignSelf: "center",
+    color: colors.accent1_5,
+    fontFamily: "Nunito-SemiBold",
+    fontSize: 14,
   },
 });
 

@@ -134,7 +134,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   smallTouchable: {
-    backgroundColor: "pink",
     paddingVertical: 8,
   },
   reject: {

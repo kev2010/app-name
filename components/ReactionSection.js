@@ -12,7 +12,7 @@ import Comment from "./Comment";
 import { getUser, getReactions } from "../api";
 import colors from "../assets/colors";
 
-const ReactionSection = ({ data }) => {
+const ReactionSection = ({ navigation, data }) => {
   // TODO: add loading hook?
   // TODO: grab thoughts as you scroll vs. all at once
   // TODO: have a default thing shown for no reactions
@@ -23,7 +23,13 @@ const ReactionSection = ({ data }) => {
       data={data}
       renderItem={({ item }) => (
         <>
-          <Comment name={item.name} time={item.time} comment={item.text} />
+          <Comment
+            navigation={navigation}
+            creatorID={item.creatorID}
+            name={item.name}
+            time={item.time}
+            comment={item.text}
+          />
           <View style={styles.divider} />
         </>
       )}

@@ -52,6 +52,7 @@ const ReactionsScreen = ({ navigation, route }) => {
               ...data,
               {
                 id: reactionDoc.id,
+                creatorID: user.id,
                 name: user.data().name,
                 text: reactionDoc.data().text,
                 time: calculateTimeDiffFromNow(
@@ -92,7 +93,6 @@ const ReactionsScreen = ({ navigation, route }) => {
 
   const onPressSheet = () => {
     bottomSheetRef.current.snapToIndex(!swiped ? 0 : 1);
-    console.log("hello", swiped);
   };
 
   return (
@@ -129,6 +129,8 @@ const ReactionsScreen = ({ navigation, route }) => {
         </View>
         <View style={styles.original}>
           <Thought
+            navigation={navigation}
+            creatorID={route.params.creatorID}
             name={route.params.name}
             time={route.params.time}
             collabs={route.params.collabs}
@@ -137,7 +139,11 @@ const ReactionsScreen = ({ navigation, route }) => {
           />
         </View>
         <View style={styles.reactions}>
-          <ReactionSection data={data} uid={route.params.id} />
+          <ReactionSection
+            navigation={navigation}
+            data={data}
+            uid={route.params.id}
+          />
         </View>
         {/* TODO: The think backdrop has a sliver of a white border on the very top */}
         <BottomSheet

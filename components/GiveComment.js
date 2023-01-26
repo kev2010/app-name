@@ -33,7 +33,6 @@ const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
 
   useEffect(() => {
-    console.log("looking for value", swiped);
     if (swiped) {
       inputRef.current.focus();
     } else {
@@ -55,7 +54,6 @@ const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
   const inputRef = React.createRef();
 
   const onSubmit = () => {
-    console.log("about to submit ", thought);
     setLoading(true);
     addComment(thoughtUID, user.uid, thought).then(() => {
       submitted();

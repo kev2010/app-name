@@ -5,8 +5,9 @@ import PhoneScreen from "./screens/PhoneScreen";
 import VerificationScreen from "./screens/VerificationScreen";
 import UsernameScreen from "./screens/UsernameScreen";
 import FriendsScreen from "./screens/FriendsScreen";
-import ProfileScreen from "./screens/ProfileScreen";
+import SettingsScreen from "./screens/SettingsScreen";
 import ReactionsScreen from "./screens/ReactionsScreen";
+import ProfileScreen from "./screens/ProfileScreen";
 import { useRecoilState } from "recoil";
 import { userState } from "./globalState";
 import { NavigationContainer } from "@react-navigation/native";
@@ -35,6 +36,7 @@ const Nav = ({}) => {
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="Reactions" component={ReactionsScreen} />
             <Stack.Screen name="Friends" component={FriendsScreen} />
+            <Stack.Screen name="Settings" component={SettingsScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
           </>
         )}

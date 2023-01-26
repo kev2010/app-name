@@ -1,20 +1,36 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import colors from "../assets/colors";
+import { useRecoilState } from "recoil";
+import { userState } from "../globalState";
 
-// name, time, comment
+// TODO: When going back, return to PREVIOUS screen instead of the original home
 const Comment = (props) => {
+  const [user, setUser] = useRecoilState(userState);
+
+  const goToProfile = () => {
+    if (props.creatorID === user.uid) {
+      props.navigation.navigate("Settings");
+    } else {
+      props.navigation.navigate("Profile", {
+        creatorID: props.creatorID,
+      });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.row1}>
-        <Image
-          style={styles.profileImage}
-          source={require("../assets/default.jpeg")}
-          //   source={{uri: props.img}}
-          //   resizeMode="stretch"
-        />
-        <Text style={styles.name}>{props.name}</Text>
-        <Text style={styles.time}>{props.time}</Text>
+        <TouchableOpacity style={styles.profile} onPress={goToProfile}>
+          <Image
+            style={styles.profileImage}
+            source={require("../assets/default.jpeg")}
+            //   source={{uri: props.img}}
+            //   resizeMode="stretch"
+          />
+          <Text style={styles.name}>{props.name}</Text>
+          <Text style={styles.time}>{props.time}</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.row2}>
         <Text style={styles.text}>{props.comment}</Text>
@@ -30,6 +46,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 16,
     marginBottom: 16,
+  },
+  profile: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   row1: {
     flexDirection: "row",

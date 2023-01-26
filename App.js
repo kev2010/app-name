@@ -33,10 +33,8 @@ export default function App() {
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded && !!assets) {
-      console.log("whats going on");
       await SplashScreen.hideAsync();
     }
-    console.log("ok");
   }, [fontsLoaded, !!assets]);
 
   if (!fontsLoaded || !assets) {

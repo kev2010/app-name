@@ -33,7 +33,6 @@ export async function checkUniqueUsername(username) {
 export async function checkUserExists(uid) {
   const docRef = doc(db, "users", uid);
   const docSnap = await getDoc(docRef);
-  console.log("checking here", docSnap);
   return {
     exists: docSnap.exists(),
     data: docSnap.data(),
@@ -52,11 +51,8 @@ export async function createUser(uid, displayName, username) {
 
 export async function getUser(uid) {
   try {
-    console.log("fetching", uid);
     return getDoc(doc(db, "users", uid));
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 }
 
 // TODO: Figure out if we want to display user's own thoughts in the feed
@@ -66,7 +62,6 @@ export async function getThoughts(uid) {
       const currentUserRef = doc(db, "users", uid);
       getUser(uid).then((currentUser) => {
         const allValid = [...currentUser.data().friends, currentUserRef];
-        console.log("allvalid", allValid);
         const q = query(
           collection(db, "thoughts"),
           where("name", "in", allValid),

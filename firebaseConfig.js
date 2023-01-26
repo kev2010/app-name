@@ -24,7 +24,5 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
-// console.log("WHAT THE FUCK");
 export const db = getFirestore(app);
-// console.log("uh", getDocs(collection(db, "thoughts")));
 // const analytics = getAnalytics(app);

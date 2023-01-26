@@ -8,6 +8,7 @@ import colors from "../assets/colors";
 import { sendFriendRequest } from "../api";
 
 // TODO: Fix bug where first press on screen makes the keyboard disappear, and then second press interacts
+// TODO: Fix bug where typing fast puts multiple results in the search
 // TODO: UX where your current friend requests DON'T show up in "OutsideUsersDisplay" not exactly intuitive, but easy to implement code wise lol. Eventually, should show friend requests in a seperate table in same screen.
 const OutsideUsersDisplay = ({ friends, friendRequests, sent, text }) => {
   const [user, setUser] = useRecoilState(userState);
@@ -33,7 +34,6 @@ const OutsideUsersDisplay = ({ friends, friendRequests, sent, text }) => {
           !foundRequest &&
           otherUser.id != user.uid
         ) {
-          console.log("outsidersINfo", user);
           setData((data) => [
             ...data,
             {
@@ -53,14 +53,9 @@ const OutsideUsersDisplay = ({ friends, friendRequests, sent, text }) => {
 
   const addUserAsFriend = (friendUID) => {
     return new Promise((resolve, reject) => {
-      console.log("we're adding friend", friendUID);
-      console.log("for debugging", user.friendRequests);
-      console.log("next", user.friendRequests.indexOf(friendUID));
       // Push friend request to everywhere only if it doesn't exist yet
       if (user.friendRequests.indexOf(friendUID) === -1) {
-        console.log("doesn't exist yet");
         sendFriendRequest(user.uid, friendUID).then(() => {
-          console.log("time to set the user");
           // Update global user state to show that user sent a friend request
           setUser((user) => ({
             ...user,

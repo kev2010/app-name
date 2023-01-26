@@ -19,7 +19,6 @@ const FriendsDisplay = ({ friends, filter }) => {
     // TODO: Decide whether we should be doing this logic (converting array of userRefs to array of user objects) in the home screen, friends screen, or here)
     friends.forEach((uid) => {
       getUser(uid).then((user) => {
-        console.log("friendsGetInfo", user);
         // TODO: Change to check if UID is found (in case friends have same name). Do the same for other "found" checks in the codebase
         const found = data.some((friend) => friend.name === user.data().name);
         if (!found) {
