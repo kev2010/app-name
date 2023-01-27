@@ -15,6 +15,7 @@ import { useRecoilState } from "recoil";
 import { addThought } from "../api";
 import colors from "../assets/colors";
 import { userState } from "../globalState";
+import { CONSTANTS } from "../constants";
 
 // TODO: Move these constants into seperate file
 const MAX_LENGTH = 500;
@@ -43,7 +44,7 @@ const Think = ({ swiped, submitted }) => {
     }
     const keyboardDidShow = (event) => {
       const { endCoordinates } = event;
-      const spacing = endCoordinates.height + KEYBOARD_OFFSET;
+      const spacing = endCoordinates.height + CONSTANTS.KEYBOARD_OFFSET;
       setTextContainerBottom(spacing);
     };
     setKeyboardDidShowListener(
@@ -71,7 +72,7 @@ const Think = ({ swiped, submitted }) => {
   };
 
   const changeThought = (text) => {
-    if (text.length <= MAX_LENGTH) {
+    if (text.length <= CONSTANTS.MAX_LENGTH) {
       setThought(text);
     }
   };
@@ -115,7 +116,7 @@ const Think = ({ swiped, submitted }) => {
         )}
       </Animated.View>
       <Text style={[styles.charCount, bottomStyle]}>
-        {thought.length}/{MAX_LENGTH}
+        {thought.length}/{CONSTANTS.MAX_LENGTH}
       </Text>
     </View>
   );
@@ -134,27 +135,11 @@ const useSubmitStyle = (thought) => {
 };
 
 // Android and iOS have weird behaviors with trying to set buttons right above the keyboard! It looks like Android automatically does it while iOS doesn't
-const useThinkStyle = (textContainerBottom) => {
-  if (Platform.OS === "ios") {
-    return {
-      position: "absolute",
-      bottom: textContainerBottom,
-      alignSelf: "center",
-    };
-  } else {
-    // Android - this assumption might break
-    return {
-      alignSelf: "center",
-      marginBottom: 16,
-    };
-  }
-};
-
-// Android and iOS have weird behaviors with trying to set buttons right above the keyboard! It looks like Android automatically does it while iOS doesn't
 const useBottomStyle = (textContainerBottom) => {
   // On Android, the keyboard adjustment happens automatically
   return {
-    bottom: Platform.OS === "ios" ? textContainerBottom : KEYBOARD_OFFSET,
+    bottom:
+      Platform.OS === "ios" ? textContainerBottom : CONSTANTS.KEYBOARD_OFFSET,
   };
 };
 
@@ -163,7 +148,7 @@ const useInputStyle = (textContainerBottom) => {
   return {
     marginBottom:
       INPUT_OFFSET +
-      (Platform.OS === "ios" ? textContainerBottom : KEYBOARD_OFFSET),
+      (Platform.OS === "ios" ? textContainerBottom : CONSTANTS.KEYBOARD_OFFSET),
   };
 };
 

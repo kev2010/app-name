@@ -20,7 +20,7 @@ const RequestsDisplay = ({ requests }) => {
     // TODO: Decide whether we should be doing this logic (converting array of userRefs to array of user objects) in the home screen, friends screen, or here)
     requests.forEach((uid) => {
       getUser(uid).then((user) => {
-        const found = data.some((request) => request.name === user.data().name);
+        const found = data.some((request) => request.uid === uid);
         if (!found) {
           // IMPORTANT: Need to use a function to create a new array since state updates are asynchronous or sometimes batched.
           // This also assumes that the document ID (the user document) is the user's UID

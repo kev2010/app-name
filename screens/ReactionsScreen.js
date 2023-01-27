@@ -226,6 +226,7 @@ const styles = StyleSheet.create({
   reactions: {
     flex: 1,
     width: "90%",
+    marginTop: 12,
     // Needed so that you can see the last element - a hacky solution
     marginBottom: 32,
     borderRadius: 15,

@@ -15,15 +15,10 @@ import { useRecoilState } from "recoil";
 import { addComment } from "../api";
 import colors from "../assets/colors";
 import { userState } from "../globalState";
-
-// TODO: Move these constants into seperate file
-const MAX_LENGTH = 500;
-const KEYBOARD_OFFSET = 16;
-const INPUT_OFFSET = 48;
+import { CONSTANTS } from "../constants";
 
 // TODO: Extremely similar to Think.js - maybe there's a way to reduce reused code?
 const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
-  // TODO: disable keyboard when the bottom sheet is deactivated (currently can click on the "hidden" component and keyboard will come up)
   const [thought, setThought] = useState("");
   const audioStyle = useAudioStyle(thought);
   const submitStyle = useSubmitStyle(thought);
@@ -44,7 +39,7 @@ const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
     }
     const keyboardDidShow = (event) => {
       const { endCoordinates } = event;
-      const spacing = endCoordinates.height + KEYBOARD_OFFSET;
+      const spacing = endCoordinates.height + CONSTANTS.KEYBOARD_OFFSET;
       setTextContainerBottom(spacing);
     };
     setKeyboardDidShowListener(
@@ -67,7 +62,7 @@ const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
   };
 
   const changeThought = (text) => {
-    if (text.length <= MAX_LENGTH) {
+    if (text.length <= CONSTANTS.MAX_LENGTH) {
       setThought(text);
     }
   };
@@ -112,7 +107,7 @@ const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
         )}
       </Animated.View>
       <Text style={[styles.charCount, bottomStyle]}>
-        {thought.length}/{MAX_LENGTH}
+        {thought.length}/{CONSTANTS.MAX_LENGTH}
       </Text>
     </View>
   ) : (
@@ -136,7 +131,8 @@ const useSubmitStyle = (thought) => {
 const useBottomStyle = (textContainerBottom) => {
   // On Android, the keyboard adjustment happens automatically
   return {
-    bottom: Platform.OS === "ios" ? textContainerBottom : KEYBOARD_OFFSET,
+    bottom:
+      Platform.OS === "ios" ? textContainerBottom : CONSTANTS.KEYBOARD_OFFSET,
   };
 };
 
@@ -144,8 +140,8 @@ const useInputStyle = (textContainerBottom) => {
   // On Android, the keyboard adjustment happens automatically
   return {
     marginBottom:
-      INPUT_OFFSET +
-      (Platform.OS === "ios" ? textContainerBottom : KEYBOARD_OFFSET),
+      CONSTANTS.INPUT_OFFSET +
+      (Platform.OS === "ios" ? textContainerBottom : CONSTANTS.KEYBOARD_OFFSET),
   };
 };
 

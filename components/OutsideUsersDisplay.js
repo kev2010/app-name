@@ -21,9 +21,7 @@ const OutsideUsersDisplay = ({ friends, friendRequests, sent, text }) => {
   const getOutsidersInfo = (text) => {
     getUsernamesStartingWith(text, 10).then((usernames) => {
       usernames.forEach((otherUser) => {
-        const found = data.some(
-          (other) => other.name === otherUser.data().name
-        );
+        const found = data.some((other) => other.uid === otherUser.id);
         const foundFriend = friends.some((friend) => friend === otherUser.id);
         const foundRequest = friendRequests.some(
           (request) => request === otherUser.id

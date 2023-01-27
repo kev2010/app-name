@@ -9,7 +9,6 @@ import {
 import React, { useState } from "react";
 import colors from "../assets/colors";
 
-// TODO: Provide lazy tapping buffer (if people miss their thumbs slightly)
 const FriendsHeader = ({
   goBack,
   displayFriends,
