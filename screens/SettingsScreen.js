@@ -16,7 +16,7 @@ import { userState } from "../globalState";
 const SettingsScreen = ({ navigation }) => {
   const [user, setUser] = useRecoilState(userState);
   const goBack = () => {
-    navigation.navigate("Home");
+    navigation.goBack();
   };
 
   const onLogOut = () => {

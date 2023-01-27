@@ -4,7 +4,6 @@ import colors from "../assets/colors";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 
-// TODO: When going back, return to PREVIOUS screen instead of the original home
 const Comment = (props) => {
   const [user, setUser] = useRecoilState(userState);
 

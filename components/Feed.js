@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Text,
   RefreshControl,
+  View,
 } from "react-native";
 import Thought from "./Thought";
 import {
@@ -65,7 +66,7 @@ const Feed = ({ navigation, uid }) => {
 
   // const querySnapshot = await getDocs(collection(db, "users"));
 
-  return (
+  return Object.values(data).length > 0 ? (
     <FlatList
       data={Object.values(data)}
       renderItem={({ item, index }) => (
@@ -104,7 +105,29 @@ const Feed = ({ navigation, uid }) => {
         />
       }
     />
+  ) : (
+    <View style={styles.empty}>
+      <Text style={styles.thought}>💭</Text>
+      <Text style={styles.subtitle}>It’s a bit empty here!</Text>
+      <Text style={styles.subtitle}>Try adding some friends 😎</Text>
+    </View>
   );
 };
 
+const styles = StyleSheet.create({
+  empty: {
+    marginTop: 24,
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  thought: {
+    fontSize: 48,
+  },
+  subtitle: {
+    color: colors.gray_5,
+    fontFamily: "Nunito-SemiBold",
+    fontSize: 20,
+  },
+});
 export default Feed;

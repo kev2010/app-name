@@ -52,7 +52,7 @@ const ProfileScreen = ({ navigation, route }) => {
   }, []);
 
   const goBack = () => {
-    navigation.navigate("Home");
+    navigation.goBack();
   };
 
   return (

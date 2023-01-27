@@ -146,7 +146,26 @@ const HomeScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.displayFeed}>
+      <View
+        style={[
+          styles.empty,
+          {
+            opacity: globalFeed && swiped ? 1 : 0,
+          },
+        ]}
+      >
+        <Text style={styles.thought}>🚧</Text>
+        <Text style={styles.subtitle}>Coming later...</Text>
+      </View>
+      <View
+        style={[
+          styles.displayFeed,
+          {
+            opacity: globalFeed ? 0 : 1,
+          },
+        ]}
+        pointerEvents={globalFeed ? "none" : "auto"}
+      >
         <Feed navigation={navigation} uid={user.uid}></Feed>
       </View>
 
@@ -256,6 +275,23 @@ const styles = StyleSheet.create({
     flex: 1,
     elevation: 10,
     borderRadius: 15,
+  },
+  empty: {
+    position: "absolute",
+    marginTop: 24,
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    zIndex: 1,
+    top: "25%",
+  },
+  thought: {
+    fontSize: 48,
+  },
+  subtitle: {
+    color: colors.gray_5,
+    fontFamily: "Nunito-SemiBold",
+    fontSize: 20,
   },
 });
 
