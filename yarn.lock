@@ -3086,6 +3086,13 @@
   "resolved" "https://registry.npmjs.org/atob/-/atob-2.1.2.tgz"
   "version" "2.1.2"
 
+"autolinker@^3.14.3":
+  "integrity" "sha512-JiYl7j2Z19F9NdTmirENSUUIIL/9MytEWtmzhfmsKPCp9E+G35Y0UNCMoM9tFigxT59qSc8Ml2dlZXOCVTYwuA=="
+  "resolved" "https://registry.npmjs.org/autolinker/-/autolinker-3.16.2.tgz"
+  "version" "3.16.2"
+  dependencies:
+    "tslib" "^2.3.0"
+
 "available-typed-arrays@^1.0.5":
   "integrity" "sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw=="
   "resolved" "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz"
@@ -9496,6 +9503,13 @@
   "resolved" "https://registry.npmjs.org/react-native-animated-spinkit/-/react-native-animated-spinkit-1.5.2.tgz"
   "version" "1.5.2"
 
+"react-native-autolink@^4.0.0":
+  "integrity" "sha512-58wV7lBkS+JmTDzuN4v5OqSz5cIc0lI3PlIV1WIVhxlitI1Yhl5UQWum4y31bV83faA9we7gynvi8xV/I0TWLg=="
+  "resolved" "https://registry.npmjs.org/react-native-autolink/-/react-native-autolink-4.0.0.tgz"
+  "version" "4.0.0"
+  dependencies:
+    "autolinker" "^3.14.3"
+
 "react-native-cli@^2.0.1":
   "integrity" "sha512-QgkB1urUhGe9q1vcqQLIfNdCd/Qf3MdNQe19QO6lVjhIVKljlVMKtaK8RaZ8PCNB/cdXlO/G3tKUGk+ghMXE6w=="
   "resolved" "https://registry.npmjs.org/react-native-cli/-/react-native-cli-2.0.1.tgz"
@@ -9628,7 +9642,7 @@
     "escape-string-regexp" "2.0.0"
     "invariant" "2.2.4"
 
-"react-native@*", "react-native@0.70.5":
+"react-native@*", "react-native@>=0.25.0", "react-native@0.70.5":
   "integrity" "sha512-5NZM80LC3L+TIgQX/09yiyy48S73wMgpIgN5cCv3XTMR394+KpDI3rBZGH4aIgWWuwijz31YYVF5504+9n2Zfw=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.70.5.tgz"
   "version" "0.70.5"
@@ -9679,7 +9693,7 @@
     "object-assign" "^4.1.1"
     "react-is" "^16.12.0 || ^17.0.0 || ^18.0.0"
 
-"react@*", "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.13.1", "react@^16.3.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^17.0.2 || ^18.0.0", "react@^18.1.0", "react@>=16.13.1", "react@>=16.3.0", "react@>=16.8", "react@>=17.0.0", "react@16.x.x", "react@18.1.0":
+"react@*", "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.13.1", "react@^16.3.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^17.0.2 || ^18.0.0", "react@^18.1.0", "react@>=16.13.1", "react@>=16.3.0", "react@>=16.8", "react@>=17.0.0", "react@>16.8.0", "react@16.x.x", "react@18.1.0":
   "integrity" "sha512-4oL8ivCz5ZEPyclFQXaNksK3adutVS8l2xzZU0cqEFrE9Sb7fC0EFK5uEk74wIreL1DERyjvsU915j1pcT2uEQ=="
   "resolved" "https://registry.npmjs.org/react/-/react-18.1.0.tgz"
   "version" "18.1.0"
@@ -11161,7 +11175,7 @@
   "resolved" "https://registry.npmjs.org/ts-pnp/-/ts-pnp-1.2.0.tgz"
   "version" "1.2.0"
 
-"tslib@^2.0.1", "tslib@^2.0.3", "tslib@^2.1.0", "tslib@^2.4.0":
+"tslib@^2.0.1", "tslib@^2.0.3", "tslib@^2.1.0", "tslib@^2.3.0", "tslib@^2.4.0":
   "integrity" "sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA=="
   "resolved" "https://registry.npmjs.org/tslib/-/tslib-2.4.1.tgz"
   "version" "2.4.1"

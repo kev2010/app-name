@@ -26,6 +26,7 @@
     "react-dom": "18.1.0",
     "react-native": "0.70.5",
     "react-native-animated-spinkit": "^1.5.2",
+    "react-native-autolink": "^4.0.0",
     "react-native-cli": "^2.0.1",
     "react-native-country-picker-modal": "^2.0.0",
     "react-native-dynamic-search-bar": "github:WrathChaos/react-native-dynamic-search-bar#expo",

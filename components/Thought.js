@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import colors from "../assets/colors";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
+import Autolink from "react-native-autolink";
 
 const Thought = (props) => {
   const [user, setUser] = useRecoilState(userState);
@@ -46,7 +47,9 @@ const Thought = (props) => {
           { marginBottom: props.collabs.length > 0 ? 16 : 12 },
         ]}
       >
-        <Text style={styles.text}>{props.thought}</Text>
+        {/* See https://github.com/joshswan/react-native-autolink */}
+        <Autolink style={styles.text} text={props.thought} />
+        {/* <Text style={styles.text}>{props.thought}</Text> */}
       </View>
       <View style={styles.row3}>
         <Text style={styles.thought}>{collabsText}</Text>
@@ -110,6 +113,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 14,
+    lineHeight: 24,
     color: colors.primary_9,
     fontFamily: "Nunito-Regular",
   },

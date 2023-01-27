@@ -18,8 +18,9 @@ import { calculateTimeDiffFromNow } from "../helpers";
 
 const Feed = ({ navigation, uid }) => {
   // TODO: add loading hook?
-  // TODO: get rid of TouchableOpacity "refresh"
-  // TODO: grab thoughts as you scroll vs. all at once
+  // TODO: Right now we're only grabbing thoughts in the past 3 days. We'll have to do some pagination later
+  // See: https://www.google.com/search?q=how+to+load+a+feed+react+native+without+loading+a+ton+of+data+at+once&sxsrf=AJOqlzX4EO9TgZEKFx0oBmRud5J92fOyqA%3A1674762643643&ei=k9nSY9PnJuik5NoPkZGy4AQ&ved=0ahUKEwiT_dODgeb8AhVoElkFHZGIDEwQ4dUDCBA&uact=5&oq=how+to+load+a+feed+react+native+without+loading+a+ton+of+data+at+once&gs_lcp=Cgxnd3Mtd2l6LXNlcnAQAzoKCAAQRxDWBBCwAzoFCCEQoAE6CAghEBYQHhAdOgUIIRCrAkoECEEYAEoECEYYAFDOEFi0lQlgoJYJaAJwAXgDgAGcAogBjiiSAQYyMS44LjmYAQCgAQHIAQjAAQE&sclient=gws-wiz-serp
+  // And: https://stackoverflow.com/questions/71285002/react-native-flatlist-handling-large-data
   const [data, setData] = useState({});
   const [refreshing, setRefreshing] = useState(false);
 

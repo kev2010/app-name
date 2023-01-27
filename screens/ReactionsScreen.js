@@ -70,7 +70,7 @@ const ReactionsScreen = ({ navigation, route }) => {
   const bottomSheetRef = useRef(null);
 
   // variables
-  const snapPoints = useMemo(() => ["10.5%", "70%"], []);
+  const snapPoints = useMemo(() => ["10.5%", "85%"], []);
 
   const submitted = () => {
     refreshReactions();
@@ -80,8 +80,8 @@ const ReactionsScreen = ({ navigation, route }) => {
 
   const renderBackdrop = (props) => {
     return (
-      <BottomSheetBackdrop {...props} pressBehavior={"collapse"} opacity={0.25}>
-        <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }} />
+      <BottomSheetBackdrop {...props} pressBehavior={"collapse"} opacity={0}>
+        <Pressable {...props} onPress={Keyboard.dismiss} style={{ flex: 1 }} />
       </BottomSheetBackdrop>
     );
   };

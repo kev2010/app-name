@@ -56,15 +56,19 @@ export async function getUser(uid) {
 }
 
 // TODO: Figure out if we want to display user's own thoughts in the feed
+// TODO: Right now we're only grabbing thoughts in the past 3 days. We'll have to do some pagination later
 export async function getThoughts(uid) {
   try {
     return new Promise((resolve, reject) => {
       const currentUserRef = doc(db, "users", uid);
       getUser(uid).then((currentUser) => {
         const allValid = [...currentUser.data().friends, currentUserRef];
+        let cutoff = new Date();
+        cutoff.setDate(cutoff.getDate() - 3);
         const q = query(
           collection(db, "thoughts"),
           where("name", "in", allValid),
+          where("time", ">=", cutoff),
           orderBy("time", "desc")
         );
         resolve(getDocs(q));

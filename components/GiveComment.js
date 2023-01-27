@@ -16,7 +16,12 @@ import { addComment } from "../api";
 import colors from "../assets/colors";
 import { userState } from "../globalState";
 
-// Extremely similar to Think.js - maybe there's a way to reduce reused code?
+// TODO: Move these constants into seperate file
+const MAX_LENGTH = 500;
+const KEYBOARD_OFFSET = 16;
+const INPUT_OFFSET = 48;
+
+// TODO: Extremely similar to Think.js - maybe there's a way to reduce reused code?
 const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
   // TODO: disable keyboard when the bottom sheet is deactivated (currently can click on the "hidden" component and keyboard will come up)
   const [thought, setThought] = useState("");
@@ -24,10 +29,9 @@ const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
   const submitStyle = useSubmitStyle(thought);
   const [user, setUser] = useRecoilState(userState);
   const [loading, setLoading] = useState(false);
-  const [textContainerBottom, setTextContainerBottom] = useState(
-    new Animated.Value(0)
-  );
-  const thinkStyle = useThinkStyle(textContainerBottom);
+  const [textContainerBottom, setTextContainerBottom] = useState(0);
+  const bottomStyle = useBottomStyle(textContainerBottom);
+  const inputStyle = useInputStyle(textContainerBottom);
   const [disable, setDisable] = useState(true);
 
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
@@ -40,7 +44,7 @@ const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
     }
     const keyboardDidShow = (event) => {
       const { endCoordinates } = event;
-      const spacing = endCoordinates.height + 16;
+      const spacing = endCoordinates.height + KEYBOARD_OFFSET;
       setTextContainerBottom(spacing);
     };
     setKeyboardDidShowListener(
@@ -62,6 +66,12 @@ const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
     });
   };
 
+  const changeThought = (text) => {
+    if (text.length <= MAX_LENGTH) {
+      setThought(text);
+    }
+  };
+
   const checkLength = (text) => {
     setDisable(text.length === 0);
   };
@@ -72,7 +82,8 @@ const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
         ref={inputRef}
         showSoftInputOnFocus={!initialLoading}
         autoFocus={swiped}
-        style={styles.input}
+        style={[styles.textInput, inputStyle]}
+        scrollEnabled={true}
         multiline={true}
         textAlign="left"
         selectionColor={colors.primary_4}
@@ -81,29 +92,28 @@ const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
         value={thought}
         editable={swiped}
         onChangeText={(text) => {
-          setThought(text);
+          changeThought(text);
           checkLength(text);
         }}
       />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        <Animated.View style={[thinkStyle]}>
-          <Image
-            style={[styles.audio, audioStyle]}
-            source={require("../assets/audio.png")}
-            //   source={{uri: props.img}}
-            //   resizeMode="stretch"
-          />
-          {loading ? (
-            <ActivityIndicator size="small" color={colors.primary_5} />
-          ) : (
-            <TouchableOpacity onPress={onSubmit} disabled={disable}>
-              <Text style={[styles.think, submitStyle]}>Comment</Text>
-            </TouchableOpacity>
-          )}
-        </Animated.View>
-      </KeyboardAvoidingView>
+      <Animated.View style={[styles.controls, bottomStyle]}>
+        <Image
+          style={[styles.audio, audioStyle]}
+          source={require("../assets/audio.png")}
+          //   source={{uri: props.img}}
+          //   resizeMode="stretch"
+        />
+        {loading ? (
+          <ActivityIndicator size="small" color={colors.primary_5} />
+        ) : (
+          <TouchableOpacity onPress={onSubmit} disabled={disable}>
+            <Text style={[styles.think, submitStyle]}>Comment</Text>
+          </TouchableOpacity>
+        )}
+      </Animated.View>
+      <Text style={[styles.charCount, bottomStyle]}>
+        {thought.length}/{MAX_LENGTH}
+      </Text>
     </View>
   ) : (
     <Text style={styles.default}>Think with others here!</Text>
@@ -123,20 +133,20 @@ const useSubmitStyle = (thought) => {
 };
 
 // Android and iOS have weird behaviors with trying to set buttons right above the keyboard! It looks like Android automatically does it while iOS doesn't
-const useThinkStyle = (textContainerBottom) => {
-  if (Platform.OS === "ios") {
-    return {
-      position: "absolute",
-      bottom: textContainerBottom,
-      alignSelf: "center",
-    };
-  } else {
-    // Android - this assumption might break
-    return {
-      alignSelf: "center",
-      marginBottom: 16,
-    };
-  }
+const useBottomStyle = (textContainerBottom) => {
+  // On Android, the keyboard adjustment happens automatically
+  return {
+    bottom: Platform.OS === "ios" ? textContainerBottom : KEYBOARD_OFFSET,
+  };
+};
+
+const useInputStyle = (textContainerBottom) => {
+  // On Android, the keyboard adjustment happens automatically
+  return {
+    marginBottom:
+      INPUT_OFFSET +
+      (Platform.OS === "ios" ? textContainerBottom : KEYBOARD_OFFSET),
+  };
 };
 
 const styles = StyleSheet.create({
@@ -152,6 +162,18 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     // Much needed for android - not well documented. See https://github.com/facebook/react-native/issues/13897
     textAlignVertical: "top",
+  },
+  textInput: {
+    color: colors.primary_9,
+    fontFamily: "Nunito-Medium",
+    fontSize: 20,
+    marginHorizontal: 24,
+    textAlignVertical: "top",
+    flex: 1,
+  },
+  controls: {
+    position: "absolute",
+    alignSelf: "center",
   },
   audio: {
     width: 20,
@@ -175,6 +197,15 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito-Bold",
     fontSize: 14,
     alignSelf: "center",
+  },
+  charCount: {
+    color: colors.primary_3,
+    fontFamily: "Nunito-Regular",
+    fontSize: 12,
+    paddingBottom: 4,
+    paddingRight: 24,
+    position: "absolute",
+    alignSelf: "flex-end",
   },
 });
 

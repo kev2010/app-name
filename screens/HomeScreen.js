@@ -95,11 +95,11 @@ const HomeScreen = ({ navigation }) => {
   const bottomSheetRef = useRef(null);
 
   // variables
-  const snapPoints = useMemo(() => ["10.5%", "70%"], []);
+  const snapPoints = useMemo(() => ["10.5%", "85%"], []);
 
   const renderBackdrop = (props) => {
     return (
-      <BottomSheetBackdrop {...props} pressBehavior={"collapse"} opacity={0.25}>
+      <BottomSheetBackdrop {...props} pressBehavior={"collapse"} opacity={0}>
         <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }} />
       </BottomSheetBackdrop>
     );
@@ -150,7 +150,7 @@ const HomeScreen = ({ navigation }) => {
         <Feed navigation={navigation} uid={user.uid}></Feed>
       </View>
 
-      {/* TODO: The think backdrop has a sliver of a white border on the very top */}
+      {/* TODO: Need to test if this works on an actual android device */}
       <BottomSheet
         ref={bottomSheetRef}
         snapPoints={snapPoints}
