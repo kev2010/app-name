@@ -2,7 +2,12 @@
   "expo": {
     "name": "first-expo",
     "slug": "first-expo",
+    "privacy": "unlisted",
     "version": "1.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -18,13 +23,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.expo-test.thoughts"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.kev2018.firstexpo"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -38,6 +45,11 @@
           }
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "44e8fd18-ed88-433a-81ef-3517b0798e2a"
+      }
+    }
   }
 }

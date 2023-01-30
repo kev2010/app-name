@@ -14,7 +14,6 @@ import { userState } from "../globalState";
 import OutsideUserElement from "../components/OutsideUserElement.js";
 import { getUser, sendFriendRequest } from "../api";
 
-// TODO: Fix that tapping outside of the keyboard doesn't make the keyboard go away
 const ProfileScreen = ({ navigation, route }) => {
   const [user, setUser] = useRecoilState(userState);
   const [name, setName] = useState("");

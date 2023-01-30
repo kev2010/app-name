@@ -1,25 +1,28 @@
 import { StatusBar } from "expo-status-bar";
-import { View, SafeAreaView, StyleSheet, Text } from "react-native";
-import React, { useState, useEffect } from "react";
+import {
+  View,
+  SafeAreaView,
+  StyleSheet,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from "react-native";
+import React, { useState } from "react";
 import colors from "../assets/colors";
 import FriendsHeader from "../components/FriendsHeader";
 import FriendsDisplay from "../components/FriendsDisplay";
 import OutsideUsersDisplay from "../components/OutsideUsersDisplay";
-import SearchBar from "react-native-dynamic-search-bar";
+import { SearchBar } from "react-native-elements";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import RequestsDisplay from "../components/RequestsDisplay";
 
-// TODO: Fix that tapping outside of the keyboard doesn't make the keyboard go away
 const FriendsScreen = ({ navigation }) => {
-  const [clear, setClear] = useState(false);
-  const clearStyle = useClearStyle(clear);
   const [user, setUser] = useRecoilState(userState);
   const [filter, setFilter] = useState("");
   const [showFriends, setShowFriends] = useState(true);
 
   const goBack = () => {
-    navigation.navigate("Home");
+    navigation.goBack();
   };
 
   const displayFriends = () => {
@@ -31,88 +34,73 @@ const FriendsScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle={"light-content"} />
-      <FriendsHeader
-        goBack={goBack}
-        displayFriends={displayFriends}
-        displayRequests={displayRequests}
-        numRequests={user.friendRequests.length}
-      />
-      {showFriends ? (
-        <>
-          <SearchBar
-            placeholder="Add or search for friends!"
-            placeholderTextColor={colors.gray_3}
-            // onPress={() => alert("onPress")}
-            onChangeText={(text) => {
-              setClear(text.length > 0);
-              setFilter(text);
-            }}
-            style={styles.search}
-            textInputStyle={styles.searchText}
-            searchIconImageStyle={styles.searchIcon}
-            searchIconImageSource={require("../assets/searchIcon.png")}
-            clearIconImageSource={require("../assets/clear.png")}
-            onClearPress={() => {
-              setClear(false);
-              setFilter("");
-            }}
-            clearIconImageStyle={clearStyle}
-          />
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle={"light-content"} />
+        <FriendsHeader
+          goBack={goBack}
+          displayFriends={displayFriends}
+          displayRequests={displayRequests}
+          numRequests={user.friendRequests.length}
+        />
+        {showFriends ? (
+          <>
+            <SearchBar
+              containerStyle={styles.search}
+              inputContainerStyle={styles.inputContainer}
+              inputStyle={styles.searchText}
+              placeholder="Add or search for friends!"
+              placeholderTextColor={colors.gray_3}
+              onChangeText={(text) => {
+                setFilter(text);
+              }}
+              value={filter}
+            />
+            <View style={styles.display}>
+              <FriendsDisplay friends={user.friends} filter={filter} />
+              {filter.length >= 3 ? (
+                <OutsideUsersDisplay
+                  friends={user.friends}
+                  friendRequests={user.friendRequests}
+                  sent={user.sentRequests}
+                  text={filter}
+                />
+              ) : null}
+            </View>
+          </>
+        ) : (
           <View style={styles.display}>
-            <FriendsDisplay friends={user.friends} filter={filter} />
-            {filter.length >= 3 ? (
-              <OutsideUsersDisplay
-                friends={user.friends}
-                friendRequests={user.friendRequests}
-                sent={user.sentRequests}
-                text={filter}
-              />
-            ) : null}
+            <RequestsDisplay requests={user.friendRequests} />
           </View>
-        </>
-      ) : (
-        <View style={styles.display}>
-          <RequestsDisplay requests={user.friendRequests} />
-        </View>
-      )}
-    </SafeAreaView>
+        )}
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
-};
-
-const useClearStyle = (clear) => {
-  return {
-    opacity: clear ? 1 : 0,
-    // TODO: Quite arbitrary - maybe make this a Text component
-    width: 36,
-  };
 };
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
+    flex: 1,
     backgroundColor: colors.gray_1,
     alignItems: "center",
     marginTop: 24,
   },
   search: {
-    // backgroundColor: "pink",
+    backgroundColor: colors.gray_1,
+    borderTopWidth: 0,
+    borderBottomWidth: 0,
     marginTop: 8,
-    shadowOpacity: 0,
+    padding: 0,
     width: "85%",
+  },
+  inputContainer: {
+    backgroundColor: colors.almost_white,
+    borderRadius: 15,
   },
   searchText: {
     color: colors.gray_9,
     fontFamily: "Nunito-Regular",
     fontSize: 15,
-  },
-  searchIcon: {
-    width: 14,
-    height: 14,
-  },
-  clear: {
-    opacity: 0,
   },
   display: {
     width: "85%",

@@ -7,7 +7,6 @@ import { userState } from "../globalState";
 import colors from "../assets/colors";
 import { sendFriendRequest } from "../api";
 
-// TODO: Fix bug where first press on screen makes the keyboard disappear, and then second press interacts
 // TODO: Fix bug where typing fast puts multiple results in the search
 // TODO: UX where your current friend requests DON'T show up in "OutsideUsersDisplay" not exactly intuitive, but easy to implement code wise lol. Eventually, should show friend requests in a seperate table in same screen.
 const OutsideUsersDisplay = ({ friends, friendRequests, sent, text }) => {
@@ -69,6 +68,7 @@ const OutsideUsersDisplay = ({ friends, friendRequests, sent, text }) => {
     <>
       {data.length > 0 ? <Text style={styles.header}>Other</Text> : null}
       <FlatList
+        keyboardShouldPersistTaps={"always"}
         onLayout={(event) => setLayout(event.nativeEvent.layout)}
         data={data}
         renderItem={({ item }) => (

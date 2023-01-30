@@ -60,6 +60,7 @@ const FriendsDisplay = ({ friends, filter }) => {
         <Text style={styles.header}>My Friends ({data.length})</Text>
       ) : null}
       <FlatList
+        keyboardShouldPersistTaps={"always"}
         onLayout={(event) => setLayout(event.nativeEvent.layout)}
         data={data.filter(
           (item) => item.name.includes(filter) || item.username.includes(filter)

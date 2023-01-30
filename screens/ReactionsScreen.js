@@ -21,15 +21,13 @@ import { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { getUser, getReactions } from "../api";
 import { calculateTimeDiffFromNow } from "../helpers";
 
-// TODO: Fix that tapping outside of the keyboard doesn't make the keyboard go away
 const ReactionsScreen = ({ navigation, route }) => {
   const [swiped, setSwipe] = useState(false);
   const [data, setData] = useState([]);
   const [initialLoading, setInitialLoading] = useState(true);
-  // TODO: Make sure that going back to home doesn't reset the thread and scroll up
-  // TODO: Unclutter like in HomeScreen by moving bottom sheet to a separate
+  // TODO: Unclutter like in HomeScreen by moving bottom sheet to a separate component
   const goBack = () => {
-    navigation.navigate("Home");
+    navigation.goBack();
   };
 
   // TODO: This is an extremely hacky solution. For some reason, the Bottom Sheet component I used online (screw outside components holy crap) calls onChange on render, which is why we have to pass in !swiped instead of swiped. E.g. if we pass "swiped" (initialized to false) to the components, then, ON RENDER, onChange is fired, which calls "handleBottomSheetSwipe" immediately, which then changed swiped to true. This means that the page effectively loads with swiped=true so the keyboard pops up.
