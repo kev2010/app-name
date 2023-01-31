@@ -17,11 +17,6 @@ import colors from "../assets/colors";
 import { userState } from "../globalState";
 import { CONSTANTS } from "../constants";
 
-// TODO: Move these constants into seperate file
-const MAX_LENGTH = 500;
-const KEYBOARD_OFFSET = 16;
-const INPUT_OFFSET = 48;
-
 const Think = ({ swiped, submitted }) => {
   // TODO: disable keyboard when the bottom sheet is deactivated (currently can click on the "hidden" component and keyboard will come up)
   const [thought, setThought] = useState("");
@@ -37,22 +32,26 @@ const Think = ({ swiped, submitted }) => {
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
 
   useEffect(() => {
-    if (swiped) {
-      inputRef.current.focus();
-    } else {
-      Keyboard.dismiss();
-    }
-    const keyboardDidShow = (event) => {
-      const { endCoordinates } = event;
-      const spacing = endCoordinates.height + CONSTANTS.KEYBOARD_OFFSET;
-      setTextContainerBottom(spacing);
-    };
-    setKeyboardDidShowListener(
-      Keyboard.addListener("keyboardDidShow", keyboardDidShow)
-    );
-    return () => {
-      if (keyboardDidShowListener) keyboardDidShowListener.remove();
-    };
+    // TODO: This is messy, but somehow needed for Android devices to work properly? The keyboard doesn't show up otherwise
+    setTimeout(() => {
+      if (swiped) {
+        inputRef.current.blur();
+        inputRef.current.focus();
+      } else {
+        Keyboard.dismiss();
+      }
+      const keyboardDidShow = (event) => {
+        const { endCoordinates } = event;
+        const spacing = endCoordinates.height + CONSTANTS.KEYBOARD_OFFSET;
+        setTextContainerBottom(spacing);
+      };
+      setKeyboardDidShowListener(
+        Keyboard.addListener("keyboardDidShow", keyboardDidShow)
+      );
+      return () => {
+        if (keyboardDidShowListener) keyboardDidShowListener.remove();
+      };
+    }, 100);
   }, [swiped]);
 
   const inputRef = React.createRef();
@@ -85,6 +84,7 @@ const Think = ({ swiped, submitted }) => {
     <View style={[styles.thinkContainer, hide]}>
       <TextInput
         ref={inputRef}
+        caretHidden={false}
         scrollEnabled={true}
         autoFocus={swiped}
         style={[styles.input, inputStyle]}
@@ -147,7 +147,7 @@ const useInputStyle = (textContainerBottom) => {
   // On Android, the keyboard adjustment happens automatically
   return {
     marginBottom:
-      INPUT_OFFSET +
+      CONSTANTS.INPUT_OFFSET +
       (Platform.OS === "ios" ? textContainerBottom : CONSTANTS.KEYBOARD_OFFSET),
   };
 };
@@ -165,6 +165,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     // Much needed for android - not well documented. See https://github.com/facebook/react-native/issues/13897
     textAlignVertical: "top",
+    backgroundColor: "pink",
   },
   controls: {
     position: "absolute",
