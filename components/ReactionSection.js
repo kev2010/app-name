@@ -1,15 +1,6 @@
-import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  FlatList,
-  View,
-  TouchableOpacity,
-  Text,
-  RefreshControl,
-} from "react-native";
-import Thought from "./Thought";
+import React from "react";
+import { StyleSheet, FlatList, View, Text } from "react-native";
 import Comment from "./Comment";
-import { getUser, getReactions } from "../api";
 import colors from "../assets/colors";
 
 const ReactionSection = ({ navigation, data }) => {
@@ -17,7 +8,7 @@ const ReactionSection = ({ navigation, data }) => {
   // TODO: grab thoughts as you scroll vs. all at once
   // TODO: have a default thing shown for no reactions
 
-  return (
+  return data.length > 0 ? (
     <FlatList
       contentContainerStyle={styles.reactions}
       data={data}
@@ -35,6 +26,11 @@ const ReactionSection = ({ navigation, data }) => {
       )}
       keyExtractor={(item) => item.id}
     />
+  ) : (
+    <View style={styles.empty}>
+      <Text style={styles.thought}>💭</Text>
+      <Text style={styles.subtitle}>No reactions yet!</Text>
+    </View>
   );
 };
 
@@ -48,6 +44,20 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     width: "90%",
     alignSelf: "center",
+  },
+  empty: {
+    marginTop: 24,
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  thought: {
+    fontSize: 48,
+  },
+  subtitle: {
+    color: colors.gray_5,
+    fontFamily: "Nunito-SemiBold",
+    fontSize: 20,
   },
 });
 

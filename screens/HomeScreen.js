@@ -22,15 +22,6 @@ import { getUser } from "../api";
 import { userState } from "../globalState";
 
 const HomeScreen = ({ navigation }) => {
-  // const [refreshing, setRefreshing] = React.useState(false);
-
-  // TODO: Allow refresh of feed
-  // const onRefresh = () => {
-  //   setRefreshing(true);
-  //   setItems([...Items, { key: 69, item: "item 69" }]);
-  //   setRefreshing(false);
-  // };
-  // TODO: Empty state of feed
   // TODO: Make keyboard go away when you switch between screens - for some reason it defaults to being active
   // TODO: Make BottomSheet a separate component to unclutter
 
@@ -134,7 +125,11 @@ const HomeScreen = ({ navigation }) => {
             />
           </TouchableOpacity>
           <TouchableOpacity onPress={goToFriendsScreen}>
-            <FriendsIcon hasNotification={user.friendRequests.length > 0} />
+            <FriendsIcon
+              hasNotification={
+                user.friendRequests && user.friendRequests.length > 0
+              }
+            />
           </TouchableOpacity>
         </View>
         <View style={styles.feed}>

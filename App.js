@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { SafeAreaView, StyleSheet, View, Text } from "react-native";
 import React, { useCallback } from "react";
 import colors from "./assets/colors";
 import { useFonts } from "expo-font";
@@ -42,9 +42,17 @@ export default function App() {
   }
 
   return (
-    <RecoilRoot>
-      <Nav onLayout={onLayoutRootView} />
-    </RecoilRoot>
+    <React.Suspense
+      fallback={
+        <View>
+          <Text>Loading</Text>
+        </View>
+      }
+    >
+      <RecoilRoot>
+        <Nav onLayout={onLayoutRootView} />
+      </RecoilRoot>
+    </React.Suspense>
   );
 }
 
