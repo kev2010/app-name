@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
   },
   display: {
     width: "85%",
+    flex: 1,
     // height: "100%",
     marginTop: 24,
   },

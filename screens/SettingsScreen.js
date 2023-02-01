@@ -12,7 +12,6 @@ import colors from "../assets/colors";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 
-// TODO: Fix that tapping outside of the keyboard doesn't make the keyboard go away
 const SettingsScreen = ({ navigation }) => {
   const [user, setUser] = useRecoilState(userState);
   const goBack = () => {

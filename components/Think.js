@@ -165,7 +165,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 24,
     // Much needed for android - not well documented. See https://github.com/facebook/react-native/issues/13897
     textAlignVertical: "top",
-    backgroundColor: "pink",
   },
   controls: {
     position: "absolute",

@@ -62,7 +62,6 @@ const VerificationScreen = ({ navigation, route }) => {
               sentRequests: userSent,
             });
           } else {
-            // TODO: Remove?
             setUser({ ...userCredential.user, name: route.params.paramKey });
             navigation.navigate("Username");
           }

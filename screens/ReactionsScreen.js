@@ -143,7 +143,6 @@ const ReactionsScreen = ({ navigation, route }) => {
             uid={route.params.id}
           />
         </View>
-        {/* TODO: The think backdrop has a sliver of a white border on the very top */}
         <BottomSheet
           ref={bottomSheetRef}
           snapPoints={snapPoints}
@@ -153,13 +152,8 @@ const ReactionsScreen = ({ navigation, route }) => {
           enabledContentTapInteraction={true}
           style={styles.sheet}
           handleComponent={({ animatedIndex, animatedPosition }) => (
-            <Handle
-              // animatedIndex={animatedIndex}
-              // animatedPosition={animatedPosition}
-              onPress={onPressSheet}
-              swiped={!swiped}
-            />
-          )} // WHYYY? TODO @RAPH
+            <Handle onPress={onPressSheet} swiped={!swiped} />
+          )}
         >
           <GiveComment
             thoughtUID={route.params.id}

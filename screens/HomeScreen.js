@@ -33,7 +33,7 @@ const HomeScreen = ({ navigation }) => {
   const [user, setUser] = useRecoilState(userState);
 
   const getFriendsData = () => {
-    // TODO: Figure out why the heck I can't set recoil state user with list of firebase userrefs (throws "FIRESTORE (9.15.0) INTERNAL ASSERTION FAILED: Unexpected state" & others)
+    // Can't set recoil state user with list of firebase userrefs (throws "FIRESTORE (9.15.0) INTERNAL ASSERTION FAILED: Unexpected state" & others)
     // Temporary workaround/fix is to store the document IDs (the UID of friends) instead of the firebase userRef
     getUser(user.uid).then((currentUser) => {
       const userFriends = currentUser.data().friends.map((userRef) => {
@@ -164,7 +164,6 @@ const HomeScreen = ({ navigation }) => {
         <Feed navigation={navigation} uid={user.uid}></Feed>
       </View>
 
-      {/* TODO: Need to test if this works on an actual android device */}
       <BottomSheet
         ref={bottomSheetRef}
         snapPoints={snapPoints}
@@ -173,14 +172,9 @@ const HomeScreen = ({ navigation }) => {
         backdropComponent={renderBackdrop}
         enabledContentTapInteraction={true}
         style={styles.sheet}
-        handleComponent={({ animatedIndex, animatedPosition }) => (
-          <Handle
-            // animatedIndex={animatedIndex}
-            // animatedPosition={animatedPosition}
-            onPress={onPressSheet}
-            swiped={!swiped}
-          />
-        )} // WHYYY? TODO @RAPH
+        handleComponent={() => (
+          <Handle onPress={onPressSheet} swiped={!swiped} />
+        )}
       >
         <Think swiped={!swiped} submitted={submitted}></Think>
       </BottomSheet>

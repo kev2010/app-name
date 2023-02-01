@@ -15,7 +15,6 @@ import { userState } from "../globalState";
 import colors from "../assets/colors";
 import { createUser, checkUniqueUsername } from "../api";
 
-// TODO: HANDLE LOGIC WHERE USER W/ PHONE NUMBER ALREADY EXISTS
 const UsernameScreen = ({ route, navigation }) => {
   const validUsernameChars = /^[a-z0-9_]+$/;
   const [user, setUser] = useRecoilState(userState);

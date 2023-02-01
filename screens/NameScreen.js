@@ -17,9 +17,6 @@ const NameScreen = ({ navigation }) => {
   const [disable, setDisable] = useState(true);
   const inputRef = React.createRef();
   const continueStyle = useContinueStyle(fullName);
-
-  // TODO: Issue where the button lies right above the keyboard on iphone, but somehow gets bolted up on android? Temporary fix is to just place the buttons right below the text input
-
   // TODO: For android devices with a notch: https://stackoverflow.com/questions/51289587/how-to-use-safeareaview-for-android-notch-devices
 
   // TODO: There is a lot of duplicated code with positioning the continue button right above the keyboard (need to manually do it for iOS, but it's automatic for Android). The same pattern is used for all continue buttons on Name, Phone, Verification, and Username screen. Also for the Think button! Perhaps make this a component or figure out a better solution.

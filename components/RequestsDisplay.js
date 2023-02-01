@@ -16,6 +16,7 @@ const RequestsDisplay = ({ requests }) => {
 
   // TODO: This is basically a duplicate of the FriendsDisplay function. At some point, there might be a cleaner solution here to not repeat the code
   const getRequestsInfo = (requests) => {
+    console.log("counting!", requests.length, requests);
     // TODO: Decide whether we should be doing this logic (converting array of userRefs to array of user objects) in the home screen, friends screen, or here)
     requests.forEach((uid) => {
       getUser(uid).then((user) => {
@@ -68,30 +69,27 @@ const RequestsDisplay = ({ requests }) => {
     });
   };
 
-  return (
-    // TODO: Set up a default display when there are 0 friend requests
-    requests.length > 0 ? (
-      <FlatList
-        onLayout={(event) => setLayout(event.nativeEvent.layout)}
-        data={data.sort((a, b) => a.name.localeCompare(b.name))}
-        renderItem={({ item }) => (
-          <RequestElement
-            name={item.name}
-            username={item.username}
-            uid={item.uid}
-            acceptRequest={acceptRequest}
-            rejectRequest={rejectRequest}
-            layout={layout}
-          />
-        )}
-        keyExtractor={(item) => item.uid}
-      />
-    ) : (
-      <View style={styles.empty}>
-        <Text style={styles.emoji}>😮</Text>
-        <Text style={styles.subtitle}>No requests!</Text>
-      </View>
-    )
+  return requests.length > 0 ? (
+    <FlatList
+      onLayout={(event) => setLayout(event.nativeEvent.layout)}
+      data={data.sort((a, b) => a.name.localeCompare(b.name))}
+      renderItem={({ item }) => (
+        <RequestElement
+          name={item.name}
+          username={item.username}
+          uid={item.uid}
+          acceptRequest={acceptRequest}
+          rejectRequest={rejectRequest}
+          layout={layout}
+        />
+      )}
+      keyExtractor={(item) => item.uid}
+    />
+  ) : (
+    <View style={styles.empty}>
+      <Text style={styles.emoji}>😮</Text>
+      <Text style={styles.subtitle}>No requests yet!</Text>
+    </View>
   );
 };
 
