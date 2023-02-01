@@ -136,9 +136,7 @@ export async function addComment(thoughtUID, userUID, comment) {
 export async function getReactions(thoughtUID) {
   return new Promise((resolve, reject) => {
     const reactionsRef = collection(db, `thoughts/${thoughtUID}/reactions`);
-    // Note to order by the REVERSE of what you want since Reactions data (in ReactionsScreen.js) pushes new data at the beginning of the array vs. the end
-    // So if data is in ASCENDING order, Reactions data will appear to be in DESCENDING since the first element becomes the last when it's pushed into the stack
-    getDocs(query(reactionsRef, orderBy("time", "asc"))).then((result) => {
+    getDocs(query(reactionsRef)).then((result) => {
       resolve(result);
     });
   });

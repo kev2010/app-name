@@ -55,5 +55,3 @@ export default function App() {
     </React.Suspense>
   );
 }
-
-const styles = StyleSheet.create({});

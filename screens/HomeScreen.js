@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
   },
   displayFeed: {
     flex: 1,
-    width: "90%",
+    width: "94%",
     // Needed so that you can see the last element - a hacky solution
     marginBottom: 32,
     borderRadius: 15,

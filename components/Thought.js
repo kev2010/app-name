@@ -109,8 +109,8 @@ const styles = StyleSheet.create({
   name: {
     marginRight: 8,
     color: colors.gray_9,
-    fontSize: 14,
-    fontFamily: "Nunito-SemiBold",
+    fontSize: 16,
+    fontFamily: "Nunito-ExtraBold",
   },
   time: {
     color: colors.gray_3,

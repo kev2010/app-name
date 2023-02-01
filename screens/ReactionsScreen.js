@@ -55,6 +55,7 @@ const ReactionsScreen = ({ navigation, route }) => {
                 time: calculateTimeDiffFromNow(
                   reactionDoc.data().time.toDate()
                 ),
+                rawTime: reactionDoc.data().time,
               },
               ...data,
             ]);
@@ -139,7 +140,9 @@ const ReactionsScreen = ({ navigation, route }) => {
         <View style={styles.reactions}>
           <ReactionSection
             navigation={navigation}
-            data={data}
+            data={data.sort(function (x, y) {
+              return y.rawTime - x.rawTime;
+            })}
             uid={route.params.id}
           />
         </View>
@@ -188,7 +191,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   original: {
-    width: "90%",
+    width: "94%",
   },
   top: {
     flexDirection: "row",
@@ -217,7 +220,7 @@ const styles = StyleSheet.create({
   },
   reactions: {
     flex: 1,
-    width: "90%",
+    width: "94%",
     marginTop: 12,
     // Needed so that you can see the last element - a hacky solution
     marginBottom: 32,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import colors from "../assets/colors";
 import { useRecoilState } from "recoil";
@@ -19,21 +19,19 @@ const Comment = (props) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.row1}>
-        <TouchableOpacity style={styles.profile} onPress={goToProfile}>
-          <Image
-            style={styles.profileImage}
-            source={require("../assets/default.jpeg")}
-            //   source={{uri: props.img}}
-            //   resizeMode="stretch"
-          />
-          <Text style={styles.name}>{props.name}</Text>
-          <Text style={styles.time}>{props.time}</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.row2}>
-        <Text style={styles.text}>{props.comment}</Text>
-      </View>
+      <TouchableOpacity style={styles.profile} onPress={goToProfile}>
+        <Image
+          style={styles.profileImage}
+          source={require("../assets/default.jpeg")}
+        />
+        <View style={styles.column}>
+          <View style={styles.row}>
+            <Text style={styles.name}>{props.name}</Text>
+            <Text style={styles.time}>{props.time}</Text>
+          </View>
+          <Text style={styles.text}>{props.comment}</Text>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -42,21 +40,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-around",
-    paddingHorizontal: 24,
-    paddingVertical: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   profile: {
     flexDirection: "row",
-    alignItems: "center",
   },
-  row1: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
+  column: {
+    alignItems: "flex-start",
+    flex: 1,
   },
-  row2: {
+  row: {
     flexDirection: "row",
-    marginBottom: 8,
+    marginBottom: 4,
   },
   profileImage: {
     width: 32,
@@ -67,13 +63,15 @@ const styles = StyleSheet.create({
   name: {
     marginRight: 8,
     color: colors.gray_9,
-    fontSize: 14,
-    fontFamily: "Nunito-SemiBold",
+    fontSize: 16,
+    fontFamily: "Nunito-ExtraBold",
+    lineHeight: 20,
   },
   time: {
     color: colors.gray_3,
     fontSize: 14,
     fontFamily: "Nunito-Regular",
+    lineHeight: 20,
   },
   text: {
     fontSize: 16,

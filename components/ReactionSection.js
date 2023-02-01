@@ -19,7 +19,6 @@ const ReactionSection = ({ navigation, data }) => {
             time={item.time}
             comment={item.text}
           />
-          <View style={styles.divider} />
         </>
       )}
       keyExtractor={(item) => item.id}
@@ -27,7 +26,7 @@ const ReactionSection = ({ navigation, data }) => {
   ) : (
     <View style={styles.empty}>
       <Text style={styles.thought}>💭</Text>
-      <Text style={styles.subtitle}>No reactions yet!</Text>
+      <Text style={styles.subtitle}>No chat yet!</Text>
     </View>
   );
 };
@@ -36,6 +35,7 @@ const styles = StyleSheet.create({
   reactions: {
     backgroundColor: colors.almost_white,
     borderRadius: 15,
+    paddingVertical: 10,
   },
   divider: {
     borderBottomColor: colors.gray_2,
