@@ -4,9 +4,7 @@ import Comment from "./Comment";
 import colors from "../assets/colors";
 
 const ReactionSection = ({ navigation, data }) => {
-  // TODO: add loading hook?
   // TODO: grab thoughts as you scroll vs. all at once
-  // TODO: have a default thing shown for no reactions
 
   return data.length > 0 ? (
     <FlatList

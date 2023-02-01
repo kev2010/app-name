@@ -6,7 +6,6 @@ import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import colors from "../assets/colors";
 
-// TODO: Do alphabetic sorting
 const FriendsDisplay = ({ friends, filter }) => {
   const [user, setUser] = useRecoilState(userState);
   const [data, setData] = useState([]);
@@ -62,9 +61,12 @@ const FriendsDisplay = ({ friends, filter }) => {
       <FlatList
         keyboardShouldPersistTaps={"always"}
         onLayout={(event) => setLayout(event.nativeEvent.layout)}
-        data={data.filter(
-          (item) => item.name.includes(filter) || item.username.includes(filter)
-        )}
+        data={data
+          .filter(
+            (item) =>
+              item.name.includes(filter) || item.username.includes(filter)
+          )
+          .sort((a, b) => a.name.localeCompare(b.name))}
         renderItem={({ item }) => (
           <FriendElement
             name={item.name}

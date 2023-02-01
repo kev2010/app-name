@@ -1,4 +1,4 @@
-import { StyleSheet, FlatList, Text } from "react-native";
+import { StyleSheet, FlatList, Text, View } from "react-native";
 import React, { useState, useEffect } from "react";
 import RequestElement from "./RequestElement";
 import { getUser, addFriend, deleteFriendRequest } from "../api";
@@ -6,7 +6,6 @@ import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import colors from "../assets/colors";
 
-// TODO: Do alphabetic sorting
 const RequestsDisplay = ({ requests }) => {
   const [user, setUser] = useRecoilState(userState);
   const [data, setData] = useState([]);
@@ -71,11 +70,10 @@ const RequestsDisplay = ({ requests }) => {
 
   return (
     // TODO: Set up a default display when there are 0 friend requests
-    <>
-      {/* <Text style={styles.header}>All Requests</Text> */}
+    requests.length > 0 ? (
       <FlatList
         onLayout={(event) => setLayout(event.nativeEvent.layout)}
-        data={data}
+        data={data.sort((a, b) => a.name.localeCompare(b.name))}
         renderItem={({ item }) => (
           <RequestElement
             name={item.name}
@@ -88,16 +86,30 @@ const RequestsDisplay = ({ requests }) => {
         )}
         keyExtractor={(item) => item.uid}
       />
-    </>
+    ) : (
+      <View style={styles.empty}>
+        <Text style={styles.emoji}>😮</Text>
+        <Text style={styles.subtitle}>No requests!</Text>
+      </View>
+    )
   );
 };
 
 const styles = StyleSheet.create({
-  header: {
-    color: colors.gray_3,
+  empty: {
+    marginTop: 24,
+    flex: 1,
+    flexDirection: "column",
+    alignItems: "center",
+    // backgroundColor: "purple",
+  },
+  emoji: {
+    fontSize: 48,
+  },
+  subtitle: {
+    color: colors.gray_5,
     fontFamily: "Nunito-SemiBold",
-    fontSize: 16,
-    marginBottom: 16,
+    fontSize: 20,
   },
 });
 
