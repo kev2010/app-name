@@ -30,8 +30,6 @@ const Handle = ({ swiped, onPress }) => {
   };
 
   useEffect(() => {
-    console.log("handle", swiped);
-
     Animated.timing(rotate, {
       toValue: swiped ? 180 : 0,
       duration: 1000,

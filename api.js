@@ -118,21 +118,27 @@ export async function addThought(uid, thought) {
 }
 
 export async function addComment(thoughtUID, userUID, comment) {
-  const currentUserRef = doc(db, "users", userUID);
-  const originalThoughtRef = doc(db, "thoughts", thoughtUID);
-  const reactionsRef = collection(db, `thoughts/${thoughtUID}/reactions`);
-  await addDoc(reactionsRef, {
-    name: currentUserRef,
-    originalThought: originalThoughtRef,
-    text: comment,
-    time: serverTimestamp(),
+  return new Promise((resolve, reject) => {
+    const currentUserRef = doc(db, "users", userUID);
+    const originalThoughtRef = doc(db, "thoughts", thoughtUID);
+    const reactionsRef = collection(db, `thoughts/${thoughtUID}/reactions`);
+    addDoc(reactionsRef, {
+      name: currentUserRef,
+      originalThought: originalThoughtRef,
+      text: comment,
+      time: serverTimestamp(),
+    }).then(() => {
+      resolve(true);
+    });
   });
 }
 
 export async function getReactions(thoughtUID) {
   return new Promise((resolve, reject) => {
     const reactionsRef = collection(db, `thoughts/${thoughtUID}/reactions`);
-    getDocs(query(reactionsRef, orderBy("time", "desc"))).then((result) => {
+    // Note to order by the REVERSE of what you want since Reactions data (in ReactionsScreen.js) pushes new data at the beginning of the array vs. the end
+    // So if data is in ASCENDING order, Reactions data will appear to be in DESCENDING since the first element becomes the last when it's pushed into the stack
+    getDocs(query(reactionsRef, orderBy("time", "asc"))).then((result) => {
       resolve(result);
     });
   });

@@ -47,7 +47,6 @@ const ReactionsScreen = ({ navigation, route }) => {
           if (!found) {
             // IMPORTANT: Need to use a function to create a new array since state updates are asynchronous or sometimes batched.
             setData((data) => [
-              ...data,
               {
                 id: reactionDoc.id,
                 creatorID: user.id,
@@ -57,6 +56,7 @@ const ReactionsScreen = ({ navigation, route }) => {
                   reactionDoc.data().time.toDate()
                 ),
               },
+              ...data,
             ]);
           }
         });

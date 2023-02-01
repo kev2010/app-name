@@ -109,7 +109,6 @@ const HomeScreen = ({ navigation }) => {
   const handleBottomSheetSwipe = () => {
     Keyboard.dismiss;
     setSwipe(!swiped);
-    console.log("logs", swiped);
   };
 
   return (

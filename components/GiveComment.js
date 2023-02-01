@@ -111,7 +111,7 @@ const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
       </Text>
     </View>
   ) : (
-    <Text style={styles.default}>Think with others here!</Text>
+    <Text style={styles.default}>React here!</Text>
   );
 };
 

@@ -44,7 +44,7 @@ const Thought = (props) => {
       <View
         style={[
           styles.row2,
-          { marginBottom: props.collabs.length > 0 ? 16 : 12 },
+          { marginBottom: props.collabs.length > 0 ? 16 : 8 },
         ]}
       >
         {/* See https://github.com/joshswan/react-native-autolink */}
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   row1: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 12,
   },
   row2: {
     flexDirection: "row",
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito-Regular",
   },
   text: {
-    fontSize: 14,
+    fontSize: 16,
     lineHeight: 24,
     color: colors.primary_9,
     fontFamily: "Nunito-Regular",

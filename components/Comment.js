@@ -44,7 +44,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     paddingHorizontal: 24,
     paddingVertical: 16,
-    marginBottom: 16,
   },
   profile: {
     flexDirection: "row",
@@ -53,7 +52,7 @@ const styles = StyleSheet.create({
   row1: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 12,
   },
   row2: {
     flexDirection: "row",
@@ -77,7 +76,7 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito-Regular",
   },
   text: {
-    fontSize: 14,
+    fontSize: 16,
     color: colors.primary_9,
     fontFamily: "Nunito-Regular",
   },
