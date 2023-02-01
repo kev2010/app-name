@@ -1,4 +1,4 @@
-import { StyleSheet, FlatList, Text } from "react-native";
+import { StyleSheet, FlatList, Text, View } from "react-native";
 import React, { useState, useEffect } from "react";
 import FriendElement from "./FriendElement";
 import { getUser, removeFriend } from "../api";
@@ -52,12 +52,13 @@ const FriendsDisplay = ({ friends, filter }) => {
   };
 
   return (
-    <>
+    <View>
       {data.filter(
         (item) => item.name.includes(filter) || item.username.includes(filter)
       ).length > 0 ? (
         <Text style={styles.header}>My Friends ({data.length})</Text>
       ) : null}
+      {/* <View> */}
       <FlatList
         keyboardShouldPersistTaps={"always"}
         onLayout={(event) => setLayout(event.nativeEvent.layout)}
@@ -78,7 +79,8 @@ const FriendsDisplay = ({ friends, filter }) => {
         )}
         keyExtractor={(item) => item.uid}
       />
-    </>
+      {/* </View> */}
+    </View>
   );
 };
 

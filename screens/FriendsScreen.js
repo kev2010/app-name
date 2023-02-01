@@ -1,6 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import {
   View,
+  Text,
   SafeAreaView,
   StyleSheet,
   Keyboard,
@@ -43,6 +44,7 @@ const FriendsScreen = ({ navigation }) => {
           displayRequests={displayRequests}
           numRequests={user.friendRequests.length}
         />
+        <Text style={styles.close}>Keep it to close friends!</Text>
         {showFriends ? (
           <>
             <SearchBar
@@ -85,6 +87,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 24,
   },
+  close: {
+    color: colors.gray_5,
+    fontFamily: "Nunito-SemiBold",
+    fontSize: 14,
+    marginBottom: 8,
+  },
   search: {
     backgroundColor: colors.gray_1,
     borderTopWidth: 0,
@@ -100,7 +108,7 @@ const styles = StyleSheet.create({
   searchText: {
     color: colors.gray_9,
     fontFamily: "Nunito-Regular",
-    fontSize: 15,
+    fontSize: 16,
   },
   display: {
     width: "85%",

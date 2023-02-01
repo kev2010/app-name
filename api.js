@@ -13,7 +13,6 @@ import {
   limit,
   arrayUnion,
   serverTimestamp,
-  collectionGroup,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
@@ -64,7 +63,7 @@ export async function getThoughts(uid) {
       getUser(uid).then((currentUser) => {
         const allValid = [...currentUser.data().friends, currentUserRef];
         let cutoff = new Date();
-        cutoff.setDate(cutoff.getDate() - 3);
+        cutoff.setDate(cutoff.getDate() - 7);
         const q = query(
           collection(db, "thoughts"),
           where("name", "in", allValid),
