@@ -69,7 +69,7 @@ const ReactionsScreen = ({ navigation, route }) => {
   const bottomSheetRef = useRef(null);
 
   // variables
-  const snapPoints = useMemo(() => ["10.5%", "85%"], []);
+  const snapPoints = useMemo(() => ["11%", "85%"], []);
 
   const submitted = () => {
     refreshReactions();
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     width: "94%",
     marginTop: 12,
     // Needed so that you can see the last element - a hacky solution
-    marginBottom: 32,
+    marginBottom: 48,
     borderRadius: 15,
     overflow: "hidden",
   },

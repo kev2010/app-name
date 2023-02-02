@@ -87,7 +87,8 @@ const PhoneScreen = ({ navigation, route }) => {
       setVerificationId(verificationId);
       console.log("IDDDDD", verificationId);
     } catch (err) {
-      console.log(`Error: ${err.message}`);
+      console.log(`Error Phone: ${err.message}`);
+      navigation.goBack();
     }
   };
 
@@ -244,7 +245,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   input: {
-    // alignSelf: "stretch",
+    alignSelf: "stretch",
     // backgroundColor: "pink",
     padding: 0,
     color: colors.primary_9,

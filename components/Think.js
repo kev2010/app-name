@@ -28,6 +28,7 @@ const Think = ({ swiped, submitted }) => {
   const bottomStyle = useBottomStyle(textContainerBottom);
   const inputStyle = useInputStyle(textContainerBottom);
   const [disable, setDisable] = useState(true);
+  const inputRef = React.createRef();
 
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
 
@@ -53,8 +54,6 @@ const Think = ({ swiped, submitted }) => {
       };
     }, 100);
   }, [swiped]);
-
-  const inputRef = React.createRef();
 
   const onSubmit = () => {
     console.log("about to submit ", thought);

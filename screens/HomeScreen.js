@@ -56,6 +56,7 @@ const HomeScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
+    Keyboard.dismiss();
     getFriendsData();
   }, []);
 
@@ -73,6 +74,8 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
+  const shuffleFeed = () => {};
+
   const goToSettingsScreen = () => {
     navigation.navigate("Settings");
   };
@@ -86,7 +89,7 @@ const HomeScreen = ({ navigation }) => {
   const bottomSheetRef = useRef(null);
 
   // variables
-  const snapPoints = useMemo(() => ["10.5%", "85%"], []);
+  const snapPoints = useMemo(() => ["11%", "85%"], []);
 
   const renderBackdrop = (props) => {
     return (
@@ -98,7 +101,6 @@ const HomeScreen = ({ navigation }) => {
 
   const onPressSheet = () => {
     bottomSheetRef.current.snapToIndex(!swiped ? 0 : 1);
-    console.log("hello", swiped);
   };
 
   const submitted = () => {
@@ -139,6 +141,14 @@ const HomeScreen = ({ navigation }) => {
             <Text style={[styles.type, friendsStyle]}>Friends</Text>
           </TouchableOpacity>
         </View>
+        {/* <View style={styles.shuffle}>
+          <TouchableOpacity onPress={shuffleFeed}>
+            <Image
+              style={styles.shuffleButton}
+              source={require("../assets/shuffle.png")}
+            />
+          </TouchableOpacity>
+        </View> */}
       </View>
       <View
         style={[
@@ -214,6 +224,19 @@ const styles = StyleSheet.create({
     width: "100%",
     position: "absolute",
   },
+  shuffle: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    width: "100%",
+    position: "absolute",
+    marginTop: 16,
+  },
+  shuffleButton: {
+    width: 18,
+    height: 15,
+    alignSelf: "center",
+  },
   title: {
     color: colors.primary_5,
     fontFamily: "Nunito-Bold",
@@ -230,7 +253,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "94%",
     // Needed so that you can see the last element - a hacky solution
-    marginBottom: 32,
+    marginBottom: 48,
     borderRadius: 15,
     overflow: "hidden",
   },

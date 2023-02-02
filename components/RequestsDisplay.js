@@ -16,7 +16,6 @@ const RequestsDisplay = ({ requests }) => {
 
   // TODO: This is basically a duplicate of the FriendsDisplay function. At some point, there might be a cleaner solution here to not repeat the code
   const getRequestsInfo = (requests) => {
-    console.log("counting!", requests.length, requests);
     // TODO: Decide whether we should be doing this logic (converting array of userRefs to array of user objects) in the home screen, friends screen, or here)
     requests.forEach((uid) => {
       getUser(uid).then((user) => {
