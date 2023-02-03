@@ -59,13 +59,16 @@ const FriendsScreen = ({ navigation }) => {
               value={filter}
             />
             <View style={styles.display}>
-              <FriendsDisplay friends={user.friends} filter={filter} />
+              <FriendsDisplay
+                friends={user.friends}
+                filter={filter.toLowerCase()}
+              />
               {filter.length >= 3 ? (
                 <OutsideUsersDisplay
                   friends={user.friends}
                   friendRequests={user.friendRequests}
                   sent={user.sentRequests}
-                  text={filter}
+                  text={filter.toLowerCase()}
                 />
               ) : null}
             </View>

@@ -50,7 +50,7 @@ const UsernameScreen = ({ route, navigation }) => {
     if (validateUsername(username)) {
       checkUniqueUsername(username).then((unique) => {
         if (unique) {
-          createUser(user.uid, user.displayName, username);
+          createUser(user.uid, user.name, username);
           setUser({
             ...user,
             username: username,

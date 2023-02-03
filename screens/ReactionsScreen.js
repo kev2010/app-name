@@ -9,6 +9,7 @@ import {
   Keyboard,
   Pressable,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import Handle from "../components/Handle";
 import React, { useState, useRef, useMemo, useEffect } from "react";
@@ -126,7 +127,7 @@ const ReactionsScreen = ({ navigation, route }) => {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.original}>
+        <ScrollView style={styles.original}>
           <Thought
             navigation={navigation}
             creatorID={route.params.creatorID}
@@ -136,16 +137,16 @@ const ReactionsScreen = ({ navigation, route }) => {
             reactions={route.params.reactions}
             thought={route.params.thought}
           />
-        </View>
-        <View style={styles.reactions}>
-          <ReactionSection
-            navigation={navigation}
-            data={data.sort(function (x, y) {
-              return y.rawTime - x.rawTime;
-            })}
-            uid={route.params.id}
-          />
-        </View>
+          <View style={styles.reactions}>
+            <ReactionSection
+              navigation={navigation}
+              data={data.sort(function (x, y) {
+                return y.rawTime - x.rawTime;
+              })}
+              uid={route.params.id}
+            />
+          </View>
+        </ScrollView>
         <BottomSheet
           ref={bottomSheetRef}
           snapPoints={snapPoints}
@@ -220,7 +221,6 @@ const styles = StyleSheet.create({
   },
   reactions: {
     flex: 1,
-    width: "94%",
     marginTop: 12,
     // Needed so that you can see the last element - a hacky solution
     marginBottom: 48,

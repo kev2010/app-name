@@ -24,6 +24,18 @@ const Feed = ({ navigation, uid }) => {
   const [data, setData] = useState({});
   const [refreshing, setRefreshing] = useState(false);
 
+  const DEFAULT = [
+    {
+      id: 0,
+      creatorID: "TAKLar06V3UPXUMll72Kqj51CfG2",
+      name: "App Name",
+      time: calculateTimeDiffFromNow(new Date()),
+      collabs: ["Algorithm", "Admin", "Billy"],
+      reactions: 0,
+      thought: "Your feed is a bit empty! Try adding some friends 😎",
+    },
+  ];
+
   const refreshThoughts = () => {
     setRefreshing(true);
     getThoughts(uid).then((thoughts) => {
@@ -101,28 +113,30 @@ const Feed = ({ navigation, uid }) => {
       }
     />
   ) : (
-    <View style={styles.empty}>
-      <Text style={styles.thought}>💭</Text>
-      <Text style={styles.subtitle}>It’s a bit empty here!</Text>
-      <Text style={styles.subtitle}>Try adding some friends 😎</Text>
-    </View>
+    <FlatList
+      data={DEFAULT}
+      renderItem={({ item, index }) => (
+        <Thought
+          navigation={navigation}
+          creatorID={item.creatorID}
+          name={item.name}
+          time={item.time}
+          collabs={item.collabs}
+          reactions={item.reactions}
+          thought={item.thought}
+        />
+      )}
+      keyExtractor={(item) => item.id}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={refreshThoughts}
+          colors={[colors.primary_5]}
+          tintColor={colors.primary_3}
+        />
+      }
+    />
   );
 };
 
-const styles = StyleSheet.create({
-  empty: {
-    marginTop: 24,
-    flex: 1,
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  thought: {
-    fontSize: 48,
-  },
-  subtitle: {
-    color: colors.gray_5,
-    fontFamily: "Nunito-SemiBold",
-    fontSize: 20,
-  },
-});
 export default Feed;

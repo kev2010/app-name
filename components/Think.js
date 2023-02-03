@@ -19,6 +19,7 @@ import { CONSTANTS } from "../constants";
 
 const Think = ({ swiped, submitted }) => {
   // TODO: disable keyboard when the bottom sheet is deactivated (currently can click on the "hidden" component and keyboard will come up)
+  // TODO: can't tap to move cursor (have to hold down spacebar) - problem exists for Commenting too I think
   const [thought, setThought] = useState("");
   const audioStyle = useAudioStyle(thought);
   const submitStyle = useSubmitStyle(thought);

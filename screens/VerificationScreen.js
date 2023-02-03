@@ -87,9 +87,6 @@ const VerificationScreen = ({ navigation, route }) => {
         */
         checkUserExists(userCredential.user.uid).then((snapshot) => {
           if (snapshot.exists) {
-            console.log("snapshot exists!", snapshot);
-            console.log("user beforehand", user);
-
             // The reason for this complication is explain in the duplicate code in HomeScreen.js
             const userFriends = snapshot.data.friends.map((userRef) => {
               return userRef.id;

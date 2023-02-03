@@ -56,7 +56,7 @@ const Thought = (props) => {
         <View style={styles.actions}>
           <Image
             style={styles.stars}
-            source={require("../assets/stars.png")}
+            source={require("../assets/comment.png")}
             //   source={{uri: props.img}}
             // resizeMode="stretch"
           />
@@ -133,8 +133,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   stars: {
-    width: 12,
-    height: 16,
+    width: 14,
+    height: 14,
     marginRight: 8,
   },
   number: {

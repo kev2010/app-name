@@ -102,7 +102,7 @@ const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
           <ActivityIndicator size="small" color={colors.primary_5} />
         ) : (
           <TouchableOpacity onPress={onSubmit} disabled={disable}>
-            <Text style={[styles.think, submitStyle]}>Comment</Text>
+            <Text style={[styles.think, submitStyle]}>Send</Text>
           </TouchableOpacity>
         )}
       </Animated.View>

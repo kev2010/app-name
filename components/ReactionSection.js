@@ -7,23 +7,34 @@ const ReactionSection = ({ navigation, data }) => {
   // TODO: grab thoughts as you scroll vs. all at once
 
   return data.length > 0 ? (
-    <FlatList
-      contentContainerStyle={styles.reactions}
-      data={data}
-      renderItem={({ item }) => (
-        <>
-          <Comment
-            navigation={navigation}
-            creatorID={item.creatorID}
-            name={item.name}
-            time={item.time}
-            comment={item.text}
-          />
-        </>
-      )}
-      keyExtractor={(item) => item.id}
-    />
+    <View style={styles.reactions}>
+      {data.map((item) => (
+        <Comment
+          navigation={navigation}
+          creatorID={item.creatorID}
+          name={item.name}
+          time={item.time}
+          comment={item.text}
+        />
+      ))}
+    </View>
   ) : (
+    // <FlatList
+    //   contentContainerStyle={styles.reactions}
+    //   data={data}
+    //   renderItem={({ item }) => (
+    //     <>
+    //       <Comment
+    //         navigation={navigation}
+    //         creatorID={item.creatorID}
+    //         name={item.name}
+    //         time={item.time}
+    //         comment={item.text}
+    //       />
+    //     </>
+    //   )}
+    //   keyExtractor={(item) => item.id}
+    // />
     <View style={styles.empty}>
       <Text style={styles.thought}>💭</Text>
       <Text style={styles.subtitle}>No chat yet!</Text>

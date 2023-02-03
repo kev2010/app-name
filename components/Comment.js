@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import colors from "../assets/colors";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
+import Autolink from "react-native-autolink";
 
 const Comment = (props) => {
   const [user, setUser] = useRecoilState(userState);
@@ -29,7 +30,8 @@ const Comment = (props) => {
             <Text style={styles.name}>{props.name}</Text>
             <Text style={styles.time}>{props.time}</Text>
           </View>
-          <Text style={styles.text}>{props.comment}</Text>
+          {/* See https://github.com/joshswan/react-native-autolink */}
+          <Autolink style={styles.text} text={props.comment} />
         </View>
       </TouchableOpacity>
     </View>
