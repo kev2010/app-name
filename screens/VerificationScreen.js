@@ -98,13 +98,14 @@ const VerificationScreen = ({ navigation, route }) => {
               return userRef.id;
             });
 
-            setUser({
-              ...snapshot.data,
+            setUser((user) => ({
               uid: userCredential.user.uid,
               friends: userFriends,
               friendRequests: userRequests,
               sentRequests: userSent,
-            });
+              name: snapshot.data.name,
+              username: snapshot.data.username,
+            }));
             setLoading(false);
           } else {
             setUser({ ...userCredential.user, name: route.params.paramKey });

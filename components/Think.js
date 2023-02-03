@@ -7,15 +7,15 @@ import {
   Keyboard,
   TextInput,
   TouchableOpacity,
-  KeyboardAvoidingView,
   Animated,
   ActivityIndicator,
 } from "react-native";
 import { useRecoilState } from "recoil";
 import { addThought } from "../api";
 import colors from "../assets/colors";
-import { userState } from "../globalState";
+import { userState, feedDataState } from "../globalState";
 import { CONSTANTS } from "../constants";
+import { refreshFeed } from "../logic";
 
 const Think = ({ swiped, submitted }) => {
   // TODO: disable keyboard when the bottom sheet is deactivated (currently can click on the "hidden" component and keyboard will come up)
@@ -30,7 +30,7 @@ const Think = ({ swiped, submitted }) => {
   const inputStyle = useInputStyle(textContainerBottom);
   const [disable, setDisable] = useState(true);
   const inputRef = React.createRef();
-
+  const [feedData, setFeedData] = useRecoilState(feedDataState);
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
 
   useEffect(() => {
@@ -60,9 +60,12 @@ const Think = ({ swiped, submitted }) => {
     console.log("about to submit ", thought);
     setLoading(true);
     addThought(user.uid, thought).then(() => {
-      submitted();
-      setThought("");
-      setLoading(false);
+      refreshFeed(user.uid).then((data) => {
+        setFeedData(data);
+        submitted();
+        setThought("");
+        setLoading(false);
+      });
     });
   };
 

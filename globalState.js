@@ -37,3 +37,8 @@ export const verificationState = atom({
   key: "verificationState",
   default: "",
 });
+
+export const feedDataState = atom({
+  key: "feedDataState",
+  default: {},
+});

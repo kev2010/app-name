@@ -31,11 +31,13 @@ const HomeScreen = ({ navigation }) => {
   const friendsStyle = useFriendsStyle(friendsFeed);
   const [swiped, setSwipe] = useState(false);
   const [user, setUser] = useRecoilState(userState);
+  const [requestsNotification, setRequestsNotification] = useState(false);
 
   const getFriendsData = () => {
     // Can't set recoil state user with list of firebase userrefs (throws "FIRESTORE (9.15.0) INTERNAL ASSERTION FAILED: Unexpected state" & others)
     // Temporary workaround/fix is to store the document IDs (the UID of friends) instead of the firebase userRef
     getUser(user.uid).then((currentUser) => {
+      // TODO: Could set this as a regular JSON instead of just the ID to do one less firebase read
       const userFriends = currentUser.data().friends.map((userRef) => {
         return userRef.id;
       });
@@ -52,13 +54,21 @@ const HomeScreen = ({ navigation }) => {
         friendRequests: userRequests,
         sentRequests: userSent,
       }));
+      setRequestsNotification(userRequests.length > 0);
     });
   };
 
   useEffect(() => {
     Keyboard.dismiss();
-    getFriendsData();
-  }, []);
+    const unsubscribe = navigation.addListener("focus", () => {
+      // The screen is focused
+      // Call any action and update data
+      getFriendsData();
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
 
   const onPressGlobal = () => {
     if (!globalFeed) {
@@ -126,11 +136,7 @@ const HomeScreen = ({ navigation }) => {
             />
           </TouchableOpacity>
           <TouchableOpacity onPress={goToFriendsScreen}>
-            <FriendsIcon
-              hasNotification={
-                user.friendRequests && user.friendRequests.length > 0
-              }
-            />
+            <FriendsIcon hasNotification={requestsNotification} />
           </TouchableOpacity>
         </View>
         <View style={styles.feed}>

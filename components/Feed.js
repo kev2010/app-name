@@ -1,28 +1,18 @@
 import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Text,
-  RefreshControl,
-  View,
-} from "react-native";
+import { FlatList, TouchableOpacity, RefreshControl } from "react-native";
 import Thought from "./Thought";
-import {
-  getThoughts,
-  getUsersOfThoughts,
-  getCollabsOfThoughts,
-  getReactionsSizeOfThoughts,
-} from "../api";
 import colors from "../assets/colors";
 import { calculateTimeDiffFromNow } from "../helpers";
+import { refreshFeed } from "../logic";
+import { useRecoilState } from "recoil";
+import { feedDataState } from "../globalState";
 
 const Feed = ({ navigation, uid }) => {
   // TODO: Right now we're only grabbing thoughts in the past 3 days. We'll have to do some pagination later
   // See: https://www.google.com/search?q=how+to+load+a+feed+react+native+without+loading+a+ton+of+data+at+once&sxsrf=AJOqlzX4EO9TgZEKFx0oBmRud5J92fOyqA%3A1674762643643&ei=k9nSY9PnJuik5NoPkZGy4AQ&ved=0ahUKEwiT_dODgeb8AhVoElkFHZGIDEwQ4dUDCBA&uact=5&oq=how+to+load+a+feed+react+native+without+loading+a+ton+of+data+at+once&gs_lcp=Cgxnd3Mtd2l6LXNlcnAQAzoKCAAQRxDWBBCwAzoFCCEQoAE6CAghEBYQHhAdOgUIIRCrAkoECEEYAEoECEYYAFDOEFi0lQlgoJYJaAJwAXgDgAGcAogBjiiSAQYyMS44LjmYAQCgAQHIAQjAAQE&sclient=gws-wiz-serp
   // And: https://stackoverflow.com/questions/71285002/react-native-flatlist-handling-large-data
-  const [data, setData] = useState({});
   const [refreshing, setRefreshing] = useState(false);
+  const [feedData, setFeedData] = useRecoilState(feedDataState);
 
   const DEFAULT = [
     {
@@ -36,46 +26,30 @@ const Feed = ({ navigation, uid }) => {
     },
   ];
 
+  // TODO: Should this logic be placed in the Feed componenet or HomeScreen?
   const refreshThoughts = () => {
     setRefreshing(true);
-    getThoughts(uid).then((thoughts) => {
-      getUsersOfThoughts(thoughts).then((users) => {
-        getCollabsOfThoughts(thoughts).then((thoughtCollabs) => {
-          getReactionsSizeOfThoughts(thoughts).then((reactionSizes) => {
-            // thoughtCollabs = [[obj1, obj2], [obj3], ...]
-            var data = {};
-            for (var i = 0; i < thoughts.size; i++) {
-              const doc = thoughts.docs[i];
-              const user = users[i];
-              // Grab first name of each collaborator
-              const collabs = thoughtCollabs[i].map(
-                (user) => user.data().name.split(" ")[0]
-              );
-              data[doc.id] = {
-                id: doc.id,
-                creatorID: user.id,
-                name: user.data().name,
-                time: calculateTimeDiffFromNow(doc.data().time.toDate()),
-                collabs: collabs,
-                reactions: reactionSizes[i],
-                thought: doc.data().thought,
-              };
-            }
-            setData(data);
-            setRefreshing(false);
-          });
-        });
-      });
+    refreshFeed(uid).then((data) => {
+      setFeedData(data);
+      setRefreshing(false);
     });
   };
 
   useEffect(() => {
-    refreshThoughts();
-  }, []);
+    const unsubscribe = navigation.addListener("focus", () => {
+      // The screen is focused
+      // Call any action and update data
+      refreshThoughts();
+    });
 
-  return Object.values(data).length > 0 || refreshing ? (
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
+
+  // TODO: VirtualizedList: You have a large list that is slow to update - make sure your renderItem function renders components that follow React performance best practices like PureComponent, shouldComponentUpdate, etc. {"contentLength": 3376.666748046875, "dt": 866, "prevDt": 61523}
+  return Object.values(feedData).length > 0 || refreshing ? (
     <FlatList
-      data={Object.values(data)}
+      data={Object.values(feedData)}
       renderItem={({ item, index }) => (
         <TouchableOpacity
           key={index.toString()}
