@@ -27,20 +27,6 @@ const Thought = (props) => {
     }
   };
 
-  if (
-    props.thought ===
-    "If you update, you’ll see this cool meme I attached below 🤠"
-  ) {
-    // console.log("lookingtasdfdafs");
-    // console.log(props.name);
-    // console.log(props.time);
-    // console.log(props.collabs);
-    // console.log(props.thought);
-    // console.log(props.creatorID);
-    // console.log(props.reactions);
-    // console.log(props.imageURL);
-  }
-
   return (
     <View style={styles.container}>
       <View style={styles.row1}>
@@ -123,7 +109,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderColor: colors.gray_2,
     borderWidth: 0.5,
-    resizeMode: "center",
+    resizeMode: "contain",
   },
   row4: {
     justifyContent: "space-between",

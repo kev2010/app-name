@@ -3,9 +3,7 @@ import { TouchableOpacity, Text, Image, View, StyleSheet } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import colors from "../assets/colors";
 
-const UploadImage = ({ updateImage }) => {
-  const [image, setImage] = useState(null);
-
+const UploadImage = ({ image, updateImage }) => {
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -18,13 +16,11 @@ const UploadImage = ({ updateImage }) => {
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
       updateImage(result);
     }
   };
 
   const removeImage = () => {
-    setImage(null);
     updateImage(null);
   };
 
@@ -41,7 +37,7 @@ const UploadImage = ({ updateImage }) => {
       {image && (
         <View style={styles.imageContainer}>
           <TouchableOpacity onPress={pickImage}>
-            <Image source={{ uri: image }} style={styles.image} />
+            <Image source={{ uri: image.assets[0].uri }} style={styles.image} />
           </TouchableOpacity>
           <TouchableOpacity onPress={removeImage} style={styles.deleteButton}>
             <Image

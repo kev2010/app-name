@@ -130,7 +130,7 @@ const Think = ({ swiped, submitted }) => {
         )}
       </Animated.View>
       <View style={[styles.options, bottomStyle]}>
-        <UploadImage updateImage={updateImage} />
+        <UploadImage image={image} updateImage={updateImage} />
         <Text style={styles.charCount}>
           {thought.length}/{CONSTANTS.MAX_LENGTH}
         </Text>
