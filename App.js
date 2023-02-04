@@ -27,8 +27,10 @@ export default function App() {
     require("./assets/searchIcon.png"),
     require("./assets/default.jpeg"),
     require("./assets/audio.png"),
+    require("./assets/camera.png"),
     require("./assets/remove.png"),
     require("./assets/friendsIcon.png"),
+    require("./assets/delete.png"),
   ]);
 
   const onLayoutRootView = useCallback(async () => {

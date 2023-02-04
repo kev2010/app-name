@@ -199,14 +199,14 @@ const HomeScreen = ({ navigation }) => {
 
 const useGlobalStyle = (globalFeed) => {
   return {
-    color: globalFeed ? colors.primary_4 : colors.gray_3,
+    color: globalFeed ? colors.primary_5 : colors.gray_3,
     fontFamily: globalFeed ? "Nunito-Bold" : "Nunito-Regular",
   };
 };
 
 const useFriendsStyle = (friendsFeed) => {
   return {
-    color: friendsFeed ? colors.primary_4 : colors.gray_3,
+    color: friendsFeed ? colors.primary_5 : colors.gray_3,
     fontFamily: friendsFeed ? "Nunito-Bold" : "Nunito-Regular",
   };
 };

@@ -14,7 +14,8 @@ import {
   arrayUnion,
   serverTimestamp,
 } from "firebase/firestore";
-import { db } from "./firebaseConfig";
+import { ref, uploadString } from "firebase/storage";
+import { db, storage } from "./firebaseConfig";
 
 // TODO: Needed because of dumb bug of "add document" after Firebase phone number authentication. So to circumvent it, we do a dummy call BEFORE we've been signed in and then add the user during "onSubmit" in UsernameScreen. Why does this work? I don't know bro.
 // TODO: Test if only doing a read instead of a write first works
@@ -107,13 +108,17 @@ export async function getCollabsOfThoughts(thoughts) {
 }
 
 export async function addThought(uid, thought) {
-  const currentUserRef = doc(db, "users", uid);
-  await addDoc(collection(db, "thoughts"), {
-    collabs: [],
-    name: currentUserRef,
-    tags: [],
-    thought: thought,
-    time: serverTimestamp(),
+  return new Promise((resolve, reject) => {
+    const currentUserRef = doc(db, "users", uid);
+    addDoc(collection(db, "thoughts"), {
+      collabs: [],
+      name: currentUserRef,
+      tags: [],
+      thought: thought,
+      time: serverTimestamp(),
+    }).then((docRef) => {
+      resolve(docRef.id);
+    });
   });
 }
 
@@ -221,4 +226,33 @@ export async function getUsernamesStartingWith(text, resultLimit) {
     )
   );
   return querySnapshot;
+}
+
+// THIS DOESN'T WORK YET - THROWS BASE 64 ERROR
+export async function uploadThoughtImage(imageURI, thoughtUID) {
+  try {
+    return new Promise((resolve, reject) => {
+      if (imageURI === null) {
+        console.log("imageURI is null", imageURI);
+        resolve(true);
+      } else {
+        const imageRef = ref(storage, `thoughtImages/${thoughtUID}.jpg`);
+        console.log("imageRef name", imageRef.name);
+
+        const metadata = {
+          name: thoughtUID,
+        };
+
+        const message = "data:image/jpg;base64," + imageURI;
+        uploadString(imageRef, message, "data_url", metadata).then(
+          (snapshot) => {
+            console.log("Uploaded a data_url string!");
+            resolve(true);
+          }
+        );
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
 }

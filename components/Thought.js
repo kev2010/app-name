@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
       width: 0,
       height: 6,
     },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.08,
   },
   profile: {
     flexDirection: "row",

@@ -10,8 +10,9 @@ import {
   Animated,
   ActivityIndicator,
 } from "react-native";
+import UploadImage from "./UploadImage";
 import { useRecoilState } from "recoil";
-import { addThought } from "../api";
+import { addThought, uploadThoughtImage } from "../api";
 import colors from "../assets/colors";
 import { userState, feedDataState } from "../globalState";
 import { CONSTANTS } from "../constants";
@@ -32,6 +33,7 @@ const Think = ({ swiped, submitted }) => {
   const inputRef = React.createRef();
   const [feedData, setFeedData] = useRecoilState(feedDataState);
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
+  const [image, setImage] = useState(null);
 
   useEffect(() => {
     // TODO: This is messy, but somehow needed for Android devices to work properly? The keyboard doesn't show up otherwise
@@ -59,12 +61,14 @@ const Think = ({ swiped, submitted }) => {
   const onSubmit = () => {
     console.log("about to submit ", thought);
     setLoading(true);
-    addThought(user.uid, thought).then(() => {
-      refreshFeed(user.uid).then((data) => {
-        setFeedData(data);
-        submitted();
-        setThought("");
-        setLoading(false);
+    addThought(user.uid, thought).then((docID) => {
+      uploadThoughtImage(image, docID).then(() => {
+        refreshFeed(user.uid).then((data) => {
+          setFeedData(data);
+          submitted();
+          setThought("");
+          setLoading(false);
+        });
       });
     });
   };
@@ -81,6 +85,10 @@ const Think = ({ swiped, submitted }) => {
 
   const checkLength = (text) => {
     setDisable(text.length === 0);
+  };
+
+  const updateImage = (image) => {
+    setImage(image);
   };
 
   return (
@@ -118,9 +126,12 @@ const Think = ({ swiped, submitted }) => {
           </TouchableOpacity>
         )}
       </Animated.View>
-      <Text style={[styles.charCount, bottomStyle]}>
-        {thought.length}/{CONSTANTS.MAX_LENGTH}
-      </Text>
+      <View style={[styles.options, bottomStyle]}>
+        <UploadImage updateImage={updateImage} />
+        <Text style={styles.charCount}>
+          {thought.length}/{CONSTANTS.MAX_LENGTH}
+        </Text>
+      </View>
     </View>
   );
 };
@@ -189,10 +200,16 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     margin: 0,
   },
+  options: {
+    width: "100%",
+    position: "absolute",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    zIndex: -1,
+  },
   charCount: {
     color: colors.primary_3,
-    position: "absolute",
-    alignSelf: "flex-end",
     fontFamily: "Nunito-Regular",
     fontSize: 12,
     paddingBottom: 4,
