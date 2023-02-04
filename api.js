@@ -62,23 +62,37 @@ export async function getUser(uid) {
 
 // TODO: Figure out if we want to display user's own thoughts in the feed
 // TODO: Right now we're only grabbing thoughts in the past 3 days. We'll have to do some pagination later
-export async function getThoughts(uid) {
+export async function getThoughts(currentUser) {
   try {
-    return new Promise((resolve, reject) => {
-      const currentUserRef = doc(db, "users", uid);
-      getUser(uid).then((currentUser) => {
-        const allValid = [...currentUser.data().friends, currentUserRef];
-        let cutoff = new Date();
-        cutoff.setDate(cutoff.getDate() - 7);
-        const q = query(
-          collection(db, "thoughts"),
-          where("name", "in", allValid),
-          where("time", ">=", cutoff),
-          orderBy("time", "desc")
-        );
-        resolve(getDocs(q));
-      });
-    });
+    let cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 2);
+    const currentUserRef = doc(db, "users", currentUser.id);
+    const batches = [];
+    const allValid = [...currentUser.data().friends, currentUserRef];
+
+    while (allValid.length) {
+      // firestore limits batches to 10
+      const batch = allValid.splice(0, 10);
+
+      // add the batch request to to a queue
+      batches.push(
+        getDocs(
+          query(
+            collection(db, "thoughts"),
+            where("name", "in", batch),
+            where("time", ">=", cutoff),
+            orderBy("time", "desc")
+          )
+        ).then((results) =>
+          results.docs.map((result) => ({
+            id: result.id,
+            ...result.data(),
+          }))
+        )
+      );
+    }
+    // after all of the data is fetched, return it
+    return Promise.all(batches).then((content) => content.flat());
   } catch (error) {
     console.log(error);
   }
@@ -86,9 +100,9 @@ export async function getThoughts(uid) {
 
 export async function getUsersOfThoughts(thoughts) {
   var results = [];
-  thoughts.forEach(function (doc) {
+  thoughts.forEach(function (docData) {
     // push promise from get into results
-    results.push(getDoc(doc.data().name));
+    results.push(getDoc(docData.name));
   });
   return Promise.all(results);
 }
@@ -103,10 +117,10 @@ export async function getUsersFromRefList(refs) {
 
 export async function getCollabsOfThoughts(thoughts) {
   var results = [];
-  thoughts.forEach(function (doc) {
+  thoughts.forEach(function (docData) {
     // doc.data().collabs = [ref1, ref2, ...]
     // Key thing to remember is to push promises, otherwise things will NOT return in the right order!
-    results.push(getUsersFromRefList(doc.data().collabs));
+    results.push(getUsersFromRefList(docData.collabs));
   });
   // results = [[obj1, obj2], [obj3], ...]
   return Promise.all(results);
@@ -146,7 +160,7 @@ export async function addComment(thoughtUID, userUID, comment) {
 export async function getReactions(thoughtUID) {
   return new Promise((resolve, reject) => {
     const reactionsRef = collection(db, `thoughts/${thoughtUID}/reactions`);
-    getDocs(query(reactionsRef)).then((result) => {
+    getDocs(reactionsRef).then((result) => {
       resolve(result);
     });
   });
@@ -154,13 +168,13 @@ export async function getReactions(thoughtUID) {
 
 export async function getReactionsSizeOfThoughts(thoughts) {
   var results = [];
-  // IMPORTANT: Can't do await on forEach, so make sure to do a regular for loop
-  for (const doc of thoughts.docs) {
-    // Key thing to remember is to push promises, otherwise things will NOT return in the right order!
-    await getReactions(doc.id).then((reactions) => {
-      results.push(reactions.size);
-    });
-  }
+  thoughts.forEach(function (docData) {
+    results.push(
+      getDocs(collection(db, `thoughts/${docData.id}/reactions`)).then(
+        (collection) => collection.size
+      )
+    );
+  });
 
   return Promise.all(results);
 }
@@ -265,8 +279,8 @@ export async function uploadThoughtImage(imageAsset, thoughtUID) {
 
 export async function getImagesOfThoughts(thoughts) {
   var results = [];
-  thoughts.forEach(async function (doc) {
-    results.push(getThoughtImage(doc.id));
+  thoughts.forEach(async function (docData) {
+    results.push(getThoughtImage(docData.id));
   });
   return Promise.all(results);
 }

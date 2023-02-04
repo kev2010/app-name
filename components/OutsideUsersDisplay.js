@@ -1,4 +1,4 @@
-import { StyleSheet, FlatList, SectionList, Text } from "react-native";
+import { StyleSheet, FlatList, View, Text } from "react-native";
 import React, { useState, useEffect } from "react";
 import OutsideUserElement from "./OutsideUserElement";
 import { getUsernamesStartingWith } from "../api";
@@ -72,14 +72,16 @@ const OutsideUsersDisplay = ({ friends, friendRequests, sent, text }) => {
         onLayout={(event) => setLayout(event.nativeEvent.layout)}
         data={data}
         renderItem={({ item }) => (
-          <OutsideUserElement
-            name={item.name}
-            username={item.username}
-            uid={item.uid}
-            addFriend={addUserAsFriend}
-            sent={sent}
-            layout={layout}
-          />
+          <View onStartShouldSetResponder={() => true}>
+            <OutsideUserElement
+              name={item.name}
+              username={item.username}
+              uid={item.uid}
+              addFriend={addUserAsFriend}
+              sent={sent}
+              layout={layout}
+            />
+          </View>
         )}
         keyExtractor={(item) => item.uid}
       />

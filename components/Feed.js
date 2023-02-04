@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, TouchableOpacity, RefreshControl } from "react-native";
+import {
+  FlatList,
+  TouchableOpacity,
+  RefreshControl,
+  ActivityIndicator,
+} from "react-native";
 import Thought from "./Thought";
 import colors from "../assets/colors";
 import { calculateTimeDiffFromNow } from "../helpers";
@@ -47,9 +52,12 @@ const Feed = ({ navigation, uid }) => {
   }, [navigation]);
 
   // TODO: VirtualizedList: You have a large list that is slow to update - make sure your renderItem function renders components that follow React performance best practices like PureComponent, shouldComponentUpdate, etc. {"contentLength": 3376.666748046875, "dt": 866, "prevDt": 61523}
-  return Object.values(feedData).length > 0 || refreshing ? (
+  return Object.values(feedData).length > 0 ? (
     <FlatList
-      data={Object.values(feedData)}
+      style={{ flex: 1 }}
+      data={Object.values(feedData).sort(function (x, y) {
+        return y.rawTime - x.rawTime;
+      })}
       renderItem={({ item, index }) => (
         <TouchableOpacity
           key={index.toString()}
@@ -87,6 +95,14 @@ const Feed = ({ navigation, uid }) => {
           tintColor={colors.primary_3}
         />
       }
+    />
+  ) : refreshing ? (
+    // Necessary to check for when Feed is FIRST loaded (where everything is empty)
+    // Currently no refreshing animation is shown when empty
+    <ActivityIndicator
+      style={{ height: "50%" }}
+      size="large"
+      color={colors.primary_5}
     />
   ) : (
     <FlatList

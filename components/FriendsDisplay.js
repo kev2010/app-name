@@ -52,7 +52,7 @@ const FriendsDisplay = ({ friends, filter }) => {
   };
 
   return (
-    <View>
+    <>
       {data.filter(
         (item) =>
           item.name.toLowerCase().includes(filter) ||
@@ -60,7 +60,6 @@ const FriendsDisplay = ({ friends, filter }) => {
       ).length > 0 ? (
         <Text style={styles.header}>My Friends ({data.length})</Text>
       ) : null}
-      {/* <View> */}
       <FlatList
         keyboardShouldPersistTaps={"always"}
         onLayout={(event) => setLayout(event.nativeEvent.layout)}
@@ -72,18 +71,19 @@ const FriendsDisplay = ({ friends, filter }) => {
           )
           .sort((a, b) => a.name.localeCompare(b.name))}
         renderItem={({ item }) => (
-          <FriendElement
-            name={item.name}
-            username={item.username}
-            uid={item.uid}
-            remove={removeFriendInstances}
-            layout={layout}
-          />
+          <View onStartShouldSetResponder={() => true}>
+            <FriendElement
+              name={item.name}
+              username={item.username}
+              uid={item.uid}
+              remove={removeFriendInstances}
+              layout={layout}
+            />
+          </View>
         )}
         keyExtractor={(item) => item.uid}
       />
-      {/* </View> */}
-    </View>
+    </>
   );
 };
 

@@ -115,9 +115,8 @@ const styles = StyleSheet.create({
   },
   display: {
     width: "85%",
-    flex: 1,
-    // height: "100%",
     marginTop: 24,
+    paddingBottom: "60%",
   },
   header: {
     color: colors.gray_3,

@@ -1,5 +1,5 @@
 export const CONSTANTS = {
-  MAX_LENGTH: 250,
+  MAX_LENGTH: 200,
   KEYBOARD_OFFSET: 12,
   INPUT_OFFSET: 48,
 };

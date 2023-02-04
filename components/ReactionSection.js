@@ -8,33 +8,18 @@ const ReactionSection = ({ navigation, data }) => {
 
   return data.length > 0 ? (
     <View style={styles.reactions}>
-      {data.map((item) => (
+      {data.map((item, i) => (
         <Comment
           navigation={navigation}
           creatorID={item.creatorID}
           name={item.name}
           time={item.time}
           comment={item.text}
+          key={i}
         />
       ))}
     </View>
   ) : (
-    // <FlatList
-    //   contentContainerStyle={styles.reactions}
-    //   data={data}
-    //   renderItem={({ item }) => (
-    //     <>
-    //       <Comment
-    //         navigation={navigation}
-    //         creatorID={item.creatorID}
-    //         name={item.name}
-    //         time={item.time}
-    //         comment={item.text}
-    //       />
-    //     </>
-    //   )}
-    //   keyExtractor={(item) => item.id}
-    // />
     <View style={styles.empty}>
       <Text style={styles.thought}>💭</Text>
       <Text style={styles.subtitle}>No chat yet!</Text>

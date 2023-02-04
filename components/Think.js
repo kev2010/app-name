@@ -39,8 +39,10 @@ const Think = ({ swiped, submitted }) => {
     // TODO: This is messy, but somehow needed for Android devices to work properly? The keyboard doesn't show up otherwise
     setTimeout(() => {
       if (swiped) {
-        inputRef.current.blur();
-        inputRef.current.focus();
+        // TODO: I don't quite understand why inputRef is ever null? But it throws "TypeError: null is not an object (evaluating 'inputRef.current.focus')" right after login flow
+        if (inputRef != null) {
+          inputRef.current.focus();
+        }
       } else {
         Keyboard.dismiss();
       }

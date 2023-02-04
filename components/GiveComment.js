@@ -20,6 +20,7 @@ import { CONSTANTS } from "../constants";
 // TODO: Extremely similar to Think.js - maybe there's a way to reduce reused code?
 const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
   const [thought, setThought] = useState("");
+  const inputRef = React.createRef();
   const audioStyle = useAudioStyle(thought);
   const submitStyle = useSubmitStyle(thought);
   const [user, setUser] = useRecoilState(userState);
@@ -49,8 +50,6 @@ const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
       if (keyboardDidShowListener) keyboardDidShowListener.remove();
     };
   }, [swiped]);
-
-  const inputRef = React.createRef();
 
   const onSubmit = () => {
     setLoading(true);
