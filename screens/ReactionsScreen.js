@@ -144,7 +144,7 @@ const ReactionsScreen = ({ navigation, route }) => {
             <ReactionSection
               navigation={navigation}
               data={data.sort(function (x, y) {
-                return y.rawTime - x.rawTime;
+                return x.rawTime - y.rawTime;
               })}
               uid={route.params.id}
             />
