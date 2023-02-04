@@ -67,6 +67,7 @@ const Think = ({ swiped, submitted }) => {
           setFeedData(data);
           submitted();
           setThought("");
+          setImage(null);
           setLoading(false);
         });
       });

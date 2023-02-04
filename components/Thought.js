@@ -51,7 +51,10 @@ const Thought = (props) => {
         <Autolink style={styles.text} text={props.thought} />
         {/* <Text style={styles.text}>{props.thought}</Text> */}
       </View>
-      <View style={styles.row3}>
+      {props.imageURL != "" ? (
+        <Image style={styles.row3} source={{ uri: props.imageURL }} />
+      ) : null}
+      <View style={styles.row4}>
         <Text style={styles.thought}>{collabsText}</Text>
         <View style={styles.actions}>
           <Image
@@ -97,6 +100,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   row3: {
+    flexDirection: "row",
+    marginTop: 4,
+    marginBottom: 16,
+    alignSelf: "center",
+    width: 315,
+    height: 315,
+    borderRadius: 15,
+    borderColor: colors.gray_2,
+    borderWidth: 0.5,
+  },
+  row4: {
     justifyContent: "space-between",
     flexDirection: "row",
   },

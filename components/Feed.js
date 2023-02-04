@@ -57,6 +57,7 @@ const Feed = ({ navigation, uid }) => {
             navigation.navigate("Reactions", {
               creatorID: item.creatorID,
               id: item.id,
+              imageURL: item.imageURL,
               name: item.name,
               time: item.time,
               collabs: item.collabs,
@@ -68,6 +69,7 @@ const Feed = ({ navigation, uid }) => {
           <Thought
             navigation={navigation}
             creatorID={item.creatorID}
+            imageURL={item.imageURL}
             name={item.name}
             time={item.time}
             collabs={item.collabs}

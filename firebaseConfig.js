@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { decode } from "base-64";
 // import { getAnalytics } from "firebase/analytics";
 // Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -17,6 +18,10 @@ const firebaseConfig = {
   appId: "1:921730820705:web:c8bf394c60b7095cf91820",
   measurementId: "G-ZFBGCLMZ52",
 };
+
+if (typeof atob === "undefined") {
+  global.atob = decode;
+}
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);

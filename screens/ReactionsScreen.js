@@ -131,6 +131,7 @@ const ReactionsScreen = ({ navigation, route }) => {
           <Thought
             navigation={navigation}
             creatorID={route.params.creatorID}
+            imageURL={route.params.imageURL}
             name={route.params.name}
             time={route.params.time}
             collabs={route.params.collabs}

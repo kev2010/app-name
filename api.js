@@ -14,7 +14,12 @@ import {
   arrayUnion,
   serverTimestamp,
 } from "firebase/firestore";
-import { ref, uploadString } from "firebase/storage";
+import {
+  ref,
+  uploadString,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
 import { db, storage } from "./firebaseConfig";
 
 // TODO: Needed because of dumb bug of "add document" after Firebase phone number authentication. So to circumvent it, we do a dummy call BEFORE we've been signed in and then add the user during "onSubmit" in UsernameScreen. Why does this work? I don't know bro.
@@ -228,29 +233,77 @@ export async function getUsernamesStartingWith(text, resultLimit) {
   return querySnapshot;
 }
 
-// THIS DOESN'T WORK YET - THROWS BASE 64 ERROR
-export async function uploadThoughtImage(imageURI, thoughtUID) {
+export async function uploadThoughtImage(imageAsset, thoughtUID) {
+  try {
+    // Why are we using XMLHttpRequest? See:
+    // https://github.com/expo/expo/issues/2402#issuecomment-443726662
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", imageAsset.assets[0].uri, true);
+      xhr.send(null);
+    });
+
+    const fileRef = ref(storage, `thoughtImages/${thoughtUID}.jpg`);
+    const result = await uploadBytes(fileRef, blob);
+
+    // We're done with the blob, close and release it
+    blob.close();
+
+    return await getDownloadURL(fileRef);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getImagesOfThoughts(thoughts) {
+  var results = [];
+  thoughts.forEach(async function (doc) {
+    results.push(getThoughtImage(doc.id));
+  });
+  return Promise.all(results);
+}
+
+export async function getThoughtImage(thoughtUID) {
   try {
     return new Promise((resolve, reject) => {
-      if (imageURI === null) {
-        console.log("imageURI is null", imageURI);
-        resolve(true);
-      } else {
-        const imageRef = ref(storage, `thoughtImages/${thoughtUID}.jpg`);
-        console.log("imageRef name", imageRef.name);
-
-        const metadata = {
-          name: thoughtUID,
-        };
-
-        const message = "data:image/jpg;base64," + imageURI;
-        uploadString(imageRef, message, "data_url", metadata).then(
-          (snapshot) => {
-            console.log("Uploaded a data_url string!");
-            resolve(true);
+      const imageRef = ref(storage, `thoughtImages/${thoughtUID}.jpg`);
+      // Get the download URL
+      getDownloadURL(imageRef)
+        .then((url) => {
+          resolve(url);
+        })
+        .catch((error) => {
+          // A full list of error codes is available at
+          // https://firebase.google.com/docs/storage/web/handle-errors
+          switch (error.code) {
+            case "storage/object-not-found":
+              resolve("");
+              break;
+            case "storage/unauthorized":
+              // User doesn't have permission to access the object
+              console.log("Unauthorized access");
+              resolve("");
+              break;
+            case "storage/canceled":
+              console.log("User canceled the upload");
+              resolve("");
+              // User canceled the upload
+              break;
+            case "storage/unknown":
+              console.log("Unknown error");
+              resolve("");
+              // Unknown error occurred, inspect the server response
+              break;
           }
-        );
-      }
+        });
     });
   } catch (error) {
     console.log(error);

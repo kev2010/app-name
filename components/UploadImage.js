@@ -9,17 +9,17 @@ const UploadImage = ({ updateImage }) => {
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      // TODO: Not sure if uploading image via base64 string is the best/fastest way
+      base64: true,
+      quality: 0,
     });
-
-    console.log(result);
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-      updateImage(result.assets[0].uri);
+      updateImage(result);
     }
   };
 
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   delete: {
     width: 24,
     height: 24,
-    borderRadius: 10,
+    borderRadius: 50,
     backgroundColor: colors.almost_white,
     alignItems: "center",
     justifyContent: "center",
