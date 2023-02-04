@@ -135,7 +135,9 @@ const ReactionsScreen = ({ navigation, route }) => {
             name={route.params.name}
             time={route.params.time}
             collabs={route.params.collabs}
+            emojis={route.params.emojis}
             reactions={route.params.reactions}
+            thoughtUID={route.params.id}
             thought={route.params.thought}
           />
           <View style={styles.reactions}>

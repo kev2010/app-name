@@ -4,6 +4,7 @@ import colors from "../assets/colors";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import Autolink from "react-native-autolink";
+import { addEmoji } from "../api";
 
 const Thought = (props) => {
   const [user, setUser] = useRecoilState(userState);
@@ -25,6 +26,13 @@ const Thought = (props) => {
         creatorID: props.creatorID,
       });
     }
+  };
+
+  const userAddEmoji = () => {
+    console.log("ahahaha", props.thoughtUID, user.uid);
+    addEmoji(props.thoughtUID, user.uid, "rizz").then(() => {
+      // submitted();
+    })
   };
 
   return (
@@ -54,11 +62,26 @@ const Thought = (props) => {
       {props.imageURL != "" ? (
         <Image style={styles.row3} source={{ uri: props.imageURL }} />
       ) : null}
+      
       <View style={styles.row4}>
+        <View style={styles.actions}>
+          <TouchableOpacity style={styles.profile} onPress={userAddEmoji}>
+            <Image
+                style={styles.emojis}
+                source={require("../assets/stars.png")}
+                //   source={{uri: props.img}}
+                // resizeMode="stretch"
+            />
+          </TouchableOpacity>
+          <Text style={styles.number}>{props.emojis}</Text>
+        </View>
+
         <Text style={styles.thought}>{collabsText}</Text>
         <View style={styles.actions}>
+        {/* <Text style={styles.emojis}>&#10024;</Text> */}
+          
           <Image
-            style={styles.stars}
+            style={styles.comments}
             source={require("../assets/comment.png")}
             //   source={{uri: props.img}}
             // resizeMode="stretch"
@@ -147,7 +170,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  stars: {
+  emojis: {
+    width: 14,
+    height: 20,
+    marginRight: 8,
+  },
+  comments: {
     width: 14,
     height: 14,
     marginRight: 8,

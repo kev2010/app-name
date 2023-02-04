@@ -69,7 +69,9 @@ const Feed = ({ navigation, uid }) => {
               name: item.name,
               time: item.time,
               collabs: item.collabs,
+              emojis: item.emojis,
               reactions: item.reactions,
+              thoughtUID: item.thoughtUID,
               thought: item.thought,
             });
           }}
@@ -81,7 +83,9 @@ const Feed = ({ navigation, uid }) => {
             name={item.name}
             time={item.time}
             collabs={item.collabs}
+            emojis={item.emojis}
             reactions={item.reactions}
+            thoughtUID={item.thoughtUID}
             thought={item.thought}
           />
         </TouchableOpacity>
@@ -114,7 +118,9 @@ const Feed = ({ navigation, uid }) => {
           name={item.name}
           time={item.time}
           collabs={item.collabs}
+          emojis={item.emojis}
           reactions={item.reactions}
+          thoughtUID={item.thoughtUID}
           thought={item.thought}
         />
       )}

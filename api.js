@@ -141,6 +141,44 @@ export async function addThought(uid, thought) {
   });
 }
 
+export async function addEmoji(thoughtUID, userUID, emoji) {
+  return new Promise((resolve, reject) => {
+    const currentUserRef = doc(db, "users", userUID);
+    const originalThoughtRef = doc(db, "thoughts", thoughtUID);
+    const emojisRef = collection(db, `thoughts/${thoughtUID}/emojis`);
+    addDoc(emojisRef, {
+      name: currentUserRef,
+      originalThought: originalThoughtRef,
+      emoji: emoji,
+      time: serverTimestamp(),
+    }).then(() => {
+      resolve(true);
+    });
+  });
+}
+
+export async function getEmojis(thoughtUID) {
+  return new Promise((resolve, reject) => {
+    const reactionsRef = collection(db, `thoughts/${thoughtUID}/emojis`);
+    getDocs(reactionsRef).then((result) => {
+      resolve(result);
+    });
+  });
+}
+
+export async function getEmojisSizeOfThoughts(thoughts) {
+  var results = [];
+  thoughts.forEach(function (docData) {
+    results.push(
+      getDocs(collection(db, `thoughts/${docData.id}/emojis`)).then(
+        (collection) => collection.size
+      )
+    );
+  });
+
+  return Promise.all(results);
+}
+
 export async function addComment(thoughtUID, userUID, comment) {
   return new Promise((resolve, reject) => {
     const currentUserRef = doc(db, "users", userUID);
