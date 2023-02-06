@@ -32,7 +32,7 @@ const Thought = (props) => {
     console.log("ahahaha", props.thoughtUID, user.uid);
     addEmoji(props.thoughtUID, user.uid, "rizz").then(() => {
       // submitted();
-    })
+    });
   };
 
   return (
@@ -60,17 +60,19 @@ const Thought = (props) => {
         {/* <Text style={styles.text}>{props.thought}</Text> */}
       </View>
       {props.imageURL != "" ? (
-        <Image style={styles.row3} source={{ uri: props.imageURL }} />
+        <View style={styles.row3}>
+          <Image style={styles.photo} source={{ uri: props.imageURL }} />
+        </View>
       ) : null}
-      
+
       <View style={styles.row4}>
         <View style={styles.actions}>
           <TouchableOpacity style={styles.profile} onPress={userAddEmoji}>
             <Image
-                style={styles.emojis}
-                source={require("../assets/stars.png")}
-                //   source={{uri: props.img}}
-                // resizeMode="stretch"
+              style={styles.emojis}
+              source={require("../assets/stars.png")}
+              //   source={{uri: props.img}}
+              // resizeMode="stretch"
             />
           </TouchableOpacity>
           <Text style={styles.number}>{props.emojis}</Text>
@@ -78,8 +80,8 @@ const Thought = (props) => {
 
         <Text style={styles.thought}>{collabsText}</Text>
         <View style={styles.actions}>
-        {/* <Text style={styles.emojis}>&#10024;</Text> */}
-          
+          {/* <Text style={styles.emojis}>&#10024;</Text> */}
+
           <Image
             style={styles.comments}
             source={require("../assets/comment.png")}
@@ -127,16 +129,19 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginBottom: 16,
     alignSelf: "center",
-    width: 315,
-    height: 315,
     borderRadius: 15,
     borderColor: colors.gray_2,
     borderWidth: 0.5,
-    resizeMode: "contain",
   },
   row4: {
     justifyContent: "space-between",
     flexDirection: "row",
+  },
+  photo: {
+    // Breaking the system!
+    width: 315,
+    height: 315,
+    resizeMode: "contain",
   },
   profileImage: {
     width: 32,

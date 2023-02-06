@@ -10,7 +10,7 @@ const UploadImage = ({ image, updateImage }) => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 0.5,
+      quality: 0.2,
     });
 
     if (!result.canceled) {
