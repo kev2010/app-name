@@ -3,7 +3,7 @@
     "name": "first-expo",
     "slug": "first-expo",
     "privacy": "unlisted",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "platforms": [
       "ios",
       "android"
@@ -32,7 +32,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.kev2018.firstexpo",
-      "versionCode": 4
+      "versionCode": 5
     },
     "web": {
       "favicon": "./assets/favicon.png"
