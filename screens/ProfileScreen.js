@@ -38,7 +38,7 @@ const ProfileScreen = ({ navigation, route }) => {
           // Update global user state to show that user sent a friend request
           setUser((user) => ({
             ...user,
-            sentRequests: [...user.sentRequests, friendUID],
+            sentRequests: [...new Set([...user.sentRequests, friendUID])],
           }));
           resolve(true);
         });

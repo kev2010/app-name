@@ -25,8 +25,9 @@ const Feed = ({ navigation, uid }) => {
       creatorID: "TAKLar06V3UPXUMll72Kqj51CfG2",
       name: "App Name",
       time: calculateTimeDiffFromNow(new Date()),
-      collabs: ["Algorithm", "Admin", "Billy"],
+      collabs: ["The Algorithm", "Admin"],
       reactions: 0,
+      imageURL: "",
       thought: "Your feed is a bit empty! Try adding some friends 😎",
     },
   ];
@@ -115,6 +116,7 @@ const Feed = ({ navigation, uid }) => {
         <Thought
           navigation={navigation}
           creatorID={item.creatorID}
+          imageURL={item.imageURL}
           name={item.name}
           time={item.time}
           collabs={item.collabs}

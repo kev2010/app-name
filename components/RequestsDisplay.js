@@ -47,7 +47,7 @@ const RequestsDisplay = ({ requests }) => {
         deleteFriendRequest(uid, user.uid).then(() => {
           setUser((user) => ({
             ...user,
-            friends: [...user.friends, uid],
+            friends: [...new Set([...user.friends, uid])],
             friendRequests: user.friendRequests.filter((id) => id !== uid),
           }));
           setData(data.filter((item) => item.uid !== uid));
