@@ -3,6 +3,7 @@ import {
   doc,
   setDoc,
   addDoc,
+  deleteDoc,
   getDocs,
   getDoc,
   updateDoc,
@@ -139,6 +140,11 @@ export async function addThought(uid, thought) {
       resolve(docRef.id);
     });
   });
+}
+
+export async function deleteThought(uid) {
+  // NOTE: this does NOT delete documents within the reactions subcollections
+  await deleteDoc(doc(db, "thoughts", uid));
 }
 
 export async function addEmoji(thoughtUID, userUID, emoji) {
@@ -289,17 +295,23 @@ export async function uploadThoughtImage(imageAsset, thoughtUID) {
   try {
     // Why are we using XMLHttpRequest? See:
     // https://github.com/expo/expo/issues/2402#issuecomment-443726662
+    console.log("in the uploadthoughtimage api.js");
     const blob = await new Promise((resolve, reject) => {
+      console.log("inside the promise!!!");
       const xhr = new XMLHttpRequest();
       xhr.onload = function () {
+        console.log("onload", xhr);
+        console.log("onload222", JSON.stringify(xhr.response));
         resolve(xhr.response);
       };
       xhr.onerror = function (e) {
+        console.log("uh oh!");
         console.log(e);
         reject(new TypeError("Network request failed"));
       };
       xhr.responseType = "blob";
       xhr.open("GET", imageAsset.assets[0].uri, true);
+      console.log("good news", imageAsset.assets[0].uri);
       xhr.send(null);
     });
 
@@ -307,6 +319,7 @@ export async function uploadThoughtImage(imageAsset, thoughtUID) {
     const result = await uploadBytes(fileRef, blob);
 
     // We're done with the blob, close and release it
+    console.log("we're done!", result);
     blob.close();
 
     return await getDownloadURL(fileRef);

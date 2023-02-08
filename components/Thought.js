@@ -1,13 +1,24 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
 import colors from "../assets/colors";
 import { useRecoilState } from "recoil";
-import { userState } from "../globalState";
+import { userState, feedDataState } from "../globalState";
 import Autolink from "react-native-autolink";
-import { addEmoji } from "../api";
+import { addEmoji, deleteThought } from "../api";
+import { refreshFeed } from "../logic";
 
 const Thought = (props) => {
   const [user, setUser] = useRecoilState(userState);
+  const [feedData, setFeedData] = useRecoilState(feedDataState);
+  const [loading, setLoading] = useState(false);
 
   let collabsText = "";
   if (props.collabs.length == 1) {
@@ -26,6 +37,35 @@ const Thought = (props) => {
         creatorID: props.creatorID,
       });
     }
+  };
+
+  const deleteThoughtAlert = () => {
+    Alert.alert(
+      "Confirm Delete Thought",
+      `Are you sure you want to delete this thought? This cannot be undone!`,
+      [
+        {
+          text: "Cancel",
+          onPress: () => {
+            console.log("CANCELLED");
+          },
+        },
+        {
+          text: "Remove",
+          onPress: () => {
+            setLoading(true);
+            console.log("DELETEE", props.thoughtUID);
+            deleteThought(props.thoughtUID).then(() => {
+              refreshFeed(user.uid).then((data) => {
+                setFeedData(data);
+                setLoading(false);
+              });
+            });
+          },
+          style: "destructive",
+        },
+      ]
+    );
   };
 
   const userAddEmoji = () => {
@@ -48,6 +88,23 @@ const Thought = (props) => {
           <Text style={styles.name}>{props.name}</Text>
           <Text style={styles.time}>{props.time}</Text>
         </TouchableOpacity>
+        {props.creatorID == user.uid ? (
+          loading ? (
+            <ActivityIndicator
+              style={styles.loading}
+              // style={{ height: "50%" }}
+              size="small"
+              color={colors.primary_5}
+            />
+          ) : (
+            <TouchableOpacity style={styles.trash} onPress={deleteThoughtAlert}>
+              <Image
+                style={styles.trashImage}
+                source={require("../assets/trash.png")}
+              />
+            </TouchableOpacity>
+          )
+        ) : null}
       </View>
       <View
         style={[
@@ -114,6 +171,20 @@ const styles = StyleSheet.create({
   profile: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  trash: {
+    marginLeft: "auto",
+    paddingHorizontal: 6,
+    // Needed to keep image on RHS
+    marginRight: -6,
+    paddingVertical: 6,
+  },
+  trashImage: {
+    width: 16,
+    height: 18,
+  },
+  loading: {
+    marginLeft: "auto",
   },
   row1: {
     flexDirection: "row",

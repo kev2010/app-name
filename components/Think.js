@@ -64,7 +64,9 @@ const Think = ({ swiped, submitted }) => {
     console.log("about to submit ", thought);
     setLoading(true);
     addThought(user.uid, thought).then((docID) => {
-      uploadThoughtImage(image, docID).then(() => {
+      console.log("uploaded the thought!", docID);
+      uploadThoughtImage(image, docID).then((downloadURL) => {
+        console.log("good news! we're gooD!", downloadURL);
         refreshFeed(user.uid).then((data) => {
           setFeedData(data);
           submitted();
