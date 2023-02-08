@@ -81,9 +81,11 @@ const Thought = (props) => {
         <TouchableOpacity style={styles.profile} onPress={goToProfile}>
           <Image
             style={styles.profileImage}
-            source={require("../assets/default.jpeg")}
-            //   source={{uri: props.img}}
-            //   resizeMode="stretch"
+            source={
+              props.profileURL != ""
+                ? { uri: props.profileURL }
+                : require("../assets/default.jpeg")
+            }
           />
           <Text style={styles.name}>{props.name}</Text>
           <Text style={styles.time}>{props.time}</Text>

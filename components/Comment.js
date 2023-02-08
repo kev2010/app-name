@@ -23,7 +23,11 @@ const Comment = (props) => {
       <TouchableOpacity style={styles.profile} onPress={goToProfile}>
         <Image
           style={styles.profileImage}
-          source={require("../assets/default.jpeg")}
+          source={
+            props.imageURL != ""
+              ? { uri: props.imageURL }
+              : require("../assets/default.jpeg")
+          }
         />
         <View style={styles.column}>
           <View style={styles.row}>

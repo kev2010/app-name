@@ -20,6 +20,7 @@ import {
 } from "expo-firebase-recaptcha";
 import { getAuth, PhoneAuthProvider } from "firebase/auth";
 import { app } from "../firebaseConfig";
+import { dummyCall } from "../api";
 
 const auth = getAuth(app);
 
@@ -57,6 +58,8 @@ const PhoneScreen = ({ navigation, route }) => {
   const positionStyle = usePositionStyle(textContainerBottom);
 
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
+
+  dummyCall();
 
   // TODO: GENERALIZE
   const checkLength = (number) => {

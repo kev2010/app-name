@@ -19,7 +19,7 @@ import {
   signInWithCredential,
   PhoneAuthProvider,
 } from "firebase/auth";
-import { dummyCall, checkUserExists } from "../api";
+import { checkUserExists, getProfilePicture } from "../api";
 import colors from "../assets/colors";
 
 const auth = getAuth(app);
@@ -42,8 +42,6 @@ const VerificationScreen = ({ navigation, route }) => {
   const [loading, setLoading] = useState(false);
 
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
-
-  dummyCall();
 
   const checkLength = (number) => {
     setDisable(number.length != 6);
@@ -98,15 +96,18 @@ const VerificationScreen = ({ navigation, route }) => {
               return userRef.id;
             });
 
-            setUser((user) => ({
-              uid: userCredential.user.uid,
-              friends: userFriends,
-              friendRequests: userRequests,
-              sentRequests: userSent,
-              name: snapshot.data.name,
-              username: snapshot.data.username,
-            }));
-            setLoading(false);
+            getProfilePicture(userCredential.user.uid).then((downloadURL) => {
+              setUser((user) => ({
+                uid: userCredential.user.uid,
+                friends: userFriends,
+                friendRequests: userRequests,
+                sentRequests: userSent,
+                name: snapshot.data.name,
+                username: snapshot.data.username,
+                imageURL: downloadURL,
+              }));
+              setLoading(false);
+            });
           } else {
             setUser({ ...userCredential.user, name: route.params.paramKey });
             navigation.navigate("Username");
@@ -175,6 +176,7 @@ const useErrorStyle = (error) => {
     fontSize: 16,
     width: "100%",
     textAlign: "center",
+    alignSelf: "center",
     opacity: error ? 1 : 0,
   };
 };

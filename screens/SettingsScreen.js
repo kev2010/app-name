@@ -6,16 +6,51 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  ActivityIndicator,
 } from "react-native";
-import React from "react";
+import * as ImagePicker from "expo-image-picker";
+import React, { useState, useEffect } from "react";
 import colors from "../assets/colors";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
+import { updateProfilePicture, getProfilePicture } from "../api";
 
 const SettingsScreen = ({ navigation }) => {
   const [user, setUser] = useRecoilState(userState);
+  const [imageURL, setImageURL] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user.imageURL != "" && user.imageURL != null) {
+      console.log("not empty", user.imageURL);
+      setImageURL(user.imageURL);
+    }
+  }, []);
+
   const goBack = () => {
     navigation.goBack();
+  };
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 4],
+      quality: 0.2,
+    });
+
+    if (!result.canceled) {
+      setLoading(true);
+      updateProfilePicture(user.uid, result).then((downloadURL) => {
+        setImageURL(result.assets[0].uri);
+        setUser((user) => ({
+          ...user,
+          imageURL: downloadURL,
+        }));
+        setLoading(false);
+      });
+    }
   };
 
   const onLogOut = () => {
@@ -51,7 +86,29 @@ const SettingsScreen = ({ navigation }) => {
       <Text style={styles.info}>
         Logged in as {user.name} with username {user.username}
       </Text>
-      <TouchableOpacity onPress={onLogOut}>
+
+      {loading && (
+        <ActivityIndicator
+          size="large"
+          color={colors.primary_5}
+          style={styles.loading}
+        />
+      )}
+
+      {imageURL === "" && !loading && (
+        <Image
+          style={styles.profileImage}
+          source={require("../assets/default.jpeg")}
+        />
+      )}
+      {imageURL != "" && !loading && (
+        <Image style={styles.profileImage} source={{ uri: imageURL }} />
+      )}
+
+      <TouchableOpacity onPress={pickImage} style={styles.actions}>
+        <Text style={styles.changeProfile}>Change Profile Picture</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={onLogOut} style={styles.actions}>
         <Text style={styles.logOut}>Log Out</Text>
       </TouchableOpacity>
     </SafeAreaView>
@@ -60,7 +117,6 @@ const SettingsScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
     backgroundColor: colors.gray_1,
     alignItems: "center",
     marginTop: 24,
@@ -80,7 +136,6 @@ const styles = StyleSheet.create({
   top: {
     flexDirection: "row",
     justifyContent: "space-between",
-    // backgroundColor: "pink",
     width: "100%",
     position: "absolute",
   },
@@ -102,17 +157,40 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     marginTop: 6,
   },
+  loading: {
+    height: 192 + 64,
+  },
+  profileImage: {
+    width: 192,
+    height: 192,
+    borderRadius: 100,
+    marginVertical: 32,
+  },
+  changeProfile: {
+    fontFamily: "Nunito-SemiBold",
+    fontSize: 18,
+    overflow: "hidden",
+    borderRadius: 10,
+    paddingVertical: 12,
+    margin: 0,
+    backgroundColor: colors.accent1_1,
+    color: colors.accent1_5,
+    textAlign: "center",
+  },
   logOut: {
     fontFamily: "Nunito-SemiBold",
     fontSize: 18,
     overflow: "hidden",
     borderRadius: 10,
-    paddingHorizontal: 128,
     paddingVertical: 12,
     margin: 0,
-    marginTop: 32,
+    marginTop: 16,
     backgroundColor: colors.primary_1,
-    color: colors.primary_6,
+    color: colors.primary_5,
+    textAlign: "center",
+  },
+  actions: {
+    width: "70%",
   },
 });
 

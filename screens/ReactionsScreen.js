@@ -19,7 +19,7 @@ import ReactionSection from "../components/ReactionSection";
 import GiveComment from "../components/GiveComment";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
-import { getUser, getReactions } from "../api";
+import { getUser, getProfilePicture, getReactions } from "../api";
 import { calculateTimeDiffFromNow } from "../helpers";
 
 const ReactionsScreen = ({ navigation, route }) => {
@@ -44,23 +44,28 @@ const ReactionsScreen = ({ navigation, route }) => {
     getReactions(route.params.id).then((reactions) => {
       reactions.forEach((reactionDoc) => {
         getUser(reactionDoc.data().name.id).then((user) => {
-          const found = data.some((reaction) => reaction.id === reactionDoc.id);
-          if (!found) {
-            // IMPORTANT: Need to use a function to create a new array since state updates are asynchronous or sometimes batched.
-            setData((data) => [
-              {
-                id: reactionDoc.id,
-                creatorID: user.id,
-                name: user.data().name,
-                text: reactionDoc.data().text,
-                time: calculateTimeDiffFromNow(
-                  reactionDoc.data().time.toDate()
-                ),
-                rawTime: reactionDoc.data().time,
-              },
-              ...data,
-            ]);
-          }
+          getProfilePicture(reactionDoc.data().name.id).then((imageURL) => {
+            const found = data.some(
+              (reaction) => reaction.id === reactionDoc.id
+            );
+            if (!found) {
+              // IMPORTANT: Need to use a function to create a new array since state updates are asynchronous or sometimes batched.
+              setData((data) => [
+                {
+                  id: reactionDoc.id,
+                  creatorID: user.id,
+                  imageURL: imageURL,
+                  name: user.data().name,
+                  text: reactionDoc.data().text,
+                  time: calculateTimeDiffFromNow(
+                    reactionDoc.data().time.toDate()
+                  ),
+                  rawTime: reactionDoc.data().time,
+                },
+                ...data,
+              ]);
+            }
+          });
         });
       });
     });
@@ -132,6 +137,7 @@ const ReactionsScreen = ({ navigation, route }) => {
             navigation={navigation}
             creatorID={route.params.creatorID}
             imageURL={route.params.imageURL}
+            profileURL={route.params.profileURL}
             name={route.params.name}
             time={route.params.time}
             collabs={route.params.collabs}

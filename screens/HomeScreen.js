@@ -32,21 +32,31 @@ const HomeScreen = ({ navigation }) => {
   const [swiped, setSwipe] = useState(false);
   const [user, setUser] = useRecoilState(userState);
   const [requestsNotification, setRequestsNotification] = useState(false);
+  const [imageURL, setImageURL] = useState("");
 
   const getFriendsData = () => {
     // Can't set recoil state user with list of firebase userrefs (throws "FIRESTORE (9.15.0) INTERNAL ASSERTION FAILED: Unexpected state" & others)
     // Temporary workaround/fix is to store the document IDs (the UID of friends) instead of the firebase userRef
     getUser(user.uid).then((currentUser) => {
       // TODO: Could set this as a regular JSON instead of just the ID to do one less firebase read
-      const userFriends = currentUser.data().friends.map((userRef) => {
-        return userRef.id;
-      });
-      const userRequests = currentUser.data().friendRequests.map((userRef) => {
-        return userRef.id;
-      });
-      const userSent = currentUser.data().sentRequests.map((userRef) => {
-        return userRef.id;
-      });
+      const userFriends =
+        currentUser.data().friends != null
+          ? currentUser.data().friends.map((userRef) => {
+              return userRef.id;
+            })
+          : [];
+      const userRequests =
+        currentUser.data().friendRequests != null
+          ? currentUser.data().friendRequests.map((userRef) => {
+              return userRef.id;
+            })
+          : [];
+      const userSent =
+        currentUser.data().sentRequests != null
+          ? currentUser.data().sentRequests.map((userRef) => {
+              return userRef.id;
+            })
+          : [];
 
       setUser((user) => ({
         ...user,
@@ -63,6 +73,9 @@ const HomeScreen = ({ navigation }) => {
     const unsubscribe = navigation.addListener("focus", () => {
       // The screen is focused
       // Call any action and update data
+      if (user.imageURL != null) {
+        setImageURL(user.imageURL);
+      }
       getFriendsData();
     });
 
@@ -132,7 +145,11 @@ const HomeScreen = ({ navigation }) => {
           <TouchableOpacity onPress={goToSettingsScreen}>
             <Image
               style={styles.profile}
-              source={require("../assets/default.jpeg")}
+              source={
+                imageURL != ""
+                  ? { uri: imageURL }
+                  : require("../assets/default.jpeg")
+              }
             />
           </TouchableOpacity>
           <TouchableOpacity onPress={goToFriendsScreen}>

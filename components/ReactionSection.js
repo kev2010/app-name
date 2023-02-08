@@ -12,6 +12,7 @@ const ReactionSection = ({ navigation, data }) => {
         <Comment
           navigation={navigation}
           creatorID={item.creatorID}
+          imageURL={item.imageURL}
           name={item.name}
           time={item.time}
           comment={item.text}

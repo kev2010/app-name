@@ -374,3 +374,82 @@ export async function getThoughtImage(thoughtUID) {
     console.log(error);
   }
 }
+
+// TODO: Repeated code from uploadThoughtImage, so merge into one function that just uploads an image
+export async function updateProfilePicture(uid, imageAsset) {
+  try {
+    // Why are we using XMLHttpRequest? See:
+    // https://github.com/expo/expo/issues/2402#issuecomment-443726662
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", imageAsset.assets[0].uri, true);
+      xhr.send(null);
+    });
+
+    const fileRef = ref(storage, `profileImages/${uid}.jpg`);
+    const result = await uploadBytes(fileRef, blob);
+
+    // We're done with the blob, close and release it
+    blob.close();
+
+    return await getDownloadURL(fileRef);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getProfilePicturesOfUsers(users) {
+  var results = [];
+  users.forEach(async function (docData) {
+    results.push(getProfilePicture(docData.id));
+  });
+  return Promise.all(results);
+}
+
+// TODO: Repeated code from getThoughtImage, so merge into one function that just reads images
+export async function getProfilePicture(userUID) {
+  try {
+    return new Promise((resolve, reject) => {
+      const imageRef = ref(storage, `profileImages/${userUID}.jpg`);
+      // Get the download URL
+      getDownloadURL(imageRef)
+        .then((url) => {
+          resolve(url);
+        })
+        .catch((error) => {
+          // A full list of error codes is available at
+          // https://firebase.google.com/docs/storage/web/handle-errors
+          switch (error.code) {
+            case "storage/object-not-found":
+              resolve("");
+              break;
+            case "storage/unauthorized":
+              // User doesn't have permission to access the object
+              console.log("Unauthorized access");
+              resolve("");
+              break;
+            case "storage/canceled":
+              console.log("User canceled the upload");
+              resolve("");
+              // User canceled the upload
+              break;
+            case "storage/unknown":
+              console.log("Unknown error");
+              resolve("");
+              // Unknown error occurred, inspect the server response
+              break;
+          }
+        });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}

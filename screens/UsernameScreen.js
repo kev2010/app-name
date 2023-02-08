@@ -57,6 +57,7 @@ const UsernameScreen = ({ route, navigation }) => {
             friends: [],
             friendRequests: [],
             sentRequests: [],
+            imageURL: "",
           });
         } else {
           setError(true);
@@ -152,6 +153,7 @@ const useErrorStyle = (error) => {
     fontSize: 16,
     width: "80%",
     textAlign: "center",
+    alignSelf: "center",
     opacity: error ? 1 : 0,
   };
 };

@@ -40,7 +40,7 @@ const Think = ({ swiped, submitted }) => {
     setTimeout(() => {
       if (swiped) {
         // TODO: I don't quite understand why inputRef is ever null? But it throws "TypeError: null is not an object (evaluating 'inputRef.current.focus')" right after login flow
-        if (inputRef != null) {
+        if (inputRef != null && inputRef.current != null) {
           inputRef.current.focus();
         }
       } else {
