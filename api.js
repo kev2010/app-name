@@ -81,8 +81,8 @@ export async function getThoughts(currentUser) {
           query(
             collection(db, "thoughts"),
             where("name", "in", batch),
-            where("lastInteraction", ">=", cutoff),
-            orderBy("lastInteraction", "desc")
+            where("time", ">=", cutoff),
+            orderBy("time", "desc")
           )
         ).then((results) =>
           results.docs.map((result) => ({
@@ -457,4 +457,43 @@ export async function getProfilePicture(userUID) {
   } catch (error) {
     console.log(error);
   }
+}
+
+export async function getLastInteractionOfThoughts(thoughts) {
+  var results = [];
+  thoughts.forEach(async function (docData) {
+    results.push(getLastInteraction(docData.id));
+  });
+  return Promise.all(results);
+}
+
+// Adding a lastInteraction field to all thoughts documents so that we can keep showing thoughts that have new comments on it
+export async function getLastInteraction(thoughtUID) {
+  return new Promise((resolve, reject) => {
+    getDoc(doc(db, "thoughts", thoughtUID)).then((docData) => {
+      getRecentReaction(docData.id).then((recentReaction) => {
+        if (recentReaction.length > 0) {
+          resolve(
+            recentReaction[0].data().time.toDate() >=
+              docData.data().time.toDate()
+              ? recentReaction[0].data().time.toDate()
+              : docData.data().time.toDate()
+          );
+        } else {
+          resolve(docData.data().time.toDate());
+        }
+      });
+    });
+  });
+}
+
+export async function getRecentReaction(thoughtUID) {
+  return new Promise((resolve, reject) => {
+    const reactionsRef = collection(db, `thoughts/${thoughtUID}/reactions`);
+    getDocs(query(reactionsRef, orderBy("time", "desc"), limit(1))).then(
+      (result) => {
+        resolve(result.docs);
+      }
+    );
+  });
 }

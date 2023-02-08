@@ -1,6 +1,7 @@
 import {
   getUser,
   getThoughts,
+  getLastInteractionOfThoughts,
   getUsersOfThoughts,
   getProfilePicturesOfUsers,
   getCollabsOfThoughts,
@@ -17,46 +18,49 @@ export async function refreshFeed(uid) {
     return new Promise((resolve, reject) => {
       getUser(uid).then((currentUser) => {
         getThoughts(currentUser).then((thoughts) => {
-          getUsersOfThoughts(thoughts).then((users) => {
-            getProfilePicturesOfUsers(users).then((profileURLs) => {
-              getImagesOfThoughts(thoughts).then((imageURLs) => {
-                getCollabsOfThoughts(thoughts).then((thoughtCollabs) => {
-                  getEmojisSizeOfThoughts(thoughts).then((emojiSizes) => {
-                    getReactionsSizeOfThoughts(thoughts).then(
-                      (reactionSizes) => {
-                        // thoughtCollabs = [[obj1, obj2], [obj3], ...]
-                        var data = {};
-                        for (var i = 0; i < thoughts.length; i++) {
-                          const docData = thoughts[i];
-                          const user = users[i];
-                          // Grab first name of each collaborator
-                          const collabs = thoughtCollabs[i].map(
-                            (user) => user.data().name.split(" ")[0]
-                          );
-                          const imageURL = imageURLs[i];
-                          const profileURL = profileURLs[i];
+          getLastInteractionOfThoughts(thoughts).then((lastInteractions) => {
+            getUsersOfThoughts(thoughts).then((users) => {
+              getProfilePicturesOfUsers(users).then((profileURLs) => {
+                getImagesOfThoughts(thoughts).then((imageURLs) => {
+                  getCollabsOfThoughts(thoughts).then((thoughtCollabs) => {
+                    getEmojisSizeOfThoughts(thoughts).then((emojiSizes) => {
+                      getReactionsSizeOfThoughts(thoughts).then(
+                        (reactionSizes) => {
+                          // thoughtCollabs = [[obj1, obj2], [obj3], ...]
+                          var data = {};
+                          for (var i = 0; i < thoughts.length; i++) {
+                            const docData = thoughts[i];
+                            const user = users[i];
+                            // Grab first name of each collaborator
+                            const collabs = thoughtCollabs[i].map(
+                              (user) => user.data().name.split(" ")[0]
+                            );
+                            const imageURL = imageURLs[i];
+                            const profileURL = profileURLs[i];
+                            const lastInteraction = lastInteractions[i];
 
-                          data[docData.id] = {
-                            id: docData.id,
-                            creatorID: user.id,
-                            name: user.data().name,
-                            imageURL: imageURL,
-                            profileURL: profileURL,
-                            time: calculateTimeDiffFromNow(
-                              docData.time.toDate()
-                            ),
-                            // TODO: For some reason, the image loading puts things out of order
-                            rawTime: docData.lastInteraction.toDate(),
-                            collabs: collabs,
-                            emojis: emojiSizes[i],
-                            reactions: reactionSizes[i],
-                            thoughtUID: docData.id,
-                            thought: docData.thought,
-                          };
+                            data[docData.id] = {
+                              id: docData.id,
+                              creatorID: user.id,
+                              name: user.data().name,
+                              imageURL: imageURL,
+                              profileURL: profileURL,
+                              time: calculateTimeDiffFromNow(
+                                docData.time.toDate()
+                              ),
+                              // TODO: For some reason, the image loading puts things out of order
+                              rawTime: lastInteraction,
+                              collabs: collabs,
+                              emojis: emojiSizes[i],
+                              reactions: reactionSizes[i],
+                              thoughtUID: docData.id,
+                              thought: docData.thought,
+                            };
+                          }
+                          resolve(data);
                         }
-                        resolve(data);
-                      }
-                    );
+                      );
+                    });
                   });
                 });
               });

@@ -5,28 +5,35 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  Alert,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import colors from "../assets/colors";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import OutsideUserElement from "../components/OutsideUserElement.js";
-import { getUser, sendFriendRequest } from "../api";
+import { getUser, sendFriendRequest, getProfilePicture } from "../api";
 
 const ProfileScreen = ({ navigation, route }) => {
   const [user, setUser] = useRecoilState(userState);
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
+  const [imageURL, setImageURL] = useState("");
   const [layout, setLayout] = useState({
     width: 0,
     height: 0,
   });
+  const [loading, setLoading] = useState(true);
 
   const getProfile = () => {
+    setLoading(true);
     getUser(route.params.creatorID).then((profile) => {
-      setName(profile.data().name);
-      setUsername(profile.data().username);
+      getProfilePicture(route.params.creatorID).then((imageURL) => {
+        setName(profile.data().name);
+        setUsername(profile.data().username);
+        setImageURL(imageURL);
+        setLoading(false);
+      });
     });
   };
 
@@ -73,6 +80,7 @@ const ProfileScreen = ({ navigation, route }) => {
           name={name}
           username={username}
           uid={route.params.creatorID}
+          imageURL={imageURL}
           addFriend={addUserAsFriend}
           sent={user.sentRequests}
           layout={layout}
@@ -87,10 +95,22 @@ const ProfileScreen = ({ navigation, route }) => {
           ]}
         >
           <View style={styles.left}>
-            <Image
-              style={styles.profileImage}
-              source={require("../assets/default.jpeg")}
-            />
+            {loading ? (
+              <ActivityIndicator
+                size="small"
+                color={colors.primary_5}
+                style={styles.loading}
+              />
+            ) : (
+              <Image
+                style={styles.profileImage}
+                source={
+                  imageURL != ""
+                    ? { uri: imageURL }
+                    : require("../assets/default.jpeg")
+                }
+              />
+            )}
             <View style={styles.information}>
               <Text style={styles.name}>{name}</Text>
               <Text style={styles.username}>{username}</Text>
@@ -172,6 +192,11 @@ const styles = StyleSheet.create({
     color: colors.accent1_5,
     fontFamily: "Nunito-SemiBold",
     fontSize: 14,
+  },
+  loading: {
+    width: 48,
+    height: 48,
+    marginRight: 8,
   },
 });
 

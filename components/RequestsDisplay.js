@@ -1,7 +1,12 @@
 import { StyleSheet, FlatList, Text, View } from "react-native";
 import React, { useState, useEffect } from "react";
 import RequestElement from "./RequestElement";
-import { getUser, addFriend, deleteFriendRequest } from "../api";
+import {
+  getUser,
+  addFriend,
+  deleteFriendRequest,
+  getProfilePicture,
+} from "../api";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import colors from "../assets/colors";
@@ -19,19 +24,22 @@ const RequestsDisplay = ({ requests }) => {
     // TODO: Decide whether we should be doing this logic (converting array of userRefs to array of user objects) in the home screen, friends screen, or here)
     requests.forEach((uid) => {
       getUser(uid).then((user) => {
-        const found = data.some((request) => request.uid === uid);
-        if (!found) {
-          // IMPORTANT: Need to use a function to create a new array since state updates are asynchronous or sometimes batched.
-          // This also assumes that the document ID (the user document) is the user's UID
-          setData((data) => [
-            ...data,
-            {
-              uid: uid,
-              name: user.data().name,
-              username: user.data().username,
-            },
-          ]);
-        }
+        getProfilePicture(uid).then((imageURL) => {
+          const found = data.some((request) => request.uid === uid);
+          if (!found) {
+            // IMPORTANT: Need to use a function to create a new array since state updates are asynchronous or sometimes batched.
+            // This also assumes that the document ID (the user document) is the user's UID
+            setData((data) => [
+              ...data,
+              {
+                uid: uid,
+                imageURL: imageURL,
+                name: user.data().name,
+                username: user.data().username,
+              },
+            ]);
+          }
+        });
       });
     });
   };
@@ -77,6 +85,7 @@ const RequestsDisplay = ({ requests }) => {
           name={item.name}
           username={item.username}
           uid={item.uid}
+          imageURL={item.imageURL}
           acceptRequest={acceptRequest}
           rejectRequest={rejectRequest}
           layout={layout}

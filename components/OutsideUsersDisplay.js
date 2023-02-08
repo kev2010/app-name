@@ -1,11 +1,14 @@
 import { StyleSheet, FlatList, View, Text } from "react-native";
 import React, { useState, useEffect } from "react";
 import OutsideUserElement from "./OutsideUserElement";
-import { getUsernamesStartingWith } from "../api";
+import {
+  getUsernamesStartingWith,
+  getProfilePicture,
+  sendFriendRequest,
+} from "../api";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import colors from "../assets/colors";
-import { sendFriendRequest } from "../api";
 
 // TODO: Fix bug where typing fast puts multiple results in the search
 // TODO: UX where your current friend requests DON'T show up in "OutsideUsersDisplay" not exactly intuitive, but easy to implement code wise lol. Eventually, should show friend requests in a seperate table in same screen.
@@ -20,26 +23,29 @@ const OutsideUsersDisplay = ({ friends, friendRequests, sent, text }) => {
   const getOutsidersInfo = (text) => {
     getUsernamesStartingWith(text, 10).then((usernames) => {
       usernames.forEach((otherUser) => {
-        const found = data.some((other) => other.uid === otherUser.id);
-        const foundFriend = friends.some((friend) => friend === otherUser.id);
-        const foundRequest = friendRequests.some(
-          (request) => request === otherUser.id
-        );
-        if (
-          !found &&
-          !foundFriend &&
-          !foundRequest &&
-          otherUser.id != user.uid
-        ) {
-          setData((data) => [
-            ...data,
-            {
-              uid: otherUser.id,
-              name: otherUser.data().name,
-              username: otherUser.data().username,
-            },
-          ]);
-        }
+        getProfilePicture(otherUser.id).then((imageURL) => {
+          const found = data.some((other) => other.uid === otherUser.id);
+          const foundFriend = friends.some((friend) => friend === otherUser.id);
+          const foundRequest = friendRequests.some(
+            (request) => request === otherUser.id
+          );
+          if (
+            !found &&
+            !foundFriend &&
+            !foundRequest &&
+            otherUser.id != user.uid
+          ) {
+            setData((data) => [
+              ...data,
+              {
+                uid: otherUser.id,
+                imageURL: imageURL,
+                name: otherUser.data().name,
+                username: otherUser.data().username,
+              },
+            ]);
+          }
+        });
       });
     });
   };
@@ -77,6 +83,7 @@ const OutsideUsersDisplay = ({ friends, friendRequests, sent, text }) => {
               name={item.name}
               username={item.username}
               uid={item.uid}
+              imageURL={item.imageURL}
               addFriend={addUserAsFriend}
               sent={sent}
               layout={layout}

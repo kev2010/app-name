@@ -1,7 +1,7 @@
 import { StyleSheet, FlatList, Text, View } from "react-native";
 import React, { useState, useEffect } from "react";
 import FriendElement from "./FriendElement";
-import { getUser, removeFriend } from "../api";
+import { getUser, removeFriend, getProfilePicture } from "../api";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import colors from "../assets/colors";
@@ -18,19 +18,22 @@ const FriendsDisplay = ({ friends, filter }) => {
     // TODO: Decide whether we should be doing this logic (converting array of userRefs to array of user objects) in the home screen, friends screen, or here)
     friends.forEach((uid) => {
       getUser(uid).then((user) => {
-        const found = data.some((friend) => friend.uid === uid);
-        if (!found) {
-          // IMPORTANT: Need to use a function to create a new array since state updates are asynchronous or sometimes batched.
-          // This also assumes that the document ID (the user document) is the user's UID
-          setData((data) => [
-            ...data,
-            {
-              uid: uid,
-              name: user.data().name,
-              username: user.data().username,
-            },
-          ]);
-        }
+        getProfilePicture(uid).then((imageURL) => {
+          const found = data.some((friend) => friend.uid === uid);
+          if (!found) {
+            // IMPORTANT: Need to use a function to create a new array since state updates are asynchronous or sometimes batched.
+            // This also assumes that the document ID (the user document) is the user's UID
+            setData((data) => [
+              ...data,
+              {
+                uid: uid,
+                imageURL: imageURL,
+                name: user.data().name,
+                username: user.data().username,
+              },
+            ]);
+          }
+        });
       });
     });
   };
@@ -75,6 +78,7 @@ const FriendsDisplay = ({ friends, filter }) => {
             <FriendElement
               name={item.name}
               username={item.username}
+              imageURL={item.imageURL}
               uid={item.uid}
               remove={removeFriendInstances}
               layout={layout}

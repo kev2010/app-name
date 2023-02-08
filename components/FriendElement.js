@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import colors from "../assets/colors";
 
-const FriendElement = ({ name, username, uid, layout, remove }) => {
+const FriendElement = ({ name, username, imageURL, uid, layout, remove }) => {
   const onRemove = () => {
     Alert.alert(
       "Confirm Friend Removal",
@@ -45,7 +45,11 @@ const FriendElement = ({ name, username, uid, layout, remove }) => {
       <View style={styles.left}>
         <Image
           style={styles.profileImage}
-          source={require("../assets/default.jpeg")}
+          source={
+            imageURL != ""
+              ? { uri: imageURL }
+              : require("../assets/default.jpeg")
+          }
         />
         <View style={styles.information}>
           <Text style={styles.name}>{name}</Text>

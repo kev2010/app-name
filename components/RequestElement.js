@@ -14,6 +14,7 @@ const RequestElement = ({
   name,
   username,
   uid,
+  imageURL,
   acceptRequest,
   rejectRequest,
   layout,
@@ -61,7 +62,11 @@ const RequestElement = ({
       <View style={styles.left}>
         <Image
           style={styles.profileImage}
-          source={require("../assets/default.jpeg")}
+          source={
+            imageURL != ""
+              ? { uri: imageURL }
+              : require("../assets/default.jpeg")
+          }
         />
         <View style={styles.information}>
           <Text style={styles.name}>{name}</Text>

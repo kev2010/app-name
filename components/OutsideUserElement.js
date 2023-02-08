@@ -13,6 +13,7 @@ const OutsideUserElement = ({
   name,
   username,
   uid,
+  imageURL,
   addFriend,
   sent,
   layout,
@@ -37,7 +38,11 @@ const OutsideUserElement = ({
       <View style={styles.left}>
         <Image
           style={styles.profileImage}
-          source={require("../assets/default.jpeg")}
+          source={
+            imageURL != ""
+              ? { uri: imageURL }
+              : require("../assets/default.jpeg")
+          }
         />
         <View style={styles.information}>
           <Text style={styles.name}>{name}</Text>
