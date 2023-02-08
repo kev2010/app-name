@@ -46,7 +46,7 @@ export async function refreshFeed(uid) {
                               docData.time.toDate()
                             ),
                             // TODO: For some reason, the image loading puts things out of order
-                            rawTime: docData.time.toDate(),
+                            rawTime: docData.lastInteraction.toDate(),
                             collabs: collabs,
                             emojis: emojiSizes[i],
                             reactions: reactionSizes[i],
