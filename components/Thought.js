@@ -115,10 +115,19 @@ const Thought = (props) => {
         ]}
       >
         {/* See https://github.com/joshswan/react-native-autolink */}
-        <Autolink style={styles.text} text={props.thought} />
-        {/* <Text style={styles.text}>{props.thought}</Text> */}
+        {props.locked ? (
+          <View style={styles.lockedRow}>
+            <Image style={styles.lock} source={require("../assets/lock.png")} />
+            <Text style={styles.lockedText}>
+              Share something interesting today to unlock your collective’s
+              thoughts!
+            </Text>
+          </View>
+        ) : (
+          <Autolink style={styles.text} text={props.thought} />
+        )}
       </View>
-      {props.imageURL != "" ? (
+      {props.imageURL != "" && !props.locked ? (
         <View style={styles.row3}>
           <Image style={styles.photo} source={{ uri: props.imageURL }} />
         </View>
@@ -261,6 +270,23 @@ const styles = StyleSheet.create({
   number: {
     color: colors.primary_5,
     fontFamily: "Nunito-SemiBold",
+  },
+  lockedRow: {
+    flexDirection: "row",
+    width: "100%",
+  },
+  lock: {
+    width: 16,
+    height: 21,
+    marginRight: 12,
+    marginTop: 4,
+  },
+  lockedText: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: colors.gray_3,
+    fontFamily: "Nunito-Regular",
+    flex: 1,
   },
 });
 

@@ -61,6 +61,31 @@ export async function getUser(uid) {
   } catch (error) {}
 }
 
+export async function checkUserPostedToday(uid) {
+  return new Promise((resolve, reject) => {
+    // TODO: Reset at 2pm UTC, which is 9am ET
+    const currentTime = new Date();
+    const startOfToday = new Date();
+    startOfToday.setUTCHours(14, 0, 0, 0);
+    if (startOfToday >= currentTime) {
+      startOfToday.setUTCHours(-10, 0, 0, 0);
+    }
+
+    const currentUserRef = doc(db, "users", uid);
+    let cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 2);
+    getDocs(
+      query(
+        collection(db, "thoughts"),
+        where("name", "==", currentUserRef),
+        where("time", ">=", startOfToday)
+      )
+    ).then((results) => {
+      resolve(results.docs.length > 0);
+    });
+  });
+}
+
 // TODO: Figure out if we want to display user's own thoughts in the feed
 // TODO: Right now we're only grabbing thoughts in the past 3 days. We'll have to do some pagination later
 export async function getThoughts(currentUser) {

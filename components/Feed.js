@@ -11,6 +11,7 @@ import { calculateTimeDiffFromNow } from "../helpers";
 import { refreshFeed } from "../logic";
 import { useRecoilState } from "recoil";
 import { feedDataState } from "../globalState";
+import { checkUserPostedToday } from "../api";
 
 const Feed = ({ navigation, uid }) => {
   // TODO: Right now we're only grabbing thoughts in the past 3 days. We'll have to do some pagination later
@@ -18,6 +19,7 @@ const Feed = ({ navigation, uid }) => {
   // And: https://stackoverflow.com/questions/71285002/react-native-flatlist-handling-large-data
   const [refreshing, setRefreshing] = useState(false);
   const [feedData, setFeedData] = useRecoilState(feedDataState);
+  const [locked, setLocked] = useState(true);
 
   const DEFAULT = [
     {
@@ -37,8 +39,11 @@ const Feed = ({ navigation, uid }) => {
   const refreshThoughts = () => {
     setRefreshing(true);
     refreshFeed(uid).then((data) => {
-      setFeedData(data);
-      setRefreshing(false);
+      checkUserPostedToday(uid).then((posted) => {
+        setLocked(!posted);
+        setFeedData(data);
+        setRefreshing(false);
+      });
     });
   };
 
@@ -78,6 +83,7 @@ const Feed = ({ navigation, uid }) => {
               thought: item.thought,
             });
           }}
+          disabled={locked}
         >
           <Thought
             navigation={navigation}
@@ -91,6 +97,7 @@ const Feed = ({ navigation, uid }) => {
             reactions={item.reactions}
             thoughtUID={item.thoughtUID}
             thought={item.thought}
+            locked={locked}
           />
         </TouchableOpacity>
       )}

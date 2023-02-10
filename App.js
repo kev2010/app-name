@@ -30,6 +30,7 @@ export default function App() {
     require("./assets/camera.png"),
     require("./assets/remove.png"),
     require("./assets/friendsIcon.png"),
+    require("./assets/lock.png"),
     require("./assets/delete.png"),
   ]);
 
