@@ -97,6 +97,7 @@ const Feed = ({ navigation, uid }) => {
             reactions={item.reactions}
             thoughtUID={item.thoughtUID}
             thought={item.thought}
+            showTrash={false}
             locked={locked}
           />
         </TouchableOpacity>
@@ -135,6 +136,7 @@ const Feed = ({ navigation, uid }) => {
           reactions={item.reactions}
           thoughtUID={item.thoughtUID}
           thought={item.thought}
+          showTrash={false}
         />
       )}
       keyExtractor={(item) => item.id}

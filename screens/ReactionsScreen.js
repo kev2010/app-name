@@ -145,6 +145,7 @@ const ReactionsScreen = ({ navigation, route }) => {
             reactions={route.params.reactions}
             thoughtUID={route.params.id}
             thought={route.params.thought}
+            showTrash={true}
           />
           <View style={styles.reactions}>
             <ReactionSection

@@ -90,7 +90,7 @@ const Thought = (props) => {
           <Text style={styles.name}>{props.name}</Text>
           <Text style={styles.time}>{props.time}</Text>
         </TouchableOpacity>
-        {props.creatorID == user.uid ? (
+        {props.creatorID == user.uid && props.showTrash ? (
           loading ? (
             <ActivityIndicator
               style={styles.loading}
