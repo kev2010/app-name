@@ -44,6 +44,18 @@ const OutsideUsersDisplay = ({ friends, friendRequests, sent, text }) => {
                 username: otherUser.data().username,
               },
             ]);
+            // setData(
+            //   (data) =>
+            //     new Set([
+            //       ...data,
+            //       {
+            //         uid: otherUser.id,
+            //         imageURL: imageURL,
+            //         name: otherUser.data().name,
+            //         username: otherUser.data().username,
+            //       },
+            //     ])
+            // );
           }
         });
       });
