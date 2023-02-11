@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "921730820705",
+    "project_id": "thoughts-f813e",
+    "storage_bucket": "thoughts-f813e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:921730820705:android:1e5cb46b50946a0ef91820",
+        "android_client_info": {
+          "package_name": "com.kev2018.firstexpo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "921730820705-mfh2tb9cmtlvk9t28n5kd4td4a1kuuq3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDWIWUDPqTIRN-IHAS0yQksIhRdU68iGTg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "921730820705-mfh2tb9cmtlvk9t28n5kd4td4a1kuuq3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

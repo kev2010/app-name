@@ -522,3 +522,11 @@ export async function getRecentReaction(thoughtUID) {
     );
   });
 }
+
+// TODO: Eventually can turn this to a general purpose "updateUser" function
+export async function updateNotificationToken(uid, notificationToken) {
+  const currentUserRef = doc(db, "users", uid);
+  await updateDoc(currentUserRef, {
+    notificationToken: notificationToken,
+  });
+}

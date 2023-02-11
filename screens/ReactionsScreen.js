@@ -146,6 +146,7 @@ const ReactionsScreen = ({ navigation, route }) => {
             thoughtUID={route.params.id}
             thought={route.params.thought}
             showTrash={true}
+            locked={false}
           />
           <View style={styles.reactions}>
             <ReactionSection
@@ -171,6 +172,7 @@ const ReactionsScreen = ({ navigation, route }) => {
         >
           <GiveComment
             thoughtUID={route.params.id}
+            creatorID={route.params.creatorID}
             swiped={!swiped}
             submitted={submitted}
             initialLoading={initialLoading}

@@ -18,8 +18,21 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import Feed from "../components/Feed";
 import { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { useRecoilState } from "recoil";
-import { getUser } from "../api";
+import { getUser, updateNotificationToken } from "../api";
 import { userState } from "../globalState";
+import {
+  registerForPushNotificationsAsync,
+  sendPushNotification,
+} from "../notifications";
+import * as Notifications from "expo-notifications";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 const HomeScreen = ({ navigation }) => {
   // TODO: Make keyboard go away when you switch between screens - for some reason it defaults to being active
@@ -33,6 +46,9 @@ const HomeScreen = ({ navigation }) => {
   const [user, setUser] = useRecoilState(userState);
   const [requestsNotification, setRequestsNotification] = useState(false);
   const [imageURL, setImageURL] = useState("");
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
   const getFriendsData = () => {
     // Can't set recoil state user with list of firebase userrefs (throws "FIRESTORE (9.15.0) INTERNAL ASSERTION FAILED: Unexpected state" & others)
@@ -68,6 +84,23 @@ const HomeScreen = ({ navigation }) => {
     });
   };
 
+  const registerNotification = () => {
+    if (
+      user.notificationToken === undefined ||
+      user.notificationToken === null ||
+      user.notification === ""
+    ) {
+      registerForPushNotificationsAsync().then((token) => {
+        setUser((user) => ({
+          ...user,
+          notificationToken: token,
+        }));
+        console.log("TOKEN", token, user);
+        updateNotificationToken(user.uid, token).then();
+      });
+    }
+  };
+
   useEffect(() => {
     Keyboard.dismiss();
     const unsubscribe = navigation.addListener("focus", () => {
@@ -82,6 +115,27 @@ const HomeScreen = ({ navigation }) => {
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
   }, [navigation]);
+
+  useEffect(() => {
+    registerNotification();
+
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
 
   const onPressGlobal = () => {
     if (!globalFeed) {

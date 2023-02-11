@@ -211,9 +211,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginBottom: 16,
     alignSelf: "center",
-    borderRadius: 15,
-    borderColor: colors.gray_2,
-    borderWidth: 0.5,
   },
   row4: {
     justifyContent: "space-between",
@@ -224,6 +221,9 @@ const styles = StyleSheet.create({
     width: 315,
     height: 315,
     resizeMode: "contain",
+    borderRadius: 15,
+    borderColor: colors.gray_2,
+    borderWidth: 0.5,
   },
   profileImage: {
     width: 32,

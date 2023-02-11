@@ -83,7 +83,7 @@ const Feed = ({ navigation, uid }) => {
               thought: item.thought,
             });
           }}
-          disabled={locked}
+          disabled={uid === item.creatorID ? false : locked}
         >
           <Thought
             navigation={navigation}
@@ -98,7 +98,7 @@ const Feed = ({ navigation, uid }) => {
             thoughtUID={item.thoughtUID}
             thought={item.thought}
             showTrash={false}
-            locked={locked}
+            locked={uid === item.creatorID ? false : locked}
           />
         </TouchableOpacity>
       )}

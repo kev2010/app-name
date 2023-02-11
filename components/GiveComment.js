@@ -12,13 +12,20 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRecoilState } from "recoil";
-import { addComment } from "../api";
+import { addComment, getUser } from "../api";
 import colors from "../assets/colors";
 import { userState } from "../globalState";
 import { CONSTANTS } from "../constants";
+import { sendPushNotification } from "../notifications";
 
 // TODO: Extremely similar to Think.js - maybe there's a way to reduce reused code?
-const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
+const GiveComment = ({
+  thoughtUID,
+  creatorID,
+  swiped,
+  submitted,
+  initialLoading,
+}) => {
   const [thought, setThought] = useState("");
   const inputRef = React.createRef();
   const audioStyle = useAudioStyle(thought);
@@ -54,6 +61,15 @@ const GiveComment = ({ thoughtUID, swiped, submitted, initialLoading }) => {
   const onSubmit = () => {
     setLoading(true);
     addComment(thoughtUID, user.uid, thought).then(() => {
+      getUser(creatorID).then((creator) => {
+        console.log("WOOOHOO", creator.data().notificationToken);
+        sendPushNotification(
+          creator.data().notificationToken,
+          `${user.name} replied to your thought!`,
+          thought,
+          {}
+        );
+      });
       submitted();
       setThought("");
       setLoading(false);
