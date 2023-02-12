@@ -12,9 +12,9 @@ import {
 } from "react-native";
 import UploadImage from "./UploadImage";
 import { useRecoilState } from "recoil";
-import { addThought, uploadThoughtImage } from "../api";
+import { addThought, uploadThoughtImage, checkUserPostedToday } from "../api";
 import colors from "../assets/colors";
-import { userState, feedDataState } from "../globalState";
+import { userState, feedDataState, feedLockedState } from "../globalState";
 import { CONSTANTS } from "../constants";
 import { refreshFeed } from "../logic";
 
@@ -34,6 +34,7 @@ const Think = ({ swiped, submitted }) => {
   const [feedData, setFeedData] = useRecoilState(feedDataState);
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
   const [image, setImage] = useState(null);
+  const [locked, setLocked] = useRecoilState(feedLockedState);
 
   useEffect(() => {
     // TODO: This is messy, but somehow needed for Android devices to work properly? The keyboard doesn't show up otherwise
@@ -69,10 +70,13 @@ const Think = ({ swiped, submitted }) => {
         console.log("good news! we're gooD!", downloadURL);
         refreshFeed(user.uid).then((data) => {
           setFeedData(data);
-          submitted();
-          setThought("");
-          setImage(null);
-          setLoading(false);
+          checkUserPostedToday(user.uid).then((posted) => {
+            setLocked(!posted);
+            submitted();
+            setThought("");
+            setImage(null);
+            setLoading(false);
+          });
         });
       });
     });

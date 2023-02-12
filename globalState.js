@@ -42,3 +42,8 @@ export const feedDataState = atom({
   key: "feedDataState",
   default: {},
 });
+
+export const feedLockedState = atom({
+  key: "feedLockedState",
+  default: true,
+});

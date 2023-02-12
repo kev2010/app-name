@@ -13,11 +13,9 @@ import { useRecoilState } from "recoil";
 import { userState, feedDataState } from "../globalState";
 import Autolink from "react-native-autolink";
 import { addEmoji, deleteThought } from "../api";
-import { refreshFeed } from "../logic";
 
 const Thought = (props) => {
   const [user, setUser] = useRecoilState(userState);
-  const [feedData, setFeedData] = useRecoilState(feedDataState);
   const [loading, setLoading] = useState(false);
 
   let collabsText = "";
@@ -56,10 +54,7 @@ const Thought = (props) => {
             setLoading(true);
             console.log("DELETEE", props.thoughtUID);
             deleteThought(props.thoughtUID).then(() => {
-              refreshFeed(user.uid).then((data) => {
-                setFeedData(data);
-                setLoading(false);
-              });
+              setLoading(false);
             });
           },
           style: "destructive",
