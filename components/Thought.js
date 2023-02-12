@@ -206,19 +206,21 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginBottom: 16,
     alignSelf: "center",
+    // Breaking the system!
+    width: 315,
+    height: 315,
+    borderRadius: 15,
+    borderColor: colors.gray_2,
+    borderWidth: 0.5,
+    overflow: "hidden",
   },
   row4: {
     justifyContent: "space-between",
     flexDirection: "row",
   },
   photo: {
-    // Breaking the system!
-    width: 315,
-    height: 315,
+    width: "100%",
     resizeMode: "contain",
-    borderRadius: 15,
-    borderColor: colors.gray_2,
-    borderWidth: 0.5,
   },
   profileImage: {
     width: 32,

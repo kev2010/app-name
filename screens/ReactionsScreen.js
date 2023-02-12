@@ -235,7 +235,8 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 12,
     // Needed so that you can see the last element - a hacky solution
-    marginBottom: 48,
+    marginBottom: 12,
+    paddingBottom: 64,
     borderRadius: 15,
     overflow: "hidden",
   },
