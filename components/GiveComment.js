@@ -61,15 +61,18 @@ const GiveComment = ({
   const onSubmit = () => {
     setLoading(true);
     addComment(thoughtUID, user.uid, thought).then(() => {
-      getUser(creatorID).then((creator) => {
-        console.log("WOOOHOO", creator.data().notificationToken);
-        sendPushNotification(
-          creator.data().notificationToken,
-          `${user.name} replied to your thought!`,
-          thought,
-          {}
-        );
-      });
+      // Make sure we don't send a push notification if the user replies to their own post!
+      if (creatorID != user.uid) {
+        getUser(creatorID).then((creator) => {
+          console.log("WOOOHOO", creator.data().notificationToken);
+          sendPushNotification(
+            creator.data().notificationToken,
+            `${user.name} replied to your thought!`,
+            thought,
+            {}
+          );
+        });
+      }
       submitted();
       setThought("");
       setLoading(false);
