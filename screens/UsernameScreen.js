@@ -151,7 +151,6 @@ const useErrorStyle = (error) => {
     color: colors.primary_6,
     fontFamily: "Nunito-Regular",
     fontSize: 16,
-    width: "80%",
     textAlign: "center",
     alignSelf: "center",
     opacity: error ? 1 : 0,
@@ -161,7 +160,6 @@ const useErrorStyle = (error) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: "pink",
     alignItems: "center",
     justifyContent: "space-between",
     marginTop: 24,

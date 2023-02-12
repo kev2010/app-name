@@ -6,8 +6,12 @@ import {
   Image,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from "react-native";
+import { useRecoilState } from "recoil";
+import { userState } from "../globalState";
 import colors from "../assets/colors";
+import { CONSTANTS } from "../constants";
 
 const OutsideUserElement = ({
   name,
@@ -19,11 +23,79 @@ const OutsideUserElement = ({
   layout,
 }) => {
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useRecoilState(userState);
+
+  const addFriendAlert = () => {
+    Alert.alert(
+      "Confirm Add Friend",
+      `Are you close friends with ${name}? Make sure to keep your circle tight!`,
+      [
+        {
+          text: "No",
+          onPress: () => {
+            setLoading(false);
+            console.log("CANCELLED");
+          },
+        },
+        {
+          text: "Yes",
+          onPress: () => {
+            addFriend(uid).then(() => {
+              setLoading(false);
+            });
+          },
+          style: "default",
+        },
+      ]
+    );
+  };
+
+  const maxFriendsAlert = () => {
+    Alert.alert(
+      "Friend Limit Reached",
+      `You cannot have more than ${CONSTANTS.MAX_FRIENDS} friends! Remove a friend to another.`,
+      [
+        {
+          text: "Understood!",
+          onPress: () => {
+            setLoading(false);
+            console.log("CANCELLED");
+          },
+          style: "default",
+        },
+      ]
+    );
+  };
+
+  const sentRequestAlreadyAlert = () => {
+    Alert.alert(
+      "Check Your Requests",
+      `${name} already sent you a friend request`,
+      [
+        {
+          text: "Understood!",
+          onPress: () => {
+            setLoading(false);
+            console.log("CANCELLED");
+          },
+          style: "default",
+        },
+      ]
+    );
+  };
+
   const onAdd = () => {
     setLoading(true);
-    addFriend(uid).then(() => {
-      setLoading(false);
-    });
+    console.log("friend count", user.friends.length);
+    if (user.friendRequests.indexOf(uid) === -1) {
+      if (user.friends.length <= CONSTANTS.MAX_FRIENDS - 1) {
+        addFriendAlert();
+      } else {
+        maxFriendsAlert();
+      }
+    } else {
+      sentRequestAlreadyAlert();
+    }
   };
 
   return (

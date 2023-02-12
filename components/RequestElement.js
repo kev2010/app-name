@@ -9,6 +9,9 @@ import {
   Alert,
 } from "react-native";
 import colors from "../assets/colors";
+import { useRecoilState } from "recoil";
+import { userState } from "../globalState";
+import { CONSTANTS } from "../constants";
 
 const RequestElement = ({
   name,
@@ -20,11 +23,59 @@ const RequestElement = ({
   layout,
 }) => {
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useRecoilState(userState);
+
+  // TODO: Some duplicate code in OutsideUserElement
+  const addFriendAlert = () => {
+    Alert.alert(
+      "Confirm Add Friend",
+      `Are you close friends with ${name}? Make sure to keep your circle tight!`,
+      [
+        {
+          text: "No",
+          onPress: () => {
+            setLoading(false);
+            console.log("CANCELLED");
+          },
+        },
+        {
+          text: "Yes",
+          onPress: () => {
+            acceptRequest(uid).then(() => {
+              setLoading(false);
+            });
+          },
+          style: "default",
+        },
+      ]
+    );
+  };
+
+  const maxFriendsAlert = () => {
+    Alert.alert(
+      "Friend Limit Reached",
+      `You cannot have more than ${CONSTANTS.MAX_FRIENDS} friends! Remove a friend to another.`,
+      [
+        {
+          text: "Understood!",
+          onPress: () => {
+            setLoading(false);
+            console.log("CANCELLED");
+          },
+          style: "default",
+        },
+      ]
+    );
+  };
+
   const onAccept = () => {
     setLoading(true);
-    acceptRequest(uid).then(() => {
-      setLoading(false);
-    });
+    console.log("friend count", user.friends.length);
+    if (user.friends.length <= CONSTANTS.MAX_FRIENDS - 1) {
+      addFriendAlert();
+    } else {
+      maxFriendsAlert();
+    }
   };
 
   const onReject = () => {

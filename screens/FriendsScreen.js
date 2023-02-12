@@ -16,6 +16,7 @@ import { SearchBar } from "react-native-elements";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import RequestsDisplay from "../components/RequestsDisplay";
+import { CONSTANTS } from "../constants";
 
 const FriendsScreen = ({ navigation }) => {
   const [user, setUser] = useRecoilState(userState);
@@ -44,7 +45,9 @@ const FriendsScreen = ({ navigation }) => {
           displayRequests={displayRequests}
           numRequests={user.friendRequests.length}
         />
-        <Text style={styles.close}>Keep it to close friends!</Text>
+        <Text style={styles.close}>
+          Keep it to close friends! You have a limit of {CONSTANTS.MAX_FRIENDS}.
+        </Text>
         {showFriends ? (
           <>
             <SearchBar
