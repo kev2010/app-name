@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -17,6 +17,7 @@ import { addEmoji, deleteThought } from "../api";
 const Thought = (props) => {
   const [user, setUser] = useRecoilState(userState);
   const [loading, setLoading] = useState(false);
+  const [emojiCount, setEmojiCount] = useState(props.emojis);
 
   let collabsText = "";
   if (props.collabs.length == 1) {
@@ -36,6 +37,10 @@ const Thought = (props) => {
       });
     }
   };
+
+  useEffect(() => {
+    setEmojiCount(props.emojis);
+  }, [props.emojis]);
 
   const deleteThoughtAlert = () => {
     Alert.alert(
@@ -66,7 +71,7 @@ const Thought = (props) => {
   const userAddEmoji = () => {
     console.log("ahahaha", props.thoughtUID, user.uid);
     addEmoji(props.thoughtUID, user.uid, "rizz").then(() => {
-      // submitted();
+      setEmojiCount((emojiCount) => emojiCount + 1);
     });
   };
 
@@ -138,7 +143,7 @@ const Thought = (props) => {
               // resizeMode="stretch"
             />
           </TouchableOpacity>
-          <Text style={styles.number}>{props.emojis}</Text>
+          <Text style={styles.number}>{emojiCount}</Text>
         </View>
 
         <Text style={styles.thought}>{collabsText}</Text>

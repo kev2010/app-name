@@ -19,13 +19,14 @@ import ReactionSection from "../components/ReactionSection";
 import GiveComment from "../components/GiveComment";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
-import { getUser, getProfilePicture, getReactions } from "../api";
+import { getUser, getProfilePicture, getReactions, getEmojis } from "../api";
 import { calculateTimeDiffFromNow } from "../helpers";
 
 const ReactionsScreen = ({ navigation, route }) => {
   const [swiped, setSwipe] = useState(false);
   const [data, setData] = useState([]);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [emojiCount, setEmojiCount] = useState(route.params.emojis);
   // TODO: Unclutter like in HomeScreen by moving bottom sheet to a separate component
   const goBack = () => {
     navigation.goBack();
@@ -38,6 +39,10 @@ const ReactionsScreen = ({ navigation, route }) => {
     setTimeout(() => {
       setInitialLoading(false);
     }, 450);
+  }, []);
+
+  useEffect(() => {
+    refreshEmojis();
   }, []);
 
   const refreshReactions = () => {
@@ -68,6 +73,12 @@ const ReactionsScreen = ({ navigation, route }) => {
           });
         });
       });
+    });
+  };
+
+  const refreshEmojis = () => {
+    getEmojis(route.params.id).then((result) => {
+      setEmojiCount(result.size);
     });
   };
 
@@ -141,7 +152,7 @@ const ReactionsScreen = ({ navigation, route }) => {
             name={route.params.name}
             time={route.params.time}
             collabs={route.params.collabs}
-            emojis={route.params.emojis}
+            emojis={emojiCount}
             reactions={route.params.reactions}
             thoughtUID={route.params.id}
             thought={route.params.thought}
