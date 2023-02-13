@@ -1,5 +1,6 @@
 import {
   collection,
+  collectionGroup,
   doc,
   setDoc,
   addDoc,
@@ -72,8 +73,6 @@ export async function checkUserPostedToday(uid) {
     }
 
     const currentUserRef = doc(db, "users", uid);
-    let cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - 2);
     getDocs(
       query(
         collection(db, "thoughts"),
@@ -82,6 +81,30 @@ export async function checkUserPostedToday(uid) {
       )
     ).then((results) => {
       resolve(results.docs.length > 0);
+    });
+  });
+}
+
+export async function checkUserCommentedToday(uid) {
+  return new Promise((resolve, reject) => {
+    // TODO: Reset at 2pm UTC, which is 9am ET
+    const currentTime = new Date();
+    const startOfToday = new Date();
+    startOfToday.setUTCHours(14, 0, 0, 0);
+    if (startOfToday >= currentTime) {
+      startOfToday.setUTCHours(-10, 0, 0, 0);
+    }
+
+    const currentUserRef = doc(db, "users", uid);
+    getDocs(
+      query(
+        collectionGroup(db, "reactions"),
+        where("name", "==", currentUserRef),
+        where("time", ">=", startOfToday)
+      )
+    ).then((results) => {
+      console.log("COMMENTS CHECK", results.docs.length);
+      resolve(results.docs.length > 1);
     });
   });
 }

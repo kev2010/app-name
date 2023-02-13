@@ -11,7 +11,7 @@ import { calculateTimeDiffFromNow } from "../helpers";
 import { refreshFeed } from "../logic";
 import { useRecoilState } from "recoil";
 import { feedDataState, feedLockedState } from "../globalState";
-import { checkUserPostedToday } from "../api";
+import { checkUserPostedToday, checkUserCommentedToday } from "../api";
 import { CONSTANTS } from "../constants";
 
 const Feed = ({ navigation, uid }) => {
@@ -36,14 +36,27 @@ const Feed = ({ navigation, uid }) => {
     },
   ];
 
+  const checkIfTodayCycle = (time) => {
+    // Each cycle starts at 9am ET, 2pm UTC
+    const currentTime = new Date();
+    const startOfToday = new Date();
+    startOfToday.setUTCHours(14, 0, 0, 0);
+    if (startOfToday >= currentTime) {
+      startOfToday.setUTCHours(-10, 0, 0, 0);
+    }
+    return time >= startOfToday;
+  };
+
   // TODO: Should this logic be placed in the Feed componenet or HomeScreen?
   const refreshThoughts = () => {
     setRefreshing(true);
     refreshFeed(uid).then((data) => {
       checkUserPostedToday(uid).then((posted) => {
-        setLocked(!posted);
-        setFeedData(data);
-        setRefreshing(false);
+        checkUserCommentedToday(uid, 2).then((commented) => {
+          setLocked(!(posted || commented));
+          setFeedData(data);
+          setRefreshing(false);
+        });
       });
     });
   };
@@ -84,7 +97,11 @@ const Feed = ({ navigation, uid }) => {
               thought: item.thought,
             });
           }}
-          disabled={uid === item.creatorID ? false : locked}
+          disabled={
+            uid === item.creatorID || !checkIfTodayCycle(item.postTime)
+              ? false
+              : locked
+          }
         >
           <Thought
             navigation={navigation}
@@ -99,7 +116,11 @@ const Feed = ({ navigation, uid }) => {
             thoughtUID={item.thoughtUID}
             thought={item.thought}
             showTrash={false}
-            locked={uid === item.creatorID ? false : locked}
+            locked={
+              uid === item.creatorID || !checkIfTodayCycle(item.postTime)
+                ? false
+                : locked
+            }
           />
         </TouchableOpacity>
       )}

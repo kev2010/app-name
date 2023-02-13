@@ -3,7 +3,7 @@
     "name": "Pontis",
     "slug": "Pontis",
     "privacy": "unlisted",
-    "version": "1.4.1",
+    "version": "1.4.2",
     "platforms": [
       "ios",
       "android"
@@ -33,7 +33,10 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.kev2018.firstexpo",
-      "versionCode": 12
+      "versionCode": 13,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -53,6 +56,11 @@
           "photosPermission": "The app accesses your photos/videos to let you share them with your friends."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "3db2c8b7-7f82-40a4-9b76-4824f41c08d7"
+      }
+    }
   }
 }
