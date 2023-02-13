@@ -89,7 +89,7 @@ const HomeScreen = ({ navigation }) => {
     if (
       user.notificationToken === undefined ||
       user.notificationToken === null ||
-      user.notification === ""
+      user.notificationToken === ""
     ) {
       registerForPushNotificationsAsync().then((token) => {
         setUser((user) => ({

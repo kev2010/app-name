@@ -41,13 +41,13 @@ export async function registerForPushNotificationsAsync() {
       finalStatus = status;
     }
     if (finalStatus !== "granted") {
-      alert("Failed to get push token for push notification!");
-      return;
+      console.log("Failed to get push token for push notification!");
+      return "";
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
     console.log(token);
   } else {
-    alert("Must use physical device for Push Notifications");
+    console.log("Must use physical device for Push Notifications");
   }
 
   if (Platform.OS === "android") {

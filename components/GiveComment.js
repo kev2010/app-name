@@ -65,12 +65,14 @@ const GiveComment = ({
       if (creatorID != user.uid) {
         getUser(creatorID).then((creator) => {
           console.log("WOOOHOO", creator.data().notificationToken);
-          sendPushNotification(
-            creator.data().notificationToken,
-            `${user.name} replied to your thought!`,
-            thought,
-            {}
-          );
+          if (creator.data().notificationToken != "") {
+            sendPushNotification(
+              creator.data().notificationToken,
+              `${user.name} replied to your thought!`,
+              thought,
+              {}
+            );
+          }
         });
       }
       submitted();
