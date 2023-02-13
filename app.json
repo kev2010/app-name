@@ -3,7 +3,7 @@
     "name": "Pontis",
     "slug": "Pontis",
     "privacy": "unlisted",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "platforms": [
       "ios",
       "android"
@@ -33,7 +33,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.kev2018.firstexpo",
-      "versionCode": 11
+      "versionCode": 12
     },
     "web": {
       "favicon": "./assets/favicon.png"
