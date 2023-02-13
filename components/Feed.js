@@ -12,6 +12,7 @@ import { refreshFeed } from "../logic";
 import { useRecoilState } from "recoil";
 import { feedDataState, feedLockedState } from "../globalState";
 import { checkUserPostedToday } from "../api";
+import { CONSTANTS } from "../constants";
 
 const Feed = ({ navigation, uid }) => {
   // TODO: Right now we're only grabbing thoughts in the past 3 days. We'll have to do some pagination later
@@ -26,7 +27,7 @@ const Feed = ({ navigation, uid }) => {
       id: 0,
       creatorID: "TAKLar06V3UPXUMll72Kqj51CfG2",
       profileURL: "",
-      name: "App Name",
+      name: CONSTANTS.APP_NAME,
       time: calculateTimeDiffFromNow(new Date()),
       collabs: ["Algorithm", "Admin"],
       reactions: 0,

@@ -21,6 +21,7 @@ import {
 } from "firebase/auth";
 import { checkUserExists, getProfilePicture } from "../api";
 import colors from "../assets/colors";
+import { CONSTANTS } from "../constants";
 
 const auth = getAuth(app);
 
@@ -128,7 +129,7 @@ const VerificationScreen = ({ navigation, route }) => {
     <SafeAreaView style={styles.container}>
       <View>
         <StatusBar barStyle={"light-content"} />
-        <Text style={styles.title}>App Name</Text>
+        <Text style={styles.title}>{CONSTANTS.APP_NAME}</Text>
         <Text style={styles.subtitle}>Enter the code we sent!</Text>
         <View style={styles.number}>
           <TextInput

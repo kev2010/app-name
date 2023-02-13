@@ -25,6 +25,7 @@ import {
   sendPushNotification,
 } from "../notifications";
 import * as Notifications from "expo-notifications";
+import { CONSTANTS } from "../constants";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -194,7 +195,7 @@ const HomeScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <StatusBar barStyle={"light-content"} />
-        <Text style={styles.title}>App Name</Text>
+        <Text style={styles.title}>{CONSTANTS.APP_NAME}</Text>
         <View style={styles.top}>
           <TouchableOpacity onPress={goToSettingsScreen}>
             <Image

@@ -21,6 +21,7 @@ import {
 import { getAuth, PhoneAuthProvider } from "firebase/auth";
 import { app } from "../firebaseConfig";
 import { dummyCall } from "../api";
+import { CONSTANTS } from "../constants";
 
 const auth = getAuth(app);
 
@@ -129,7 +130,7 @@ const PhoneScreen = ({ navigation, route }) => {
           attemptInvisibleVerification={attemptInvisibleVerification}
         />
         <StatusBar barStyle={"light-content"} />
-        <Text style={styles.title}>App Name</Text>
+        <Text style={styles.title}>{CONSTANTS.APP_NAME}</Text>
         <Text style={styles.subtitle}>
           Hey {route.params.paramKey.split(" ")[0]}! Enter your number📱
         </Text>

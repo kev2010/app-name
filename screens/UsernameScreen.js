@@ -14,6 +14,7 @@ import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import colors from "../assets/colors";
 import { createUser, checkUniqueUsername } from "../api";
+import { CONSTANTS } from "../constants";
 
 const UsernameScreen = ({ route, navigation }) => {
   const validUsernameChars = /^[a-z0-9_]+$/;
@@ -90,7 +91,7 @@ const UsernameScreen = ({ route, navigation }) => {
     <SafeAreaView style={styles.container}>
       <View>
         <StatusBar barStyle={"light-content"} />
-        <Text style={styles.title}>App Name</Text>
+        <Text style={styles.title}>{CONSTANTS.APP_NAME}</Text>
         <Text style={styles.subtitle}>Finally, choose a unique username!</Text>
         <TextInput
           ref={inputRef}

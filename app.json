@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "first-expo",
-    "slug": "first-expo",
+    "name": "Pontis",
+    "slug": "Pontis",
     "privacy": "unlisted",
     "version": "1.4.0",
     "platforms": [
@@ -53,11 +53,6 @@
           "photosPermission": "The app accesses your photos/videos to let you share them with your friends."
         }
       ]
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "44e8fd18-ed88-433a-81ef-3517b0798e2a"
-      }
-    }
+    ]
   }
 }

@@ -11,6 +11,7 @@ import {
   View,
 } from "react-native";
 import colors from "../assets/colors";
+import { CONSTANTS } from "../constants";
 
 const NameScreen = ({ navigation }) => {
   const [fullName, setfullName] = useState("");
@@ -61,7 +62,7 @@ const NameScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle={"light-content"} />
       <View>
-        <Text style={styles.title}>App Name</Text>
+        <Text style={styles.title}>{CONSTANTS.APP_NAME}</Text>
         <Text style={styles.subtitle}>Welcome! What's your name?</Text>
         <TextInput
           ref={inputRef}

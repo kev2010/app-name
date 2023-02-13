@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import colors from "../assets/colors";
+import { CONSTANTS } from "../constants";
 
 const FriendsHeader = ({
   goBack,
@@ -40,7 +41,7 @@ const FriendsHeader = ({
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>App Name</Text>
+        <Text style={styles.title}>{CONSTANTS.APP_NAME}</Text>
         <View style={styles.top}>
           <TouchableOpacity onPress={goBack} style={styles.button}>
             <Image style={styles.back} source={require("../assets/back.png")} />
