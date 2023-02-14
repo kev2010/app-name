@@ -42,7 +42,7 @@ export async function refreshFeed(uid) {
                             data[docData.id] = {
                               id: docData.id,
                               creatorID: user.id,
-                              name: user.data().name,
+                              name: user.data().username,
                               imageURL: imageURL,
                               profileURL: profileURL,
                               time: calculateTimeDiffFromNow(

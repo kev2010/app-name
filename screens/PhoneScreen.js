@@ -129,7 +129,7 @@ const PhoneScreen = ({ navigation, route }) => {
           androidLayerType="software"
           attemptInvisibleVerification={attemptInvisibleVerification}
         />
-        <StatusBar barStyle={"light-content"} />
+        {/* <StatusBar barStyle={"light-content"} /> */}
         <Text style={styles.title}>{CONSTANTS.APP_NAME}</Text>
         <Text style={styles.subtitle}>
           Hey {route.params.paramKey.split(" ")[0]}! Enter your number📱
@@ -209,7 +209,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 24,
+    paddingTop: 24,
   },
   title: {
     marginTop: 4,

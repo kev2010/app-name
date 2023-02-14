@@ -60,7 +60,7 @@ const ReactionsScreen = ({ navigation, route }) => {
                   id: reactionDoc.id,
                   creatorID: user.id,
                   imageURL: imageURL,
-                  name: user.data().name,
+                  name: user.data().username,
                   text: reactionDoc.data().text,
                   time: calculateTimeDiffFromNow(
                     reactionDoc.data().time.toDate()
@@ -131,7 +131,7 @@ const ReactionsScreen = ({ navigation, route }) => {
           },
         ]}
       >
-        <StatusBar barStyle={"light-content"} />
+        {/* <StatusBar barStyle={"light-content"} /> */}
         <View style={styles.header}>
           <Text style={styles.title}>Thought</Text>
           <View style={styles.top}>
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.gray_1,
     alignItems: "center",
-    marginTop: 24,
+    paddingTop: 24,
     alignSelf: "center",
     width: "100%",
   },
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   },
   reactions: {
     flex: 1,
-    marginTop: 12,
+    marginTop: 4,
     // Needed so that you can see the last element - a hacky solution
     marginBottom: 12,
     paddingBottom: 64,

@@ -133,8 +133,9 @@ const Thought = (props) => {
         </View>
       ) : null}
 
-      <View style={styles.row4}>
-        <View style={styles.actions}>
+      {props.reactions > 0 || collabsText != "" ? (
+        <View style={styles.row4}>
+          {/* <View style={styles.actions}>
           <TouchableOpacity style={styles.profile} onPress={userAddEmoji}>
             <Image
               style={styles.emojis}
@@ -144,21 +145,24 @@ const Thought = (props) => {
             />
           </TouchableOpacity>
           <Text style={styles.number}>{emojiCount}</Text>
+        </View> */}
+          <Text style={styles.thought}>{collabsText}</Text>
+          <View style={styles.actions}>
+            {/* <Text style={styles.emojis}>&#10024;</Text> */}
+            {props.reactions > 0 ? (
+              <>
+                <Image
+                  style={styles.comments}
+                  source={require("../assets/comment.png")}
+                  //   source={{uri: props.img}}
+                  // resizeMode="stretch"
+                />
+                <Text style={styles.number}>{props.reactions}</Text>
+              </>
+            ) : null}
+          </View>
         </View>
-
-        <Text style={styles.thought}>{collabsText}</Text>
-        <View style={styles.actions}>
-          {/* <Text style={styles.emojis}>&#10024;</Text> */}
-
-          <Image
-            style={styles.comments}
-            source={require("../assets/comment.png")}
-            //   source={{uri: props.img}}
-            // resizeMode="stretch"
-          />
-          <Text style={styles.number}>{props.reactions}</Text>
-        </View>
-      </View>
+      ) : null}
     </View>
   );
 };
@@ -204,7 +208,6 @@ const styles = StyleSheet.create({
   },
   row2: {
     flexDirection: "row",
-    marginBottom: 16,
   },
   row3: {
     flexDirection: "row",
@@ -215,7 +218,7 @@ const styles = StyleSheet.create({
     width: 315,
     height: 315,
     borderRadius: 15,
-    borderColor: colors.gray_2,
+    borderColor: colors.gray_1,
     borderWidth: 0.5,
     overflow: "hidden",
   },
@@ -240,7 +243,7 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito-ExtraBold",
   },
   time: {
-    color: colors.gray_3,
+    color: colors.gray_4,
     fontSize: 14,
     fontFamily: "Nunito-Regular",
   },

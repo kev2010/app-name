@@ -33,6 +33,12 @@ export const userState = atom({
   effects: [persistAtom("userState")],
 });
 
+export const themeState = atom({
+  key: "themeState",
+  default: "light",
+  effects: [persistAtom("themeState")],
+});
+
 export const verificationState = atom({
   key: "verificationState",
   default: "",

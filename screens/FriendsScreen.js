@@ -38,7 +38,7 @@ const FriendsScreen = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView style={styles.container}>
-        <StatusBar barStyle={"light-content"} />
+        {/* <StatusBar barStyle={"light-content"} /> */}
         <FriendsHeader
           goBack={goBack}
           displayFriends={displayFriends}
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.gray_1,
     alignItems: "center",
-    marginTop: 24,
+    paddingTop: 24,
   },
   close: {
     color: colors.gray_5,

@@ -90,7 +90,7 @@ const UsernameScreen = ({ route, navigation }) => {
     // maybe use Safe Area view instead?
     <SafeAreaView style={styles.container}>
       <View>
-        <StatusBar barStyle={"light-content"} />
+        {/* <StatusBar barStyle={"light-content"} /> */}
         <Text style={styles.title}>{CONSTANTS.APP_NAME}</Text>
         <Text style={styles.subtitle}>Finally, choose a unique username!</Text>
         <TextInput
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 24,
+    paddingTop: 24,
   },
   title: {
     color: colors.primary_5,

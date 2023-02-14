@@ -60,7 +60,7 @@ const NameScreen = ({ navigation }) => {
   return (
     // maybe use Safe Area view instead?
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle={"light-content"} />
+      {/* <StatusBar barStyle={"light-content"} /> */}
       <View>
         <Text style={styles.title}>{CONSTANTS.APP_NAME}</Text>
         <Text style={styles.subtitle}>Welcome! What's your name?</Text>
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "pink",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 24,
+    paddingTop: 24,
   },
   title: {
     color: colors.primary_5,

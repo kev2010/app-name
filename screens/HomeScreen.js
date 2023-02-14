@@ -171,7 +171,7 @@ const HomeScreen = ({ navigation }) => {
 
   const renderBackdrop = (props) => {
     return (
-      <BottomSheetBackdrop {...props} pressBehavior={"collapse"} opacity={0}>
+      <BottomSheetBackdrop {...props} pressBehavior={"collapse"} opacity={0.25}>
         <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }} />
       </BottomSheetBackdrop>
     );
@@ -194,7 +194,7 @@ const HomeScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <StatusBar barStyle={"light-content"} />
+        {/* <StatusBar barStyle={"light-content"} /> */}
         <Text style={styles.title}>{CONSTANTS.APP_NAME}</Text>
         <View style={styles.top}>
           <TouchableOpacity onPress={goToSettingsScreen}>
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.gray_1,
     alignItems: "center",
-    marginTop: 24,
+    paddingTop: 24,
   },
   header: {
     alignItems: "center",

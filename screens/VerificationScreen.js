@@ -128,7 +128,7 @@ const VerificationScreen = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <StatusBar barStyle={"light-content"} />
+        {/* <StatusBar barStyle={"light-content"} /> */}
         <Text style={styles.title}>{CONSTANTS.APP_NAME}</Text>
         <Text style={styles.subtitle}>Enter the code we sent!</Text>
         <View style={styles.number}>
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 24,
+    paddingTop: 24,
   },
   title: {
     marginTop: 4,

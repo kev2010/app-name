@@ -111,7 +111,7 @@ const Think = ({ swiped, submitted }) => {
         multiline={true}
         textAlign="left"
         selectionColor={colors.primary_4}
-        placeholderTextColor={colors.gray_3}
+        placeholderTextColor={colors.gray_4}
         placeholder="What you thinking about? Keep it raw. Develop it as you go!"
         value={thought}
         editable={swiped}

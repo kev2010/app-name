@@ -130,7 +130,7 @@ const Feed = ({ navigation, uid }) => {
           refreshing={refreshing}
           onRefresh={refreshThoughts}
           colors={[colors.primary_5]}
-          tintColor={colors.primary_3}
+          tintColor={colors.primary_5}
         />
       }
     />
@@ -167,7 +167,7 @@ const Feed = ({ navigation, uid }) => {
           refreshing={refreshing}
           onRefresh={refreshThoughts}
           colors={[colors.primary_5]}
-          tintColor={colors.primary_3}
+          tintColor={colors.primary_5}
         />
       }
     />
