@@ -81,7 +81,6 @@ const SuggestedDisplay = () => {
           const phoneNumberList = getPhoneNumberList(data);
           getMultipleUsersByPhoneNumbers(phoneNumberList).then((usersData) => {
             let itemsProcessed = 0;
-            console.log("length", usersData.length);
             usersData.forEach((document) => {
               if (document != null) {
                 const isCurrentUser = user.uid === document.id;

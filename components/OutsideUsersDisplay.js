@@ -10,7 +10,6 @@ import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import colors from "../assets/colors";
 
-// TODO: Fix bug where typing fast puts multiple results in the search
 // TODO: UX where your current friend requests DON'T show up in "OutsideUsersDisplay" not exactly intuitive, but easy to implement code wise lol. Eventually, should show friend requests in a seperate table in same screen.
 const OutsideUsersDisplay = ({ friends, friendRequests, sent, text }) => {
   const [user, setUser] = useRecoilState(userState);
@@ -24,38 +23,27 @@ const OutsideUsersDisplay = ({ friends, friendRequests, sent, text }) => {
     getUsernamesStartingWith(text, 10).then((usernames) => {
       usernames.forEach((otherUser) => {
         getProfilePicture(otherUser.id).then((imageURL) => {
-          const found = data.some((other) => other.uid === otherUser.id);
           const foundFriend = friends.some((friend) => friend === otherUser.id);
           const foundRequest = friendRequests.some(
             (request) => request === otherUser.id
           );
-          if (
-            !found &&
-            !foundFriend &&
-            !foundRequest &&
-            otherUser.id != user.uid
-          ) {
-            setData((data) => [
-              ...data,
-              {
-                uid: otherUser.id,
-                imageURL: imageURL,
-                name: otherUser.data().name,
-                username: otherUser.data().username,
-              },
-            ]);
-            // setData(
-            //   (data) =>
-            //     new Set([
-            //       ...data,
-            //       {
-            //         uid: otherUser.id,
-            //         imageURL: imageURL,
-            //         name: otherUser.data().name,
-            //         username: otherUser.data().username,
-            //       },
-            //     ])
-            // );
+          if (!foundFriend && !foundRequest && otherUser.id != user.uid) {
+            setData((data) =>
+              [
+                ...data,
+                {
+                  uid: otherUser.id,
+                  imageURL: imageURL,
+                  name: otherUser.data().name,
+                  username: otherUser.data().username,
+                },
+              ].reduce((unique, o) => {
+                if (!unique.some((obj) => obj.uid === o.uid)) {
+                  unique.push(o);
+                }
+                return unique;
+              }, [])
+            );
           }
         });
       });
