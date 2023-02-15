@@ -18,7 +18,11 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import Feed from "../components/Feed";
 import { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { useRecoilState } from "recoil";
-import { getUser, updateNotificationToken } from "../api";
+import {
+  getUser,
+  updateNotificationToken,
+  updateUserPhoneNumber,
+} from "../api";
 import { userState } from "../globalState";
 import {
   registerForPushNotificationsAsync,
@@ -26,6 +30,7 @@ import {
 } from "../notifications";
 import * as Notifications from "expo-notifications";
 import { CONSTANTS } from "../constants";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -102,6 +107,12 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
+  const getPhoneNumber = async () => {
+    return await getUser(user.uid).then(
+      (currentUser) => currentUser.data().phoneNumber
+    );
+  };
+
   useEffect(() => {
     Keyboard.dismiss();
     const unsubscribe = navigation.addListener("focus", () => {
@@ -136,6 +147,19 @@ const HomeScreen = ({ navigation }) => {
       );
       Notifications.removeNotificationSubscription(responseListener.current);
     };
+  }, []);
+
+  useEffect(() => {
+    getPhoneNumber().then((number) => {
+      if (number === undefined) {
+        const auth = getAuth();
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            updateUserPhoneNumber(user.uid, user.phoneNumber);
+          }
+        });
+      }
+    });
   }, []);
 
   const onPressGlobal = () => {
@@ -194,7 +218,7 @@ const HomeScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        {/* <StatusBar barStyle={"light-content"} /> */}
+        <StatusBar barStyle={"light-content"} />
         <Text style={styles.title}>{CONSTANTS.APP_NAME}</Text>
         <View style={styles.top}>
           <TouchableOpacity onPress={goToSettingsScreen}>

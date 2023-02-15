@@ -56,6 +56,35 @@ export async function createUser(uid, displayName, username) {
   });
 }
 
+export async function updateUserPhoneNumber(uid, phoneNumber) {
+  const currentUserRef = doc(db, "users", uid);
+  await updateDoc(currentUserRef, {
+    phoneNumber: phoneNumber,
+  });
+}
+
+export async function getMultipleUsersByPhoneNumbers(phoneNumberList) {
+  var results = [];
+  phoneNumberList.forEach(async function (phoneNumber) {
+    results.push(getUserByPhoneNumber(phoneNumber));
+  });
+  return Promise.all(results);
+}
+
+export async function getUserByPhoneNumber(phoneNumber) {
+  return new Promise((resolve, reject) => {
+    getDocs(
+      query(
+        collection(db, "users"),
+        where("phoneNumber", "==", phoneNumber),
+        limit(1)
+      )
+    ).then((results) => {
+      resolve(results.docs.length > 0 ? results.docs[0] : null);
+    });
+  });
+}
+
 export async function getUser(uid) {
   try {
     return getDoc(doc(db, "users", uid));
@@ -103,7 +132,6 @@ export async function checkUserCommentedToday(uid) {
         where("time", ">=", startOfToday)
       )
     ).then((results) => {
-      console.log("COMMENTS CHECK", results.docs.length);
       resolve(results.docs.length > 1);
     });
   });

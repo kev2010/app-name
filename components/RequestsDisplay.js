@@ -103,11 +103,8 @@ const RequestsDisplay = ({ requests }) => {
 
 const styles = StyleSheet.create({
   empty: {
-    marginTop: 24,
-    flex: 1,
     flexDirection: "column",
     alignItems: "center",
-    // backgroundColor: "purple",
   },
   emoji: {
     fontSize: 48,

@@ -14,18 +14,21 @@ const FriendsHeader = ({
   goBack,
   displayFriends,
   displayRequests,
+  displaySuggested,
   numRequests,
 }) => {
   const [requestsTab, setRequestsTab] = useState(false);
   const [friendsTab, setFriendsTab] = useState(true);
+  const [suggestedTab, setSuggestedTab] = useState(false);
   const requestsStyle = useRequestsStyle(requestsTab);
   const friendsStyle = useFriendsStyle(friendsTab);
-  const requestCountStyle = useRequestNumberStyle(numRequests);
+  const suggestedStyle = useSuggestedStyle(suggestedTab);
 
   const onPressFriends = () => {
     if (!friendsTab) {
       setFriendsTab(true);
       setRequestsTab(false);
+      setSuggestedTab(false);
       displayFriends();
     }
   };
@@ -34,7 +37,17 @@ const FriendsHeader = ({
     if (!requestsTab) {
       setFriendsTab(false);
       setRequestsTab(true);
+      setSuggestedTab(false);
       displayRequests();
+    }
+  };
+
+  const onPressSuggested = () => {
+    if (!suggestedTab) {
+      setFriendsTab(false);
+      setRequestsTab(false);
+      setSuggestedTab(true);
+      displaySuggested();
     }
   };
 
@@ -51,14 +64,19 @@ const FriendsHeader = ({
           <TouchableOpacity onPress={onPressFriends}>
             <Text style={[styles.type, friendsStyle]}>Friends</Text>
           </TouchableOpacity>
+          <TouchableOpacity onPress={onPressSuggested}>
+            <Text style={[styles.type, suggestedStyle]}>Suggested</Text>
+          </TouchableOpacity>
           <TouchableOpacity
             onPress={onPressRequests}
             style={styles.requestsTab}
           >
             <Text style={[styles.type, requestsStyle]}>Requests</Text>
-            <View style={[styles.requests, requestCountStyle]}>
-              <Text style={styles.number}>{numRequests}</Text>
-            </View>
+            {numRequests > 0 ? (
+              <View style={styles.requests}>
+                <Text style={styles.number}>{numRequests}</Text>
+              </View>
+            ) : null}
           </TouchableOpacity>
         </View>
       </View>
@@ -73,17 +91,17 @@ const useRequestsStyle = (requestsTab) => {
   };
 };
 
-const useFriendsStyle = (friendsFeed) => {
+const useFriendsStyle = (friendsTab) => {
   return {
-    color: friendsFeed ? colors.primary_4 : colors.gray_3,
-    fontFamily: friendsFeed ? "Nunito-Bold" : "Nunito-Regular",
+    color: friendsTab ? colors.primary_4 : colors.gray_3,
+    fontFamily: friendsTab ? "Nunito-Bold" : "Nunito-Regular",
   };
 };
 
-// Make disappear
-const useRequestNumberStyle = (requestNumber) => {
+const useSuggestedStyle = (suggestedTab) => {
   return {
-    opacity: requestNumber == 0 ? 0 : 1,
+    color: suggestedTab ? colors.primary_4 : colors.gray_3,
+    fontFamily: suggestedTab ? "Nunito-Bold" : "Nunito-Regular",
   };
 };
 

@@ -16,12 +16,14 @@ import { SearchBar } from "react-native-elements";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import RequestsDisplay from "../components/RequestsDisplay";
+import SuggestedDisplay from "../components/SuggestedDisplay";
 import { CONSTANTS } from "../constants";
 
 const FriendsScreen = ({ navigation }) => {
   const [user, setUser] = useRecoilState(userState);
   const [filter, setFilter] = useState("");
   const [showFriends, setShowFriends] = useState(true);
+  const [showRequests, setShowRequests] = useState(false);
 
   const goBack = () => {
     navigation.goBack();
@@ -29,10 +31,17 @@ const FriendsScreen = ({ navigation }) => {
 
   const displayFriends = () => {
     setShowFriends(true);
+    setShowRequests(false);
   };
 
   const displayRequests = () => {
     setShowFriends(false);
+    setShowRequests(true);
+  };
+
+  const displaySuggested = () => {
+    setShowFriends(false);
+    setShowRequests(false);
   };
 
   return (
@@ -43,6 +52,7 @@ const FriendsScreen = ({ navigation }) => {
           goBack={goBack}
           displayFriends={displayFriends}
           displayRequests={displayRequests}
+          displaySuggested={displaySuggested}
           numRequests={user.friendRequests.length}
         />
         <Text style={styles.close}>
@@ -76,9 +86,13 @@ const FriendsScreen = ({ navigation }) => {
               ) : null}
             </View>
           </>
-        ) : (
+        ) : showRequests ? (
           <View style={styles.display}>
             <RequestsDisplay requests={user.friendRequests} />
+          </View>
+        ) : (
+          <View style={styles.display}>
+            <SuggestedDisplay />
           </View>
         )}
       </SafeAreaView>
