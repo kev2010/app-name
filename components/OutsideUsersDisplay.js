@@ -11,7 +11,7 @@ import { userState } from "../globalState";
 import colors from "../assets/colors";
 
 // TODO: UX where your current friend requests DON'T show up in "OutsideUsersDisplay" not exactly intuitive, but easy to implement code wise lol. Eventually, should show friend requests in a seperate table in same screen.
-const OutsideUsersDisplay = ({ friends, friendRequests, sent, text }) => {
+const OutsideUsersDisplay = ({ text }) => {
   const [user, setUser] = useRecoilState(userState);
   const [data, setData] = useState([]);
   const [layout, setLayout] = useState({
@@ -23,8 +23,10 @@ const OutsideUsersDisplay = ({ friends, friendRequests, sent, text }) => {
     getUsernamesStartingWith(text, 10).then((usernames) => {
       usernames.forEach((otherUser) => {
         getProfilePicture(otherUser.id).then((imageURL) => {
-          const foundFriend = friends.some((friend) => friend === otherUser.id);
-          const foundRequest = friendRequests.some(
+          const foundFriend = user.friends.some(
+            (friend) => friend === otherUser.id
+          );
+          const foundRequest = user.friendRequests.some(
             (request) => request === otherUser.id
           );
           if (!foundFriend && !foundRequest && otherUser.id != user.uid) {
@@ -85,7 +87,7 @@ const OutsideUsersDisplay = ({ friends, friendRequests, sent, text }) => {
               uid={item.uid}
               imageURL={item.imageURL}
               addFriend={addUserAsFriend}
-              sent={sent}
+              sent={user.sentRequests}
               layout={layout}
             />
           </View>
