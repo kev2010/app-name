@@ -12,7 +12,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useRecoilState } from "recoil";
-import { addComment, getUser } from "../api";
+import { addComment, getUser, getReactions } from "../api";
 import colors from "../assets/colors";
 import { userState } from "../globalState";
 import { CONSTANTS } from "../constants";
@@ -58,23 +58,74 @@ const GiveComment = ({
     };
   }, [swiped]);
 
+  const sendNotificationsTo = (userNotificationTokens) => {
+    console.log("looking atttt", userNotificationTokens);
+    userNotificationTokens.forEach((token) => {
+      sendPushNotification(
+        token,
+        `${user.username} added to a thought`,
+        thought,
+        {}
+      );
+    });
+  };
+
   const onSubmit = () => {
     setLoading(true);
     addComment(thoughtUID, user.uid, thought).then(() => {
       // Make sure we don't send a push notification if the user replies to their own post!
       if (creatorID != user.uid) {
         getUser(creatorID).then((creator) => {
-          console.log("WOOOHOO", creator.data().notificationToken);
-          if (creator.data().notificationToken != "") {
+          if (
+            creator.data().notificationToken != "" &&
+            creator.data().notificationToken != undefined
+          ) {
             sendPushNotification(
               creator.data().notificationToken,
-              `${user.name} replied to your thought!`,
+              `${user.username} replied to your thought`,
               thought,
               {}
             );
           }
         });
       }
+
+      // Send notification to all users in the thread if they want it
+      getReactions(thoughtUID).then((reactions) => {
+        let itemsProcessed = 0;
+        const seen = new Set();
+        reactions.forEach((reactionDoc) => {
+          if (
+            reactionDoc.data().name.id != user.uid &&
+            reactionDoc.data().name.id != creatorID
+          ) {
+            getUser(reactionDoc.data().name.id).then((userData) => {
+              if (
+                userData.data().notifyReplies != undefined &&
+                userData.data().notifyReplies
+              ) {
+                seen.add(userData.data().notificationToken);
+
+                itemsProcessed++;
+                if (itemsProcessed === reactions.size) {
+                  sendNotificationsTo(seen);
+                }
+              } else {
+                itemsProcessed++;
+                if (itemsProcessed === reactions.size) {
+                  sendNotificationsTo(seen);
+                }
+              }
+            });
+          } else {
+            itemsProcessed++;
+            if (itemsProcessed === reactions.size) {
+              sendNotificationsTo(seen);
+            }
+          }
+        });
+      });
+
       submitted();
       setThought("");
       setLoading(false);

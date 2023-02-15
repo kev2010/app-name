@@ -90,21 +90,24 @@ const HomeScreen = ({ navigation }) => {
     });
   };
 
+  const getNotificationToken = async () => {
+    return await getUser(user.uid).then(
+      (currentUser) => currentUser.data().notificationToken
+    );
+  };
+
   const registerNotification = () => {
-    if (
-      user.notificationToken === undefined ||
-      user.notificationToken === null ||
-      user.notificationToken === ""
-    ) {
-      registerForPushNotificationsAsync().then((token) => {
-        setUser((user) => ({
-          ...user,
-          notificationToken: token,
-        }));
-        console.log("TOKEN", token, user);
-        updateNotificationToken(user.uid, token).then();
-      });
-    }
+    getNotificationToken().then((token) => {
+      if (token === undefined || token === "") {
+        registerForPushNotificationsAsync().then((token) => {
+          setUser((user) => ({
+            ...user,
+            notificationToken: token,
+          }));
+          updateNotificationToken(user.uid, token).then();
+        });
+      }
+    });
   };
 
   const getPhoneNumber = async () => {

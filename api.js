@@ -581,3 +581,11 @@ export async function updateNotificationToken(uid, notificationToken) {
     notificationToken: notificationToken,
   });
 }
+
+// TODO: Eventually can turn this to a general purpose "updateUser" function
+export async function updateNotifyReplies(uid, setting) {
+  const currentUserRef = doc(db, "users", uid);
+  await updateDoc(currentUserRef, {
+    notifyReplies: setting,
+  });
+}
