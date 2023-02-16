@@ -59,7 +59,6 @@ const GiveComment = ({
   }, [swiped]);
 
   const sendNotificationsTo = (userNotificationTokens) => {
-    console.log("looking atttt", userNotificationTokens);
     userNotificationTokens.forEach((token) => {
       sendPushNotification(
         token,

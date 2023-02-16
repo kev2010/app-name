@@ -176,12 +176,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 16,
     marginBottom: 16,
-    shadowColor: colors.gray_7,
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 6,
+      height: 4,
     },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.05,
   },
   profile: {
     flexDirection: "row",
