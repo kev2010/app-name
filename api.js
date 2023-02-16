@@ -157,8 +157,7 @@ export async function getThoughts(currentUser) {
           query(
             collection(db, "thoughts"),
             where("name", "in", batch),
-            where("time", ">=", cutoff),
-            orderBy("time", "desc")
+            where("lastInteraction", ">=", cutoff)
           )
         ).then((results) =>
           results.docs.map((result) => ({
@@ -212,7 +211,7 @@ export async function addThought(uid, thought) {
       tags: [],
       thought: thought,
       time: serverTimestamp(),
-      lastInteration: serverTimestamp(),
+      lastInteraction: serverTimestamp(),
     }).then((docRef) => {
       resolve(docRef.id);
     });
