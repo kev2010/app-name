@@ -3,7 +3,7 @@
     "name": "Pontis",
     "slug": "Pontis",
     "privacy": "unlisted",
-    "version": "1.4.5",
+    "version": "1.4.6",
     "platforms": [
       "ios",
       "android"
@@ -33,7 +33,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.kev2018.firstexpo",
-      "versionCode": 16,
+      "versionCode": 17,
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ]
