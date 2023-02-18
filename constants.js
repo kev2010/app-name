@@ -3,5 +3,5 @@ export const CONSTANTS = {
   MAX_FRIENDS: 30,
   KEYBOARD_OFFSET: 12,
   INPUT_OFFSET: 48,
-  APP_NAME: "💬 Pontis",
+  APP_NAME: "💬 App Name",
 };
