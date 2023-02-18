@@ -111,7 +111,7 @@ const Thought = (props) => {
       <View
         style={[
           styles.row2,
-          { marginBottom: props.collabs.length > 0 ? 16 : 8 },
+          { marginBottom: props.collabs.length > 0 ? 16 : 12 },
         ]}
       >
         {/* See https://github.com/joshswan/react-native-autolink */}
@@ -135,17 +135,17 @@ const Thought = (props) => {
 
       {props.reactions > 0 || collabsText != "" ? (
         <View style={styles.row4}>
-          {/* <View style={styles.actions}>
-          <TouchableOpacity style={styles.profile} onPress={userAddEmoji}>
-            <Image
-              style={styles.emojis}
-              source={require("../assets/stars.png")}
-              //   source={{uri: props.img}}
-              // resizeMode="stretch"
-            />
-          </TouchableOpacity>
-          <Text style={styles.number}>{emojiCount}</Text>
-        </View> */}
+          <View style={styles.actions}>
+            <TouchableOpacity style={styles.profile} onPress={userAddEmoji}>
+              <Image
+                style={styles.emojis}
+                source={require("../assets/stars.png")}
+                //   source={{uri: props.img}}
+                // resizeMode="stretch"
+              />
+            </TouchableOpacity>
+            <Text style={styles.number}>{emojiCount}</Text>
+          </View>
           <Text style={styles.thought}>{collabsText}</Text>
           <View style={styles.actions}>
             {/* <Text style={styles.emojis}>&#10024;</Text> */}
@@ -153,7 +153,7 @@ const Thought = (props) => {
               <>
                 <Image
                   style={styles.comments}
-                  source={require("../assets/comment.png")}
+                  source={require("../assets/comment2.png")}
                   //   source={{uri: props.img}}
                   // resizeMode="stretch"
                 />
@@ -268,13 +268,14 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   comments: {
-    width: 14,
-    height: 14,
+    width: 16,
+    height: 16,
     marginRight: 8,
   },
   number: {
-    color: colors.primary_5,
+    color: colors.primary_4,
     fontFamily: "Nunito-SemiBold",
+    fontSize: 14,
   },
   lockedRow: {
     flexDirection: "row",
