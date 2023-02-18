@@ -133,7 +133,7 @@ const Thought = (props) => {
         </View>
       ) : null}
 
-      {props.reactions > 0 || collabsText != "" ? (
+      {props.reactions > 0 || collabsText != "" || emojiCount > 0 ? (
         <View style={styles.row4}>
           <View style={styles.actions}>
             <TouchableOpacity style={styles.profile} onPress={userAddEmoji}>
@@ -144,7 +144,9 @@ const Thought = (props) => {
                 // resizeMode="stretch"
               />
             </TouchableOpacity>
-            <Text style={styles.number}>{emojiCount}</Text>
+            {emojiCount > 0 ? (
+              <Text style={styles.number}>{emojiCount}</Text>
+            ) : null}
           </View>
           <Text style={styles.thought}>{collabsText}</Text>
           <View style={styles.actions}>
@@ -162,7 +164,18 @@ const Thought = (props) => {
             ) : null}
           </View>
         </View>
-      ) : null}
+      ) : (
+        <View style={styles.row4}>
+          <View style={styles.actions}>
+            <TouchableOpacity style={styles.profile} onPress={userAddEmoji}>
+              <Image
+                style={styles.emojis}
+                source={require("../assets/stars.png")}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
