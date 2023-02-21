@@ -8,17 +8,40 @@ const ReactionSection = ({ navigation, data }) => {
 
   return data.length > 0 ? (
     <View style={styles.reactions}>
-      {data.map((item, i) => (
-        <Comment
-          navigation={navigation}
-          creatorID={item.creatorID}
-          imageURL={item.imageURL}
-          name={item.name}
-          time={item.time}
-          comment={item.text}
-          key={i}
-        />
-      ))}
+      {data.map((item, i) => {
+        if (
+          i != 0 &&
+          data[i - 1].creatorID === item.creatorID &&
+          // rawTime is serverTimestamp type i think
+          Math.floor(item.rawTime - data[i - 1].rawTime) <= 600
+        ) {
+          return (
+            <Comment
+              navigation={navigation}
+              continued={true}
+              creatorID={item.creatorID}
+              imageURL={item.imageURL}
+              name={item.name}
+              time={item.time}
+              comment={item.text}
+              key={i}
+            />
+          );
+        } else {
+          return (
+            <Comment
+              navigation={navigation}
+              continued={false}
+              creatorID={item.creatorID}
+              imageURL={item.imageURL}
+              name={item.name}
+              time={item.time}
+              comment={item.text}
+              key={i}
+            />
+          );
+        }
+      })}
     </View>
   ) : (
     <View style={styles.empty}>
@@ -32,7 +55,7 @@ const styles = StyleSheet.create({
   reactions: {
     backgroundColor: colors.almost_white,
     borderRadius: 15,
-    paddingVertical: 10,
+    paddingBottom: 16,
   },
   divider: {
     borderBottomColor: colors.gray_2,

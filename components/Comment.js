@@ -7,6 +7,7 @@ import Autolink from "react-native-autolink";
 
 const Comment = (props) => {
   const [user, setUser] = useRecoilState(userState);
+  const continuedStyle = useContinuedStyle(props.continued);
 
   const goToProfile = () => {
     if (props.creatorID === user.uid) {
@@ -19,27 +20,38 @@ const Comment = (props) => {
   };
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.profile} onPress={goToProfile}>
-        <Image
-          style={styles.profileImage}
-          source={
-            props.imageURL != ""
-              ? { uri: props.imageURL }
-              : require("../assets/default.jpeg")
-          }
-        />
-        <View style={styles.column}>
-          <View style={styles.row}>
-            <Text style={styles.name}>{props.name}</Text>
-            <Text style={styles.time}>{props.time}</Text>
+    <View style={[styles.container, continuedStyle]}>
+      {props.continued ? (
+        <Autolink style={styles.text} text={props.comment} />
+      ) : (
+        <TouchableOpacity style={styles.profile} onPress={goToProfile}>
+          <Image
+            style={styles.profileImage}
+            source={
+              props.imageURL != ""
+                ? { uri: props.imageURL }
+                : require("../assets/default.jpeg")
+            }
+          />
+          <View style={styles.column}>
+            <View style={styles.row}>
+              <Text style={styles.name}>{props.name}</Text>
+              <Text style={styles.time}>{props.time}</Text>
+            </View>
+            {/* See https://github.com/joshswan/react-native-autolink */}
+            <Autolink style={styles.text} text={props.comment} />
           </View>
-          {/* See https://github.com/joshswan/react-native-autolink */}
-          <Autolink style={styles.text} text={props.comment} />
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      )}
     </View>
   );
+};
+
+const useContinuedStyle = (continued) => {
+  return {
+    paddingTop: continued ? 8 : 16,
+    marginLeft: continued ? 40 : 0,
+  };
 };
 
 const styles = StyleSheet.create({
@@ -47,7 +59,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-around",
     paddingHorizontal: 16,
-    paddingVertical: 8,
   },
   profile: {
     flexDirection: "row",
