@@ -119,8 +119,8 @@ const Thought = (props) => {
           <View style={styles.lockedRow}>
             <Image style={styles.lock} source={require("../assets/lock.png")} />
             <Text style={styles.lockedText}>
-              Share something interesting or reply to two thoughts to unlock
-              your collective’s thoughts today!
+              Share something interesting to unlock your collective’s thoughts
+              today!
             </Text>
           </View>
         ) : (

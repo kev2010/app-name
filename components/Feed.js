@@ -52,11 +52,11 @@ const Feed = ({ navigation, uid }) => {
     setRefreshing(true);
     refreshFeed(uid).then((data) => {
       checkUserPostedToday(uid).then((posted) => {
-        checkUserCommentedToday(uid, 2).then((commented) => {
-          setLocked(!(posted || commented));
-          setFeedData(data);
-          setRefreshing(false);
-        });
+        // checkUserCommentedToday(uid, 2).then((commented) => {
+        setLocked(!posted);
+        setFeedData(data);
+        setRefreshing(false);
+        // });
       });
     });
   };
@@ -98,9 +98,8 @@ const Feed = ({ navigation, uid }) => {
             });
           }}
           disabled={
-            uid === item.creatorID || !checkIfTodayCycle(item.postTime)
-              ? false
-              : locked
+            // uid === item.creatorID || !checkIfTodayCycle(item.postTime)
+            uid === item.creatorID ? false : locked
           }
         >
           <Thought
@@ -117,9 +116,8 @@ const Feed = ({ navigation, uid }) => {
             thought={item.thought}
             showTrash={false}
             locked={
-              uid === item.creatorID || !checkIfTodayCycle(item.postTime)
-                ? false
-                : locked
+              // uid === item.creatorID || !checkIfTodayCycle(item.postTime)
+              uid === item.creatorID ? false : locked
             }
           />
         </TouchableOpacity>
