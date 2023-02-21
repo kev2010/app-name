@@ -33,7 +33,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.kev2018.firstexpo",
-      "versionCode": 18,
+      "versionCode": 19,
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ]
