@@ -2,12 +2,12 @@ import { Image, View, StyleSheet } from "react-native";
 import React from "react";
 import colors from "../assets/colors";
 
-const friendsIcon = require("../assets/friendsIcon.png");
+const chatIcon = require("../assets/clock.png");
 
-const FriendsIcon = ({ hasNotification }) => {
+const ChatIcon = ({ hasNotification }) => {
   return (
     <View style={styles.imageContainer}>
-      <Image source={friendsIcon} style={styles.image} />
+      <Image source={chatIcon} style={styles.image} />
       {hasNotification && <View style={styles.notificationCircle} />}
     </View>
   );
@@ -19,7 +19,8 @@ const styles = StyleSheet.create({
     padding: 6,
   },
   image: {
-    width: 32,
+    width: 22.5,
+    // width: 24,
     height: 22.5,
     resizeMode: "stretch",
   },
@@ -30,11 +31,11 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderRadius: 10,
-    backgroundColor: colors.accent1_5,
+    backgroundColor: colors.primary_5,
     alignItems: "center",
     justifyContent: "center",
     zIndex: 1,
   },
 });
 
-export default FriendsIcon;
+export default ChatIcon;

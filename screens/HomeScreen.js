@@ -14,6 +14,7 @@ import colors from "../assets/colors";
 import Handle from "../components/Handle";
 import Think from "../components/Think";
 import FriendsIcon from "../components/FriendsIcon";
+import ChatIcon from "../components/ChatIcon";
 import BottomSheet from "@gorhom/bottom-sheet";
 import Feed from "../components/Feed";
 import { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
@@ -190,6 +191,10 @@ const HomeScreen = ({ navigation }) => {
     navigation.navigate("Friends");
   };
 
+  const goToChatsScreen = () => {
+    navigation.navigate("Chats");
+  };
+
   // ref
   const bottomSheetRef = useRef(null);
 
@@ -234,9 +239,14 @@ const HomeScreen = ({ navigation }) => {
               }
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={goToFriendsScreen}>
-            <FriendsIcon hasNotification={requestsNotification} />
-          </TouchableOpacity>
+          <View style={styles.rhs}>
+            <TouchableOpacity onPress={goToFriendsScreen}>
+              <FriendsIcon hasNotification={requestsNotification} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={goToChatsScreen}>
+              <ChatIcon hasNotification={false} />
+            </TouchableOpacity>
+          </View>
         </View>
         <View style={styles.feed}>
           <TouchableOpacity onPress={onPressGlobal}>
@@ -328,6 +338,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     position: "absolute",
+  },
+  rhs: {
+    flexDirection: "row",
   },
   shuffle: {
     flexDirection: "row",

@@ -76,6 +76,7 @@ const Feed = ({ navigation, uid }) => {
   return Object.values(feedData).length > 0 ? (
     <FlatList
       style={{ flex: 1 }}
+      showsVerticalScrollIndicator={false}
       data={Object.values(feedData).sort(function (x, y) {
         return y.rawTime - x.rawTime;
       })}

@@ -23,6 +23,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { db, storage } from "./firebaseConfig";
+const _ = require("lodash");
 
 // TODO: Needed because of dumb bug of "add document" after Firebase phone number authentication. So to circumvent it, we do a dummy call BEFORE we've been signed in and then add the user during "onSubmit" in UsernameScreen. Why does this work? I don't know bro.
 // TODO: Test if only doing a read instead of a write first works
@@ -142,7 +143,7 @@ export async function checkUserCommentedToday(uid) {
 export async function getThoughts(currentUser) {
   try {
     let cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - 2);
+    cutoff.setDate(cutoff.getDate() - 3);
     const currentUserRef = doc(db, "users", currentUser.id);
     const batches = [];
     const allValid = [...currentUser.data().friends, currentUserRef];
@@ -587,4 +588,46 @@ export async function updateNotifyReplies(uid, setting) {
   await updateDoc(currentUserRef, {
     notifyReplies: setting,
   });
+}
+
+export async function getUserAllChats(uid) {
+  return new Promise((resolve, reject) => {
+    // TODO: just cutting off activity at 10 days (your thoughts + your last reply to thoughts) for performance
+    let cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 10);
+    const currentUserRef = doc(db, "users", uid);
+    getDocs(
+      query(
+        collection(db, "thoughts"),
+        where("name", "==", currentUserRef),
+        where("lastInteraction", ">=", cutoff)
+      )
+    ).then((resultsThoughts) => {
+      getDocs(
+        query(
+          collectionGroup(db, "reactions"),
+          where("name", "==", currentUserRef),
+          where("time", ">=", cutoff)
+        )
+      ).then((resultsReactions) => {
+        getOriginalThoughtsFromReactions(resultsReactions).then(
+          (resultsReactionsThoughts) => {
+            // Eliminate duplicates
+            resolve(
+              _.unionBy(resultsReactionsThoughts, resultsThoughts.docs, "id")
+            );
+          }
+        );
+      });
+    });
+  });
+}
+
+export async function getOriginalThoughtsFromReactions(reactions, cutoff) {
+  var results = [];
+  reactions.forEach(function (docData) {
+    results.push(getDoc(docData.data().originalThought));
+  });
+
+  return Promise.all(results);
 }

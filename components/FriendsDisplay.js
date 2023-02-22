@@ -65,6 +65,7 @@ const FriendsDisplay = ({ friends, filter }) => {
       ) : null}
       <FlatList
         keyboardShouldPersistTaps={"always"}
+        showsVerticalScrollIndicator={false}
         onLayout={(event) => setLayout(event.nativeEvent.layout)}
         data={data
           .filter(
