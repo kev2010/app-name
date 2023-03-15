@@ -37,20 +37,20 @@ const Feed = ({ navigation, uid }) => {
     },
   ];
 
-  const TEMP = [
-    {
-      id: 0,
-      creatorID: "TAKLar06V3UPXUMll72Kqj51CfG2",
-      profileURL: "",
-      name: "The Algorithm",
-      time: calculateTimeDiffFromNow(new Date()),
-      collabs: ["You!"],
-      reactions: 420,
-      emojis: 42,
-      imageURL: "",
-      thought: `Thank you for beta testing, ${user.username}! App Name 2.0 is being built rn with a completely new experience based on your feedback :). Stay tuned!`,
-    },
-  ];
+  // const TEMP = [
+  //   {
+  //     id: 0,
+  //     creatorID: "TAKLar06V3UPXUMll72Kqj51CfG2",
+  //     profileURL: "",
+  //     name: "The Algorithm",
+  //     time: calculateTimeDiffFromNow(new Date()),
+  //     collabs: ["You!"],
+  //     reactions: 420,
+  //     emojis: 42,
+  //     imageURL: "",
+  //     thought: `Thank you for beta testing, ${user.username}! App Name 2.0 is being built rn with a completely new experience based on your feedback :). Stay tuned!`,
+  //   },
+  // ];
 
   const checkIfTodayCycle = (time) => {
     // Each cycle starts at 9am ET, 2pm UTC
@@ -88,109 +88,80 @@ const Feed = ({ navigation, uid }) => {
     return unsubscribe;
   }, [navigation]);
 
-  // TODO: VirtualizedList: You have a large list that is slow to update - make sure your renderItem function renders components that follow React performance best practices like PureComponent, shouldComponentUpdate, etc. {"contentLength": 3376.666748046875, "dt": 866, "prevDt": 61523}
-  // return Object.values(feedData).length > 0 ? (
-  //   <FlatList
-  //     style={{ flex: 1 }}
-  //     showsVerticalScrollIndicator={false}
-  //     data={Object.values(feedData).sort(function (x, y) {
-  //       return y.rawTime - x.rawTime;
-  //     })}
-  //     renderItem={({ item, index }) => (
-  //       <TouchableOpacity
-  //         key={index.toString()}
-  //         onPress={() => {
-  //           navigation.navigate("Reactions", {
-  //             creatorID: item.creatorID,
-  //             id: item.id,
-  //             imageURL: item.imageURL,
-  //             profileURL: item.profileURL,
-  //             name: item.name,
-  //             time: item.time,
-  //             collabs: item.collabs,
-  //             emojis: item.emojis,
-  //             reactions: item.reactions,
-  //             thoughtUID: item.thoughtUID,
-  //             thought: item.thought,
-  //           });
-  //         }}
-  //         disabled={
-  //           // uid === item.creatorID || !checkIfTodayCycle(item.postTime)
-  //           uid === item.creatorID ? false : locked
-  //         }
-  //       >
-  //         <Thought
-  //           navigation={navigation}
-  //           creatorID={item.creatorID}
-  //           imageURL={item.imageURL}
-  //           profileURL={item.profileURL}
-  //           name={item.name}
-  //           time={item.time}
-  //           collabs={item.collabs}
-  //           emojis={item.emojis}
-  //           reactions={item.reactions}
-  //           thoughtUID={item.thoughtUID}
-  //           thought={item.thought}
-  //           showTrash={false}
-  //           locked={
-  //             // uid === item.creatorID || !checkIfTodayCycle(item.postTime)
-  //             uid === item.creatorID ? false : locked
-  //           }
-  //         />
-  //       </TouchableOpacity>
-  //     )}
-  //     keyExtractor={(item) => item.id}
-  //     refreshControl={
-  //       <RefreshControl
-  //         refreshing={refreshing}
-  //         onRefresh={refreshThoughts}
-  //         colors={[colors.primary_5]}
-  //         tintColor={colors.primary_5}
-  //       />
-  //     }
-  //   />
-  // ) : refreshing ? (
-  //   // Necessary to check for when Feed is FIRST loaded (where everything is empty)
-  //   // Currently no refreshing animation is shown when empty
-  //   <ActivityIndicator
-  //     style={{ height: "50%" }}
-  //     size="large"
-  //     color={colors.primary_5}
-  //   />
-  // ) : (
-  //   <FlatList
-  //     data={DEFAULT}
-  //     renderItem={({ item, index }) => (
-  //       <Thought
-  //         navigation={navigation}
-  //         creatorID={item.creatorID}
-  //         imageURL={item.imageURL}
-  //         profileURL={item.profileURL}
-  //         name={item.name}
-  //         time={item.time}
-  //         collabs={item.collabs}
-  //         emojis={item.emojis}
-  //         reactions={item.reactions}
-  //         thoughtUID={item.thoughtUID}
-  //         thought={item.thought}
-  //         showTrash={false}
-  //       />
-  //     )}
-  //     keyExtractor={(item) => item.id}
-  //     refreshControl={
-  //       <RefreshControl
-  //         refreshing={refreshing}
-  //         onRefresh={refreshThoughts}
-  //         colors={[colors.primary_5]}
-  //         tintColor={colors.primary_5}
-  //       />
-  //     }
-  //   />
-  // );
-
-  return (
+  //TODO: VirtualizedList: You have a large list that is slow to update - make sure your renderItem function renders components that follow React performance best practices like PureComponent, shouldComponentUpdate, etc. {"contentLength": 3376.666748046875, "dt": 866, "prevDt": 61523}
+  return Object.values(feedData).length > 0 ? (
     <FlatList
-      data={TEMP}
+      style={{ flex: 1 }}
+      showsVerticalScrollIndicator={false}
+      data={Object.values(feedData).sort(function (x, y) {
+        return y.rawTime - x.rawTime;
+      })}
+      renderItem={({ item, index }) => (
+        <TouchableOpacity
+          key={index.toString()}
+          onPress={() => {
+            navigation.navigate("Reactions", {
+              creatorID: item.creatorID,
+              id: item.id,
+              imageURL: item.imageURL,
+              profileURL: item.profileURL,
+              name: item.name,
+              time: item.time,
+              collabs: item.collabs,
+              emojis: item.emojis,
+              reactions: item.reactions,
+              thoughtUID: item.thoughtUID,
+              thought: item.thought,
+            });
+          }}
+          disabled={
+            // uid === item.creatorID || !checkIfTodayCycle(item.postTime)
+            // uid === item.creatorID ? false : locked
+            false
+          }
+        >
+          <Thought
+            navigation={navigation}
+            creatorID={item.creatorID}
+            imageURL={item.imageURL}
+            profileURL={item.profileURL}
+            name={item.name}
+            time={item.time}
+            collabs={item.collabs}
+            emojis={item.emojis}
+            reactions={item.reactions}
+            thoughtUID={item.thoughtUID}
+            thought={item.thought}
+            showTrash={false}
+            locked={
+              // uid === item.creatorID || !checkIfTodayCycle(item.postTime)
+              // uid === item.creatorID ? false : locked
+              false
+            }
+          />
+        </TouchableOpacity>
+      )}
+      keyExtractor={(item) => item.id}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={refreshThoughts}
+          colors={[colors.primary_5]}
+          tintColor={colors.primary_5}
+        />
+      }
+    />
+  ) : refreshing ? (
+    // Necessary to check for when Feed is FIRST loaded (where everything is empty)
+    // Currently no refreshing animation is shown when empty
+    <ActivityIndicator
+      style={{ height: "50%" }}
+      size="large"
+      color={colors.primary_5}
+    />
+  ) : (
+    <FlatList
+      data={DEFAULT}
       renderItem={({ item, index }) => (
         <Thought
           navigation={navigation}
@@ -218,6 +189,37 @@ const Feed = ({ navigation, uid }) => {
       }
     />
   );
+
+  // return (
+  //   <FlatList
+  //     data={TEMP}
+  //     renderItem={({ item, index }) => (
+  //       <Thought
+  //         navigation={navigation}
+  //         creatorID={item.creatorID}
+  //         imageURL={item.imageURL}
+  //         profileURL={item.profileURL}
+  //         name={item.name}
+  //         time={item.time}
+  //         collabs={item.collabs}
+  //         emojis={item.emojis}
+  //         reactions={item.reactions}
+  //         thoughtUID={item.thoughtUID}
+  //         thought={item.thought}
+  //         showTrash={false}
+  //       />
+  //     )}
+  //     keyExtractor={(item) => item.id}
+  //     refreshControl={
+  //       <RefreshControl
+  //         refreshing={refreshing}
+  //         onRefresh={refreshThoughts}
+  //         colors={[colors.primary_5]}
+  //         tintColor={colors.primary_5}
+  //       />
+  //     }
+  //   />
+  // );
 };
 
 export default Feed;

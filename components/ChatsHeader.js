@@ -14,8 +14,10 @@ const ChatsHeader = ({ goBack }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.text}>
-          <Text style={styles.title}>Your Recent</Text>
-          <Text style={styles.note}>Note: Read/Unread not available yet!</Text>
+          <Text style={styles.title}>Messages</Text>
+          <Text style={styles.note}>
+            Chats auto-archive after a week of inactivity
+          </Text>
         </View>
         <View style={styles.top}>
           <TouchableOpacity onPress={goBack} style={styles.button}>

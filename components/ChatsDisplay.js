@@ -6,6 +6,7 @@ import {
   getRecentReaction,
   getProfilePicture,
   getUserAllChats,
+  getParticipants,
 } from "../api";
 import { useRecoilState } from "recoil";
 import { userState, feedDataState } from "../globalState";
@@ -21,40 +22,49 @@ const ChatsDisplay = () => {
     setLoading(true);
     let itemsProcessed = 0;
     getUserAllChats(user.uid).then((chatsArray) => {
+      if (chatsArray.length === 0) {
+        setLoading(false);
+      }
+
       chatsArray.forEach((document) => {
         const found = data.some((chat) => chat.uid === document.id);
         if (!found && document.data().thought != undefined) {
           // TODO: extremely inefficient - grabbing all images and only displaying 30 of them below
-          getProfilePicture(document.data().name.id).then((profileURL) => {
-            getRecentReaction(document.id).then((recentReaction) => {
-              // TODO: Currently only displaying thoughts that have at least one reaction
-              if (recentReaction.length > 0) {
+          getRecentReaction(document.id).then((recentReaction) => {
+            // getProfilePicture(document.data().name.id).then((profileURL) => {
+            // TODO: Currently only displaying thoughts that have at least one reaction
+            if (recentReaction.length > 0) {
+              getParticipants(document.id).then((participants) => {
                 getUser(recentReaction[0].data().name.id).then(
                   (reactionUser) => {
-                    setData((data) => [
-                      ...data,
-                      {
-                        uid: document.id,
-                        thought: document.data().thought,
-                        lastInteraction: document.data().lastInteraction,
-                        profileURL: profileURL,
-                        username: reactionUser.data().username,
-                        text: recentReaction[0].data().text,
-                      },
-                    ]);
-                    itemsProcessed++;
-                    if (itemsProcessed === chatsArray.length) {
-                      setLoading(false);
-                    }
+                    getProfilePicture(reactionUser.id).then((profileURL) => {
+                      setData((data) => [
+                        ...data,
+                        {
+                          uid: document.id,
+                          thought: document.data().thought,
+                          lastInteraction: document.data().lastInteraction,
+                          profileURL: profileURL,
+                          participants: participants,
+                          username: reactionUser.data().username,
+                          text: recentReaction[0].data().text,
+                        },
+                      ]);
+                      itemsProcessed++;
+                      if (itemsProcessed === chatsArray.length) {
+                        setLoading(false);
+                      }
+                    });
                   }
                 );
-              } else {
-                itemsProcessed++;
-                if (itemsProcessed === chatsArray.length) {
-                  setLoading(false);
-                }
+              });
+            } else {
+              itemsProcessed++;
+              if (itemsProcessed === chatsArray.length) {
+                setLoading(false);
               }
-            });
+            }
+            // });
           });
         } else {
           itemsProcessed++;
@@ -119,6 +129,8 @@ const ChatsDisplay = () => {
               thought={item.thought}
               lastInteraction={item.lastInteraction}
               profileURL={item.profileURL}
+              participants={item.participants}
+              currentUser={user.username}
               username={item.username}
               text={item.text}
             />

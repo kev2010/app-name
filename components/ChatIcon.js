@@ -2,7 +2,7 @@ import { Image, View, StyleSheet } from "react-native";
 import React from "react";
 import colors from "../assets/colors";
 
-const chatIcon = require("../assets/clock.png");
+const chatIcon = require("../assets/chat.png");
 
 const ChatIcon = ({ hasNotification }) => {
   return (
@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     position: "relative",
     padding: 6,
+    marginLeft: 4,
   },
   image: {
     width: 22.5,

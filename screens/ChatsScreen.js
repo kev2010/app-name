@@ -30,7 +30,7 @@ const ChatsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.almost_white,
+    backgroundColor: colors.gray_1,
     alignItems: "center",
     paddingTop: 24,
   },

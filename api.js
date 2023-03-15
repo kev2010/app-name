@@ -143,7 +143,7 @@ export async function checkUserCommentedToday(uid) {
 export async function getThoughts(currentUser) {
   try {
     let cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - 3);
+    cutoff.setDate(cutoff.getDate() - 15);
     const currentUserRef = doc(db, "users", currentUser.id);
     const batches = [];
     const allValid = [...currentUser.data().friends, currentUserRef];
@@ -289,6 +289,30 @@ export async function getReactions(thoughtUID) {
       resolve(result);
     });
   });
+}
+
+export async function getParticipants(thoughtUID) {
+  var results = [];
+  var userRefs = [];
+  // Get original creator
+  const originalThought = await getDoc(doc(db, "thoughts", thoughtUID));
+  userRefs.push(originalThought.data().name);
+
+  // Get list of all reaction participants
+  const reactionsRef = collection(db, `thoughts/${thoughtUID}/reactions`);
+  const reactions = await getDocs(reactionsRef);
+
+  reactions.forEach((reactionDoc) => {
+    userRefs.push(reactionDoc.data().name);
+  });
+
+  // Get the usernames of the union of the above
+  for (const userRef of userRefs) {
+    const userDoc = await getDoc(userRef);
+    results.push(userDoc.data().username);
+  }
+
+  return [...new Set(results)];
 }
 
 export async function getReactionsSizeOfThoughts(thoughts) {
@@ -594,7 +618,7 @@ export async function getUserAllChats(uid) {
   return new Promise((resolve, reject) => {
     // TODO: just cutting off activity at 10 days (your thoughts + your last reply to thoughts) for performance
     let cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - 10);
+    cutoff.setDate(cutoff.getDate() - 30);
     const currentUserRef = doc(db, "users", uid);
     getDocs(
       query(
