@@ -175,6 +175,17 @@ export async function getThoughts(currentUser) {
   }
 }
 
+export async function getThought(uid) {
+  return new Promise((resolve, reject) => {
+    getDoc(doc(db, "thoughts", uid)).then((result) =>
+      resolve({
+        id: result.id,
+        ...result.data(),
+      })
+    );
+  });
+}
+
 export async function getUsersOfThoughts(thoughts) {
   var results = [];
   thoughts.forEach(function (docData) {

@@ -4,6 +4,7 @@ import {
   Text,
   View,
   Image,
+  ActivityIndicator,
   TouchableOpacity,
   Alert,
 } from "react-native";
@@ -15,6 +16,7 @@ const ChatElement = ({
   text,
   currentUser,
   username,
+  loading,
   profileURL,
   participants,
   lastInteraction,
@@ -31,14 +33,22 @@ const ChatElement = ({
       ]}
     >
       <View style={styles.column1}>
-        <View
-          style={[
-            styles.notificationCircle,
-            {
-              opacity: 0,
-            },
-          ]}
-        />
+        {loading ? (
+          <ActivityIndicator
+            size="small"
+            style={{ width: 12, height: 12 }}
+            color={colors.primary_5}
+          />
+        ) : (
+          <View
+            style={[
+              styles.notificationCircle,
+              {
+                opacity: 0,
+              },
+            ]}
+          />
+        )}
       </View>
       <View style={styles.column2}>
         <View style={styles.row1}>
@@ -69,30 +79,6 @@ const ChatElement = ({
           </Text>
         </View>
       </View>
-      {/* <Image
-        style={styles.profileImage}
-        source={
-          profileURL != ""
-            ? { uri: profileURL }
-            : require("../assets/default.jpeg")
-        }
-      />
-      <View style={styles.chat}>
-        <Text style={styles.thought} numberOfLines={1}>
-          {thought}
-        </Text>
-        <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
-          <Text style={styles.messageText} numberOfLines={1}>
-            {username}: {text}{" "}
-          </Text>
-          <Text style={styles.timeText}>
-            {calculateTimeDiffFromNow(lastInteraction.toDate())}
-          </Text>
-        </View>
-      </View> */}
-      {/* <Text style={styles.time}>
-        {calculateTimeDiffFromNow(lastInteraction.toDate())}
-      </Text> */}
     </View>
   );
 };
@@ -101,7 +87,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
     alignItems: "center",
-
     backgroundColor: colors.almost_white,
     borderRadius: 15,
     paddingRight: 24,
@@ -118,8 +103,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   notificationCircle: {
-    width: 10,
-    height: 10,
+    width: 12,
+    height: 12,
     borderRadius: 24,
     backgroundColor: colors.primary_5,
     alignItems: "center",

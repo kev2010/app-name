@@ -21,7 +21,7 @@ const ChatsScreen = ({ navigation }) => {
         }}
       />
       <View style={styles.display}>
-        <ChatsDisplay />
+        <ChatsDisplay navigation={navigation} />
       </View>
     </SafeAreaView>
   );

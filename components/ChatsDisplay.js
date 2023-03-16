@@ -1,4 +1,4 @@
-import { FlatList, ActivityIndicator } from "react-native";
+import { FlatList, ActivityIndicator, TouchableOpacity } from "react-native";
 import React, { useState, useEffect } from "react";
 import ChatElement from "./ChatElement";
 import {
@@ -8,15 +8,17 @@ import {
   getUserAllChats,
   getParticipants,
 } from "../api";
+import { getThoughtData } from "../logic";
 import { useRecoilState } from "recoil";
 import { userState, feedDataState } from "../globalState";
 import colors from "../assets/colors";
 
-const ChatsDisplay = () => {
+const ChatsDisplay = ({ navigation }) => {
   const [user, setUser] = useRecoilState(userState);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [feedData, setFeedData] = useRecoilState(feedDataState);
+  const [fetchingDataIndex, setFetchingDataIndex] = useState(null);
 
   const getChatsInfo = () => {
     setLoading(true);
@@ -99,42 +101,40 @@ const ChatsDisplay = () => {
             // .slice(0, 10)
           }
           renderItem={({ item, index }) => (
-            // <TouchableOpacity
-            //   key={index.toString()}
-            //   onPress={() => {
-            //     const itemData = Object.values(feedData).filter((thoughtData) => {
-            //       return thoughtData.id === item.uid;
-            //     });
-            //     navigation.navigate("Reactions", {
-            //       creatorID: itemData.creatorID,
-            //       id: itemData.uid,
-            //       imageURL: itemData.imageURL,
-            //       profileURL: itemData.profileURL,
-            //       name: itemData.name,
-            //       time: itemData.time,
-            //       collabs: itemData.collabs,
-            //       emojis: itemData.emojis,
-            //       reactions: itemData.reactions,
-            //       thoughtUID: itemData.thoughtUID,
-            //       thought: itemData.thought,
-            //     });
-            //   }}
-            //   disabled={
-            //     // uid === item.creatorID || !checkIfTodayCycle(item.postTime)
-            //     uid === item.creatorID ? false : locked
-            //   }
-            // >
-            <ChatElement
-              index={index === 0 ? 0 : index === data.length - 1 ? -1 : index}
-              thought={item.thought}
-              lastInteraction={item.lastInteraction}
-              profileURL={item.profileURL}
-              participants={item.participants}
-              currentUser={user.username}
-              username={item.username}
-              text={item.text}
-            />
-            // </TouchableOpacity>
+            <TouchableOpacity
+              key={index.toString()}
+              onPress={async () => {
+                setFetchingDataIndex(index);
+                const itemData = await getThoughtData(item.uid);
+                setFetchingDataIndex(null);
+
+                navigation.navigate("Reactions", {
+                  creatorID: itemData.creatorID,
+                  id: itemData.id,
+                  imageURL: itemData.imageURL,
+                  profileURL: itemData.profileURL,
+                  name: itemData.name,
+                  time: itemData.time,
+                  collabs: itemData.collabs,
+                  emojis: itemData.emojis,
+                  reactions: itemData.reactions,
+                  thoughtUID: itemData.thoughtUID,
+                  thought: itemData.thought,
+                });
+              }}
+            >
+              <ChatElement
+                index={index === 0 ? 0 : index === data.length - 1 ? -1 : index}
+                thought={item.thought}
+                lastInteraction={item.lastInteraction}
+                profileURL={item.profileURL}
+                participants={item.participants}
+                loading={fetchingDataIndex === index}
+                currentUser={user.username}
+                username={item.username}
+                text={item.text}
+              />
+            </TouchableOpacity>
           )}
           keyExtractor={(item) => item.uid}
         />

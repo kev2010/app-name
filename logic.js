@@ -8,6 +8,7 @@ import {
   getReactionsSizeOfThoughts,
   getEmojisSizeOfThoughts,
   getImagesOfThoughts,
+  getThought,
 } from "./api";
 import { calculateTimeDiffFromNow } from "./helpers";
 
@@ -62,6 +63,58 @@ export async function refreshFeed(uid) {
                         }
                       );
                     });
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+// Function to grab data for a specific thoughtUID
+export async function getThoughtData(thoughtUID) {
+  try {
+    return new Promise((resolve, reject) => {
+      getThought(thoughtUID).then((thought) => {
+        getLastInteractionOfThoughts([thought]).then((lastInteractions) => {
+          getUsersOfThoughts([thought]).then((users) => {
+            getProfilePicturesOfUsers(users).then((profileURLs) => {
+              getImagesOfThoughts([thought]).then((imageURLs) => {
+                getCollabsOfThoughts([thought]).then((thoughtCollabs) => {
+                  getEmojisSizeOfThoughts([thought]).then((emojiSizes) => {
+                    getReactionsSizeOfThoughts([thought]).then(
+                      (reactionSizes) => {
+                        const docData = thought;
+                        const user = users[0];
+                        const collabs = thoughtCollabs[0].map(
+                          (user) => user.data().name.split(" ")[0]
+                        );
+                        const imageURL = imageURLs[0];
+                        const profileURL = profileURLs[0];
+                        const lastInteraction = lastInteractions[0];
+
+                        resolve({
+                          id: docData.id,
+                          creatorID: user.id,
+                          name: user.data().username,
+                          imageURL: imageURL,
+                          profileURL: profileURL,
+                          time: calculateTimeDiffFromNow(docData.time.toDate()),
+                          rawTime: lastInteraction,
+                          postTime: docData.time.toDate(),
+                          collabs: collabs,
+                          emojis: emojiSizes[0],
+                          reactions: reactionSizes[0],
+                          thoughtUID: docData.id,
+                          thought: docData.thought,
+                        });
+                      }
+                    );
                   });
                 });
               });
