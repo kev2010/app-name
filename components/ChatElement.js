@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     shadowRadius: 0,
   },
   column1: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
   },
   notificationCircle: {
     width: 12,
