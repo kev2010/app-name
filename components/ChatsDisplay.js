@@ -20,40 +20,62 @@ const ChatsDisplay = ({ navigation }) => {
   const [feedData, setFeedData] = useRecoilState(feedDataState);
   const [fetchingDataIndex, setFetchingDataIndex] = useState(null);
 
+  const updateData = (newData, currentData) => {
+    const updatedData = currentData.map((item) => {
+      const newItem = newData.find((newItem) => newItem.uid === item.uid);
+      return newItem ? newItem : item;
+    });
+
+    // Add any new items that are not in the current data
+    newData.forEach((newItem) => {
+      if (!currentData.some((item) => item.uid === newItem.uid)) {
+        updatedData.push(newItem);
+      }
+    });
+
+    return updatedData;
+  };
+
   const getChatsInfo = () => {
+    console.log("getChatsInfo Called");
     setLoading(true);
-    let itemsProcessed = 0;
-    getUserAllChats(user.uid).then((chatsArray) => {
+
+    const unsubscribe = getUserAllChats(user.uid, (chatsArray) => {
+      let itemsProcessed = 0;
+      // setData([]);
       if (chatsArray.length === 0) {
         setLoading(false);
       }
+      let newData = [...data];
 
       chatsArray.forEach((document) => {
-        const found = data.some((chat) => chat.uid === document.id);
+        const found = newData.some((chat) => chat.uid === document.id);
         if (!found && document.data().thought != undefined) {
-          // TODO: extremely inefficient - grabbing all images and only displaying 30 of them below
+          // ...
+
           getRecentReaction(document.id).then((recentReaction) => {
-            // getProfilePicture(document.data().name.id).then((profileURL) => {
-            // TODO: Currently only displaying thoughts that have at least one reaction
+            // ...
+
             if (recentReaction.length > 0) {
               getParticipants(document.id).then((participants) => {
                 getUser(recentReaction[0].data().name.id).then(
                   (reactionUser) => {
                     getProfilePicture(reactionUser.id).then((profileURL) => {
-                      setData((data) => [
-                        ...data,
-                        {
-                          uid: document.id,
-                          thought: document.data().thought,
-                          lastInteraction: document.data().lastInteraction,
-                          profileURL: profileURL,
-                          participants: participants,
-                          username: reactionUser.data().username,
-                          text: recentReaction[0].data().text,
-                        },
-                      ]);
+                      newData.push({
+                        uid: document.id,
+                        thought: document.data().thought,
+                        lastInteraction: document.data().lastInteraction,
+                        profileURL: profileURL,
+                        participants: participants,
+                        username: reactionUser.data().username,
+                        text: recentReaction[0].data().text,
+                      });
+
                       itemsProcessed++;
                       if (itemsProcessed === chatsArray.length) {
+                        setData((currentData) =>
+                          updateData(newData, currentData)
+                        );
                         setLoading(false);
                       }
                     });
@@ -63,18 +85,68 @@ const ChatsDisplay = ({ navigation }) => {
             } else {
               itemsProcessed++;
               if (itemsProcessed === chatsArray.length) {
+                setData((currentData) => updateData(newData, currentData));
                 setLoading(false);
               }
             }
-            // });
           });
         } else {
           itemsProcessed++;
           if (itemsProcessed === chatsArray.length) {
+            setData((currentData) => updateData(newData, currentData));
             setLoading(false);
           }
         }
       });
+
+      //   chatsArray.forEach((document) => {
+      //     console.log("LOOKING AT ", document.id);
+      //     const found = data.some((chat) => chat.uid === document.id);
+      //     if (!found && document.data().thought != undefined) {
+      //       // TODO: extremely inefficient - grabbing all images and only displaying 30 of them below
+      //       getRecentReaction(document.id).then((recentReaction) => {
+      //         // getProfilePicture(document.data().name.id).then((profileURL) => {
+      //         // TODO: Currently only displaying thoughts that have at least one reaction
+      //         if (recentReaction.length > 0) {
+      //           getParticipants(document.id).then((participants) => {
+      //             getUser(recentReaction[0].data().name.id).then(
+      //               (reactionUser) => {
+      //                 getProfilePicture(reactionUser.id).then((profileURL) => {
+      //                   setData((data) => [
+      //                     ...data,
+      //                     {
+      //                       uid: document.id,
+      //                       thought: document.data().thought,
+      //                       lastInteraction: document.data().lastInteraction,
+      //                       profileURL: profileURL,
+      //                       participants: participants,
+      //                       username: reactionUser.data().username,
+      //                       text: recentReaction[0].data().text,
+      //                     },
+      //                   ]);
+      //                   itemsProcessed++;
+      //                   if (itemsProcessed === chatsArray.length) {
+      //                     setLoading(false);
+      //                   }
+      //                 });
+      //               }
+      //             );
+      //           });
+      //         } else {
+      //           itemsProcessed++;
+      //           if (itemsProcessed === chatsArray.length) {
+      //             setLoading(false);
+      //           }
+      //         }
+      //         // });
+      //       });
+      //     } else {
+      //       itemsProcessed++;
+      //       if (itemsProcessed === chatsArray.length) {
+      //         setLoading(false);
+      //       }
+      //     }
+      //   });
     });
   };
 
@@ -141,6 +213,12 @@ const ChatsDisplay = ({ navigation }) => {
       )}
     </>
   );
+};
+
+const areEqual = (prevProps, nextProps) => {
+  // Compare the relevant props for your component
+  // Return true if they are equal, false otherwise
+  return JSON.stringify(prevProps.data) === JSON.stringify(nextProps.data);
 };
 
 export default ChatsDisplay;

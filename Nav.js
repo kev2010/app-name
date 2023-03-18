@@ -6,7 +6,6 @@ import VerificationScreen from "./screens/VerificationScreen";
 import UsernameScreen from "./screens/UsernameScreen";
 import FriendsScreen from "./screens/FriendsScreen";
 import SettingsScreen from "./screens/SettingsScreen";
-import ReactionsScreen from "./screens/ReactionsScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import ChatsScreen from "./screens/ChatsScreen";
 import SingleChatScreen from "./screens/SingleChatScreen";

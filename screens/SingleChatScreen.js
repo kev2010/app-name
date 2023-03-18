@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -8,99 +8,168 @@ import {
   Image,
   TextInput,
   SafeAreaView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import SingleChatHeader from "../components/SingleChatHeader";
 import { useNavigation } from "@react-navigation/native";
 import colors from "../assets/colors";
-import { getUser, getProfilePicture, getReactions, getEmojis } from "../api";
+import {
+  getUser,
+  getProfilePicture,
+  getReactions,
+  getThought,
+  getThoughtImage,
+  addComment,
+} from "../api";
 import { calculateTimeDiffFromNow } from "../helpers";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
+import Autolink from "react-native-autolink";
+import { sendPushNotification } from "../notifications";
 
 const SingleChatScreen = ({ navigation, route }) => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useRecoilState(userState);
   const [data, setData] = useState([]);
+  const [creatorID, setCreatorID] = useState("");
+  const [originalThought, setOriginalThought] = useState("");
+  const [message, setMessage] = useState("");
 
-  // Replace this with actual messages data
-  // let messages = [
-  //   {
-  //     id: 1,
-  //     sender: "self",
-  //     text: "Hello!",
-  //     timestamp: "7m",
-  //   },
-  //   {
-  //     id: 2,
-  //     sender: "other",
-  //     username: "fionacai",
-  //     text: "Is intelligence a surviving trait, at the scale of species? i.e., is an intelligent species more likely to survive over a less intelligent one, all else equal?",
-  //     timestamp: "5m",
-  //   },
-  //   {
-  //     id: 3,
-  //     sender: "self",
-  //     text: "Hi there!",
-  //     timestamp: "4m",
-  //   },
-  //   {
-  //     id: 4,
-  //     sender: "other",
-  //     username: "vbux",
-  //     text: "ur an egg waffle",
-  //     timestamp: "5m",
-  //   },
-  //   {
-  //     id: 5,
-  //     sender: "other",
-  //     username: "allenwang314",
-  //     text: "Bruh",
-  //     timestamp: "2m",
-  //   },
-  //   {
-  //     id: 6,
-  //     sender: "other",
-  //     username: "allenwang314",
-  //     text: "Guess what I just found out? The word 'bruh' is actually an acronym for 'Brother, you are handsome.'",
-  //     timestamp: "2m",
-  //   },
-  //   {
-  //     id: 7,
-  //     sender: "other",
-  //     username: "allenwang314",
-  //     text: "I'm not kidding.",
-  //     timestamp: "1m",
-  //   },
-  //   {
-  //     id: 8,
-  //     sender: "self",
-  //     text: "According to the theory of evolution, the answer is yes. The more intelligent species are more likely to survive over a less intelligent one, all else equal.",
-  //     timestamp: "1m",
-  //   },
-  //   {
-  //     id: 9,
-  //     sender: "self",
-  //     text: "Bruh.",
-  //     timestamp: "1m",
-  //   },
-  // ];
+  const scrollViewRef = useRef(null);
 
-  // Function to handle going back to the previous screen
   const goBack = () => {
     navigation.goBack();
+  };
+
+  const sendNotificationsTo = (userNotificationTokens) => {
+    userNotificationTokens.forEach((token) => {
+      sendPushNotification(
+        token,
+        `${user.username} to "${originalThought}"`,
+        message,
+        {}
+      );
+    });
   };
 
   useEffect(() => {
     getChat();
   }, []);
 
+  const onSendMessage = () => {
+    console.log("Sending message: " + message);
+    setLoading(true);
+    addComment(route.params.id, user.uid, message).then(() => {
+      // Make sure we don't send a push notification if the user replies to their own post!
+      if (creatorID != user.uid) {
+        getUser(creatorID).then((creator) => {
+          if (
+            creator.data().notificationToken != "" &&
+            creator.data().notificationToken != undefined
+          ) {
+            sendPushNotification(
+              creator.data().notificationToken,
+              `${user.username} to "${originalThought}"`,
+              message,
+              {}
+            );
+          }
+        });
+      }
+
+      // Send notification to all users in the thread if they want it
+      getReactions(route.params.id).then((reactions) => {
+        let itemsProcessed = 0;
+        const seen = new Set();
+        reactions.forEach((reactionDoc) => {
+          if (
+            reactionDoc.data().name.id != user.uid &&
+            reactionDoc.data().name.id != creatorID
+          ) {
+            getUser(reactionDoc.data().name.id).then((userData) => {
+              seen.add(userData.data().notificationToken);
+
+              itemsProcessed++;
+              if (itemsProcessed === reactions.size) {
+                sendNotificationsTo(seen);
+              }
+            });
+          } else {
+            itemsProcessed++;
+            if (itemsProcessed === reactions.size) {
+              sendNotificationsTo(seen);
+            }
+          }
+        });
+      });
+      setMessage("");
+      setLoading(false);
+    });
+  };
+
   const getChat = () => {
+    setLoading(true);
+
+    getThought(route.params.id).then((thoughtData) => {
+      getThoughtImage(route.params.id).then((imageURL) => {
+        getUser(thoughtData.name.id).then((userDoc) => {
+          getProfilePicture(thoughtData.name.id).then((profileURL) => {
+            const found = data.some(
+              (reaction) => reaction.id === thoughtData.id
+            );
+            if (!found) {
+              setData((data) => [
+                {
+                  id: thoughtData.id,
+                  sender: userDoc.id === user.uid ? "self" : "other",
+                  username: userDoc.data().username,
+                  text: thoughtData.thought,
+                  timestamp: calculateTimeDiffFromNow(
+                    thoughtData.time.toDate()
+                  ),
+                  rawTime: thoughtData.time,
+                  profileURL: profileURL,
+                  imageURL: "",
+                },
+                ...data,
+              ]);
+
+              // If there is an image, add it to the data array as a separate message
+              if (imageURL !== "") {
+                setData((data) => [
+                  {
+                    id: thoughtData.id,
+                    sender: userDoc.id === user.uid ? "self" : "other",
+                    username: userDoc.data().username,
+                    text: thoughtData.thought,
+                    timestamp: calculateTimeDiffFromNow(
+                      thoughtData.time.toDate()
+                    ),
+                    rawTime: thoughtData.time,
+                    profileURL: profileURL,
+                    imageURL: imageURL,
+                  },
+                  ...data,
+                ]);
+              }
+
+              // Set the creatorID of the thought and the original thought
+              setCreatorID(userDoc.id);
+              setOriginalThought(thoughtData.thought);
+            }
+          });
+        });
+      });
+    });
+
     let itemsProcessed = 0;
+
     getReactions(route.params.id).then((reactions) => {
       if (reactions.size > 0) {
         reactions.forEach((reactionDoc) => {
           getUser(reactionDoc.data().name.id).then((userDoc) => {
-            getProfilePicture(reactionDoc.data().name.id).then((imageURL) => {
+            getProfilePicture(reactionDoc.data().name.id).then((profileURL) => {
               const found = data.some(
                 (reaction) => reaction.id === reactionDoc.id
               );
@@ -116,10 +185,12 @@ const SingleChatScreen = ({ navigation, route }) => {
                       reactionDoc.data().time.toDate()
                     ),
                     rawTime: reactionDoc.data().time,
-                    imageURL: imageURL,
+                    profileURL: profileURL,
+                    imageURL: "",
                   },
                   ...data,
                 ]);
+
                 itemsProcessed++;
                 if (itemsProcessed === reactions.size) {
                   setLoading(false);
@@ -164,8 +235,8 @@ const SingleChatScreen = ({ navigation, route }) => {
             >
               <Image
                 source={
-                  message.imageURL != ""
-                    ? { uri: message.imageURL }
+                  message.profileURL != ""
+                    ? { uri: message.profileURL }
                     : require("../assets/default.jpeg")
                 }
                 style={{
@@ -175,11 +246,20 @@ const SingleChatScreen = ({ navigation, route }) => {
                   marginRight: 8,
                 }}
               />
-              <View style={{ maxWidth: "82%", alignItems: "flex-start" }}>
-                <View style={styles.otherTextBubble}>
-                  <Text style={styles.otherText}>{message.text}</Text>
+              {message.imageURL != "" ? (
+                <View style={styles.photoView}>
+                  <Image
+                    style={styles.photo}
+                    source={{ uri: message.imageURL }}
+                  />
                 </View>
-              </View>
+              ) : (
+                <View style={{ maxWidth: "82%", alignItems: "flex-start" }}>
+                  <View style={styles.otherTextBubble}>
+                    <Autolink style={styles.otherText} text={message.text} />
+                  </View>
+                </View>
+              )}
             </View>
           );
         } else if (
@@ -207,11 +287,20 @@ const SingleChatScreen = ({ navigation, route }) => {
                   opacity: 0,
                 }}
               />
-              <View style={{ maxWidth: "82%", alignItems: "flex-start" }}>
-                <View style={styles.otherTextBubble}>
-                  <Text style={styles.otherText}>{message.text}</Text>
+              {message.imageURL != "" ? (
+                <View style={styles.photoView}>
+                  <Image
+                    style={styles.photo}
+                    source={{ uri: message.imageURL }}
+                  />
                 </View>
-              </View>
+              ) : (
+                <View style={{ maxWidth: "82%", alignItems: "flex-start" }}>
+                  <View style={styles.otherTextBubble}>
+                    <Autolink style={styles.otherText} text={message.text} />
+                  </View>
+                </View>
+              )}
             </View>
           );
         } else if (
@@ -239,15 +328,30 @@ const SingleChatScreen = ({ navigation, route }) => {
                   opacity: 0,
                 }}
               />
-              <View style={{ maxWidth: "82%", alignItems: "flex-start" }}>
-                <View style={styles.info}>
-                  <Text style={styles.username}>{message.username}</Text>
-                  <Text style={styles.timestamp}>{message.timestamp}</Text>
+              {message.imageURL != "" ? (
+                <View>
+                  <View style={styles.info}>
+                    <Text style={styles.username}>{message.username}</Text>
+                    <Text style={styles.timestamp}>{message.timestamp}</Text>
+                  </View>
+                  <View style={styles.photoView}>
+                    <Image
+                      style={styles.photo}
+                      source={{ uri: message.imageURL }}
+                    />
+                  </View>
                 </View>
-                <View style={styles.otherTextBubble}>
-                  <Text style={styles.otherText}>{message.text}</Text>
+              ) : (
+                <View style={{ maxWidth: "82%", alignItems: "flex-start" }}>
+                  <View style={styles.info}>
+                    <Text style={styles.username}>{message.username}</Text>
+                    <Text style={styles.timestamp}>{message.timestamp}</Text>
+                  </View>
+                  <View style={styles.otherTextBubble}>
+                    <Autolink style={styles.otherText} text={message.text} />
+                  </View>
                 </View>
-              </View>
+              )}
             </View>
           );
         } else {
@@ -264,8 +368,8 @@ const SingleChatScreen = ({ navigation, route }) => {
             >
               <Image
                 source={
-                  message.imageURL != ""
-                    ? { uri: message.imageURL }
+                  message.profileURL != ""
+                    ? { uri: message.profileURL }
                     : require("../assets/default.jpeg")
                 }
                 style={{
@@ -275,15 +379,30 @@ const SingleChatScreen = ({ navigation, route }) => {
                   marginRight: 8,
                 }}
               />
-              <View style={{ maxWidth: "82%", alignItems: "flex-start" }}>
-                <View style={styles.info}>
-                  <Text style={styles.username}>{message.username}</Text>
-                  <Text style={styles.timestamp}>{message.timestamp}</Text>
+              {message.imageURL != "" ? (
+                <View>
+                  <View style={styles.info}>
+                    <Text style={styles.username}>{message.username}</Text>
+                    <Text style={styles.timestamp}>{message.timestamp}</Text>
+                  </View>
+                  <View style={styles.photoView}>
+                    <Image
+                      style={styles.photo}
+                      source={{ uri: message.imageURL }}
+                    />
+                  </View>
                 </View>
-                <View style={styles.otherTextBubble}>
-                  <Text style={styles.otherText}>{message.text}</Text>
+              ) : (
+                <View style={{ maxWidth: "82%", alignItems: "flex-start" }}>
+                  <View style={styles.info}>
+                    <Text style={styles.username}>{message.username}</Text>
+                    <Text style={styles.timestamp}>{message.timestamp}</Text>
+                  </View>
+                  <View style={styles.otherTextBubble}>
+                    <Autolink style={styles.otherText} text={message.text} />
+                  </View>
                 </View>
-              </View>
+              )}
             </View>
           );
         }
@@ -296,7 +415,7 @@ const SingleChatScreen = ({ navigation, route }) => {
               flexDirection: "row",
               justifyContent: "flex-end",
               alignItems: "flex-end",
-              marginTop: 2,
+              marginTop: index === 0 ? 12 : 2,
               marginBottom:
                 index != messages.length - 1 &&
                 messages[index + 1].sender === "self"
@@ -304,11 +423,27 @@ const SingleChatScreen = ({ navigation, route }) => {
                   : 12,
             }}
           >
-            <View style={{ maxWidth: "85%" }}>
-              <View style={styles.userTextBubble}>
-                <Text style={styles.userText}>{message.text}</Text>
+            {message.imageURL != "" ? (
+              <View style={styles.photoView}>
+                <Image
+                  style={styles.photo}
+                  source={{ uri: message.imageURL }}
+                />
               </View>
-            </View>
+            ) : (
+              <View style={{ maxWidth: "82%", alignItems: "flex-start" }}>
+                <View style={styles.userTextBubble}>
+                  <Autolink
+                    style={styles.userText}
+                    text={message.text}
+                    linkStyle={{
+                      color: "white",
+                      textDecorationLine: "underline",
+                    }}
+                  />
+                </View>
+              </View>
+            )}
           </View>
         );
       }
@@ -316,39 +451,45 @@ const SingleChatScreen = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <SingleChatHeader goBack={goBack} />
-      <View
-        style={{
-          marginTop: 16,
-          borderBottomColor: colors.gray_2,
-          borderBottomWidth: StyleSheet.hairlineWidth,
-          alignSelf: "stretch",
-        }}
-      />
-      <ScrollView style={styles.messages}>{renderMessages()}</ScrollView>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: 10,
-        }}
-      >
-        <TextInput
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+      style={{ flex: 1 }}
+    >
+      <SafeAreaView style={styles.container}>
+        <SingleChatHeader goBack={goBack} />
+        <View
           style={{
-            flex: 1,
-            backgroundColor: "white",
-            borderRadius: 10,
-            padding: 10,
+            marginTop: 16,
+            borderBottomColor: colors.gray_2,
+            borderBottomWidth: StyleSheet.hairlineWidth,
+            alignSelf: "stretch",
           }}
-          placeholder="Type a message"
         />
-        <TouchableOpacity>
-          <Text>Send</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+        <ScrollView
+          style={styles.messages}
+          ref={scrollViewRef}
+          onContentSizeChange={() =>
+            scrollViewRef.current.scrollToEnd({ animated: false })
+          }
+        >
+          {renderMessages()}
+        </ScrollView>
+        <View style={styles.inputView}>
+          <TextInput
+            style={styles.input}
+            placeholder="Message"
+            value={message}
+            onChangeText={(text) => {
+              setMessage(text);
+            }}
+          />
+          <TouchableOpacity onPress={onSendMessage}>
+            <Image style={styles.send} source={require("../assets/send.png")} />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -417,6 +558,42 @@ const styles = StyleSheet.create({
     color: colors.almost_white,
     fontFamily: "Nunito-Regular",
     fontSize: 16,
+  },
+  photoView: {
+    flexDirection: "row",
+    alignSelf: "center",
+    // Breaking the system!
+    width: 300,
+    height: 300,
+    borderRadius: 15,
+    borderColor: colors.gray_2,
+    borderWidth: 0.5,
+    overflow: "hidden",
+  },
+  photo: {
+    width: "100%",
+    resizeMode: "contain",
+  },
+  inputView: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 10,
+    width: "90%",
+  },
+  input: {
+    flex: 1,
+    backgroundColor: colors.almost_white,
+    borderRadius: 15,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    fontFamily: "Nunito-Regular",
+    fontSize: 16,
+  },
+  send: {
+    width: 24,
+    height: 21.2,
+    marginLeft: 16,
   },
 });
 

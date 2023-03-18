@@ -15,6 +15,7 @@ import {
   limit,
   arrayUnion,
   serverTimestamp,
+  onSnapshot,
 } from "firebase/firestore";
 import {
   ref,
@@ -625,37 +626,62 @@ export async function updateNotifyReplies(uid, setting) {
   });
 }
 
-export async function getUserAllChats(uid) {
-  return new Promise((resolve, reject) => {
-    // TODO: just cutting off activity at 10 days (your thoughts + your last reply to thoughts) for performance
-    let cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - 30);
-    const currentUserRef = doc(db, "users", uid);
-    getDocs(
-      query(
-        collection(db, "thoughts"),
-        where("name", "==", currentUserRef),
-        where("lastInteraction", ">=", cutoff)
-      )
-    ).then((resultsThoughts) => {
-      getDocs(
-        query(
-          collectionGroup(db, "reactions"),
-          where("name", "==", currentUserRef),
-          where("time", ">=", cutoff)
-        )
-      ).then((resultsReactions) => {
-        getOriginalThoughtsFromReactions(resultsReactions).then(
-          (resultsReactionsThoughts) => {
-            // Eliminate duplicates
-            resolve(
-              _.unionBy(resultsReactionsThoughts, resultsThoughts.docs, "id")
-            );
-          }
-        );
-      });
+export async function getUserAllChats(uid, callback) {
+  console.log("going at it");
+  // return new Promise((resolve, reject) => {
+  // TODO: just cutting off activity at 10 days (your thoughts + your last reply to thoughts) for performance
+  let cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - 30);
+  const currentUserRef = doc(db, "users", uid);
+
+  const thoughtsQuery = query(
+    collection(db, "thoughts"),
+    where("name", "==", currentUserRef),
+    where("lastInteraction", ">=", cutoff)
+  );
+
+  const reactionsQuery = query(
+    collectionGroup(db, "reactions"),
+    where("name", "==", currentUserRef),
+    where("time", ">=", cutoff)
+  );
+
+  const unsubscribeThoughts = onSnapshot(thoughtsQuery, (resultsThoughts) => {
+    console.log("we're goign in the thoughtsquery");
+    onSnapshot(reactionsQuery, (resultsReactions) => {
+      console.log("we're goign in the reactionsquery");
+      getOriginalThoughtsFromReactions(resultsReactions).then(
+        (resultsReactionsThoughts) => {
+          // Eliminate duplicates
+          const combinedResults = _.unionBy(
+            resultsReactionsThoughts,
+            resultsThoughts.docs,
+            "id"
+          );
+          callback(combinedResults);
+        }
+      );
     });
   });
+
+  // Return the unsubscribe function to allow the caller to stop listening for updates
+  return () => {
+    unsubscribeThoughts();
+  };
+
+  // getDocs(thoughtsQuery).then((resultsThoughts) => {
+  //   getDocs(reactionsQuery).then((resultsReactions) => {
+  //     getOriginalThoughtsFromReactions(resultsReactions).then(
+  //       (resultsReactionsThoughts) => {
+  //         // Eliminate duplicates
+  //         resolve(
+  //           _.unionBy(resultsReactionsThoughts, resultsThoughts.docs, "id")
+  //         );
+  //       }
+  //     );
+  //   });
+  // });
+  // });
 }
 
 export async function getOriginalThoughtsFromReactions(reactions, cutoff) {
