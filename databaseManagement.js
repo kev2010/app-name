@@ -7,6 +7,8 @@ import {
   query,
   orderBy,
   limit,
+  getDoc,
+  collectionGroup,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
@@ -42,5 +44,22 @@ export async function getRecentReaction(thoughtUID) {
         resolve(result.docs);
       }
     );
+  });
+}
+
+// Adding a username field to all reactions
+export async function addUsernameToReactions() {
+  console.log("adding username to reactions");
+  getDocs(query(collectionGroup(db, "reactions"))).then((results) => {
+    console.log("got reactions", results.docs.length);
+    results.docs.forEach((docData) => {
+      console.log("got reaction doc", docData.id, docData.data().name);
+      getDoc(docData.data().name).then((userDoc) => {
+        console.log("got user doc", userDoc.id, docData.ref.path);
+        updateDoc(doc(db, docData.ref.path), {
+          username: userDoc.data().username,
+        });
+      });
+    });
   });
 }

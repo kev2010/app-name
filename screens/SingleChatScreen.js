@@ -27,14 +27,23 @@ import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import Autolink from "react-native-autolink";
 import { sendPushNotification } from "../notifications";
+import { useCollectionData } from "react-firebase-hooks/firestore";
+import { collection, query, orderBy } from "firebase/firestore";
+import { db, storage } from "../firebaseConfig";
 
 const SingleChatScreen = ({ navigation, route }) => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useRecoilState(userState);
-  const [data, setData] = useState([]);
   const [creatorID, setCreatorID] = useState("");
   const [originalThought, setOriginalThought] = useState("");
   const [message, setMessage] = useState("");
+  const [time, setTime] = useState(Date.now());
+
+  const messagesRef = collection(db, `thoughts/${route.params.id}/reactions`);
+  const [data] = useCollectionData(query(messagesRef, orderBy("time")), {
+    idField: "id",
+  });
+  const [profilePictures, setProfilePictures] = useState([]);
 
   const scrollViewRef = useRef(null);
 
@@ -54,13 +63,31 @@ const SingleChatScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    getChat();
+    // setProfilePictures(data.map(message => {
+    //   getUser(message.name.id).then((userDoc) => {
+    //     getProfilePicture(reactionDoc.data().name.id).then((profileURL) => {
+    //       return {
+    //         id: message.id,
+    //         profileURL: getProfilePicture(message.name.id)
+    //       }
+    //     })
+    //   })
+    // }))
+  }, [data]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(Date.now()), 60000;
+    });
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   const onSendMessage = () => {
     console.log("Sending message: " + message);
     setLoading(true);
-    addComment(route.params.id, user.uid, message).then(() => {
+    addComment(route.params.id, user.uid, user.username, message).then(() => {
       // Make sure we don't send a push notification if the user replies to their own post!
       if (creatorID != user.uid) {
         getUser(creatorID).then((creator) => {
@@ -108,111 +135,21 @@ const SingleChatScreen = ({ navigation, route }) => {
     });
   };
 
-  const getChat = () => {
-    setLoading(true);
-
-    getThought(route.params.id).then((thoughtData) => {
-      getThoughtImage(route.params.id).then((imageURL) => {
-        getUser(thoughtData.name.id).then((userDoc) => {
-          getProfilePicture(thoughtData.name.id).then((profileURL) => {
-            const found = data.some(
-              (reaction) => reaction.id === thoughtData.id
-            );
-            if (!found) {
-              setData((data) => [
-                {
-                  id: thoughtData.id,
-                  sender: userDoc.id === user.uid ? "self" : "other",
-                  username: userDoc.data().username,
-                  text: thoughtData.thought,
-                  timestamp: calculateTimeDiffFromNow(
-                    thoughtData.time.toDate()
-                  ),
-                  rawTime: thoughtData.time,
-                  profileURL: profileURL,
-                  imageURL: "",
-                },
-                ...data,
-              ]);
-
-              // If there is an image, add it to the data array as a separate message
-              if (imageURL !== "") {
-                setData((data) => [
-                  {
-                    id: thoughtData.id,
-                    sender: userDoc.id === user.uid ? "self" : "other",
-                    username: userDoc.data().username,
-                    text: thoughtData.thought,
-                    timestamp: calculateTimeDiffFromNow(
-                      thoughtData.time.toDate()
-                    ),
-                    rawTime: thoughtData.time,
-                    profileURL: profileURL,
-                    imageURL: imageURL,
-                  },
-                  ...data,
-                ]);
-              }
-
-              // Set the creatorID of the thought and the original thought
-              setCreatorID(userDoc.id);
-              setOriginalThought(thoughtData.thought);
-            }
-          });
-        });
-      });
-    });
-
-    let itemsProcessed = 0;
-
-    getReactions(route.params.id).then((reactions) => {
-      if (reactions.size > 0) {
-        reactions.forEach((reactionDoc) => {
-          getUser(reactionDoc.data().name.id).then((userDoc) => {
-            getProfilePicture(reactionDoc.data().name.id).then((profileURL) => {
-              const found = data.some(
-                (reaction) => reaction.id === reactionDoc.id
-              );
-              if (!found) {
-                // IMPORTANT: Need to use a function to create a new array since state updates are asynchronous or sometimes batched.
-                setData((data) => [
-                  {
-                    id: reactionDoc.id,
-                    sender: userDoc.id === user.uid ? "self" : "other",
-                    username: userDoc.data().username,
-                    text: reactionDoc.data().text,
-                    timestamp: calculateTimeDiffFromNow(
-                      reactionDoc.data().time.toDate()
-                    ),
-                    rawTime: reactionDoc.data().time,
-                    profileURL: profileURL,
-                    imageURL: "",
-                  },
-                  ...data,
-                ]);
-
-                itemsProcessed++;
-                if (itemsProcessed === reactions.size) {
-                  setLoading(false);
-                }
-              } else {
-                itemsProcessed++;
-                if (itemsProcessed === reactions.size) {
-                  setLoading(false);
-                }
-              }
-            });
-          });
-        });
-      } else {
-        setLoading(false);
-      }
-    });
-  };
-
   // Function to render messages
   const renderMessages = () => {
-    const messages = data.sort((a, b) => a.rawTime - b.rawTime);
+    const messages = data.map((message) => {
+      return {
+        username: message.username,
+        sender: message.name.id === user.uid ? "self" : "other",
+        profileURL: "",
+        imageURL: "",
+        text: message.text,
+        timestamp:
+          message.time === null
+            ? new Date()
+            : calculateTimeDiffFromNow(message.time.toDate()),
+      };
+    });
     return messages.map((message, index) => {
       if (message.sender === "other") {
         // Group messages from the same user together
@@ -473,7 +410,7 @@ const SingleChatScreen = ({ navigation, route }) => {
             scrollViewRef.current.scrollToEnd({ animated: false })
           }
         >
-          {renderMessages()}
+          {data && renderMessages()}
         </ScrollView>
         <View style={styles.inputView}>
           <TextInput

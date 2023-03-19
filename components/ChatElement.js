@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -22,6 +22,17 @@ const ChatElement = ({
   lastInteraction,
   thought,
 }) => {
+  const [time, setTime] = useState(Date.now());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(Date.now()), 60000;
+    });
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
+
   return (
     <View
       style={[

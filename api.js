@@ -274,7 +274,7 @@ export async function getEmojisSizeOfThoughts(thoughts) {
   return Promise.all(results);
 }
 
-export async function addComment(thoughtUID, userUID, comment) {
+export async function addComment(thoughtUID, userUID, username, comment) {
   return new Promise((resolve, reject) => {
     const currentUserRef = doc(db, "users", userUID);
     const originalThoughtRef = doc(db, "thoughts", thoughtUID);
@@ -282,6 +282,7 @@ export async function addComment(thoughtUID, userUID, comment) {
     addDoc(reactionsRef, {
       name: currentUserRef,
       originalThought: originalThoughtRef,
+      username: username,
       text: comment,
       time: serverTimestamp(),
     }).then(() => {
