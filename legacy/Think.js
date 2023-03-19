@@ -10,7 +10,7 @@ import {
   Animated,
   ActivityIndicator,
 } from "react-native";
-import UploadImage from "./UploadImage";
+import UploadImage from "../components/UploadImage";
 import { useRecoilState } from "recoil";
 import { addThought, uploadThoughtImage, checkUserPostedToday } from "../api";
 import colors from "../assets/colors";

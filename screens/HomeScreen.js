@@ -12,7 +12,7 @@ import {
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import colors from "../assets/colors";
 import Handle from "../components/Handle";
-import Think from "../components/Think";
+import Think from "../legacy/Think";
 import FriendsIcon from "../components/FriendsIcon";
 import ChatIcon from "../components/ChatIcon";
 import BottomSheet from "@gorhom/bottom-sheet";
@@ -195,6 +195,10 @@ const HomeScreen = ({ navigation }) => {
     navigation.navigate("Chats");
   };
 
+  const goToThinkScreen = () => {
+    navigation.navigate("Think");
+  };
+
   // ref
   const bottomSheetRef = useRef(null);
 
@@ -288,7 +292,16 @@ const HomeScreen = ({ navigation }) => {
         <Feed navigation={navigation} uid={user.uid}></Feed>
       </View>
 
-      <BottomSheet
+      <TouchableOpacity style={styles.addPosition} onPress={goToThinkScreen}>
+        <View style={styles.addThoughtButton}>
+          <Image
+            style={styles.addThoughtPlus}
+            source={require("../assets/plusWhite.png")}
+          />
+        </View>
+      </TouchableOpacity>
+
+      {/* <BottomSheet
         ref={bottomSheetRef}
         snapPoints={snapPoints}
         onChange={handleBottomSheetSwipe}
@@ -301,7 +314,7 @@ const HomeScreen = ({ navigation }) => {
         )}
       >
         <Think swiped={!swiped} submitted={submitted}></Think>
-      </BottomSheet>
+      </BottomSheet> */}
     </SafeAreaView>
   );
 };
@@ -371,7 +384,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "94%",
     // Needed so that you can see the last element - a hacky solution
-    marginBottom: 48,
+    // marginBottom: 48,
     borderRadius: 15,
     overflow: "hidden",
   },
@@ -422,6 +435,23 @@ const styles = StyleSheet.create({
     color: colors.gray_5,
     fontFamily: "Nunito-SemiBold",
     fontSize: 20,
+  },
+  addPosition: {
+    position: "absolute",
+    bottom: 64,
+    right: 16,
+  },
+  addThoughtButton: {
+    backgroundColor: colors.primary_5,
+    width: 48,
+    height: 48,
+    borderRadius: 100,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  addThoughtPlus: {
+    width: 16,
+    height: 16,
   },
 });
 

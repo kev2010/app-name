@@ -153,7 +153,7 @@ const Thought = (props) => {
             <View style={styles.addPhotoButton}>
               <Image
                 style={styles.addPhotoPlus}
-                source={require("../assets/plus.png")}
+                source={require("../assets/plusGray.png")}
               />
             </View>
           </TouchableOpacity>
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   addPhotoButton: {
-    backgroundColor: colors.primary_1,
+    backgroundColor: colors.gray_1,
     width: 24,
     height: 24,
     borderRadius: 100,
@@ -299,8 +299,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   addPhotoPlus: {
-    width: 8,
-    height: 8,
+    width: 12,
+    height: 12,
   },
   emojis: {
     width: 14,
