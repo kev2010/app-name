@@ -101,12 +101,10 @@ const ThinkScreen = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.thinkContainer}>
-      <View style={styles.header}>
-        <View style={styles.top}>
-          <TouchableOpacity onPress={goBack} style={styles.button}>
-            <Image style={styles.back} source={require("../assets/back.png")} />
-          </TouchableOpacity>
-        </View>
+      <View style={styles.top}>
+        <TouchableOpacity onPress={goBack} style={styles.button}>
+          <Image style={styles.back} source={require("../assets/back.png")} />
+        </TouchableOpacity>
       </View>
       <TextInput
         ref={inputRef}
@@ -118,7 +116,7 @@ const ThinkScreen = ({ navigation, route }) => {
         textAlign="left"
         selectionColor={colors.primary_4}
         placeholderTextColor={colors.gray_4}
-        placeholder="What you thinking about? Keep it raw. Develop it as you go!"
+        placeholder="What's on your mind?"
         value={thought}
         editable={true}
         onChangeText={(text) => {
@@ -184,8 +182,6 @@ const useInputStyle = (textContainerBottom) => {
 const styles = StyleSheet.create({
   thinkContainer: {
     flex: 1,
-    justifyContent: "space-between",
-    paddingTop: 24,
   },
   input: {
     color: colors.primary_9,
@@ -231,21 +227,19 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
     paddingRight: 24,
   },
-  header: {
-    alignItems: "center",
-    marginTop: 4,
-    width: "90%",
-  },
   top: {
     flexDirection: "row",
     justifyContent: "space-between",
     // backgroundColor: "pink",
-    width: "100%",
-    position: "absolute",
+    width: "90%",
+    alignSelf: "center",
+    marginTop: 4,
+    // position: "absolute",
   },
   button: {
     paddingRight: 16,
     paddingBottom: 16,
+    marginBottom: 16,
   },
   back: {
     width: 10.85,

@@ -11,13 +11,9 @@ import {
 } from "react-native";
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import colors from "../assets/colors";
-import Handle from "../components/Handle";
-import Think from "../legacy/Think";
 import FriendsIcon from "../components/FriendsIcon";
 import ChatIcon from "../components/ChatIcon";
-import BottomSheet from "@gorhom/bottom-sheet";
 import Feed from "../components/Feed";
-import { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
 import { useRecoilState } from "recoil";
 import {
   getUser,
@@ -49,7 +45,6 @@ const HomeScreen = ({ navigation }) => {
   const [friendsFeed, setFriends] = useState(true);
   const globalStyle = useGlobalStyle(globalFeed);
   const friendsStyle = useFriendsStyle(friendsFeed);
-  const [swiped, setSwipe] = useState(false);
   const [user, setUser] = useRecoilState(userState);
   const [requestsNotification, setRequestsNotification] = useState(false);
   const [imageURL, setImageURL] = useState("");
@@ -180,8 +175,6 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
-  const shuffleFeed = () => {};
-
   const goToSettingsScreen = () => {
     navigation.navigate("Settings");
   };
@@ -197,34 +190,6 @@ const HomeScreen = ({ navigation }) => {
 
   const goToThinkScreen = () => {
     navigation.navigate("Think");
-  };
-
-  // ref
-  const bottomSheetRef = useRef(null);
-
-  // variables
-  const snapPoints = useMemo(() => ["11%", "85%"], []);
-
-  const renderBackdrop = (props) => {
-    return (
-      <BottomSheetBackdrop {...props} pressBehavior={"collapse"} opacity={0.25}>
-        <Pressable onPress={Keyboard.dismiss} style={{ flex: 1 }} />
-      </BottomSheetBackdrop>
-    );
-  };
-
-  const onPressSheet = () => {
-    bottomSheetRef.current.snapToIndex(!swiped ? 0 : 1);
-  };
-
-  const submitted = () => {
-    bottomSheetRef.current.snapToIndex(0);
-    setSwipe(false);
-  };
-
-  const handleBottomSheetSwipe = () => {
-    Keyboard.dismiss;
-    setSwipe(!swiped);
   };
 
   return (
@@ -260,20 +225,12 @@ const HomeScreen = ({ navigation }) => {
             <Text style={[styles.type, friendsStyle]}>Friends</Text>
           </TouchableOpacity>
         </View>
-        {/* <View style={styles.shuffle}>
-          <TouchableOpacity onPress={shuffleFeed}>
-            <Image
-              style={styles.shuffleButton}
-              source={require("../assets/shuffle.png")}
-            />
-          </TouchableOpacity>
-        </View> */}
       </View>
       <View
         style={[
           styles.empty,
           {
-            opacity: globalFeed && swiped ? 1 : 0,
+            opacity: globalFeed ? 1 : 0,
           },
         ]}
       >
@@ -292,29 +249,16 @@ const HomeScreen = ({ navigation }) => {
         <Feed navigation={navigation} uid={user.uid}></Feed>
       </View>
 
-      <TouchableOpacity style={styles.addPosition} onPress={goToThinkScreen}>
-        <View style={styles.addThoughtButton}>
-          <Image
-            style={styles.addThoughtPlus}
-            source={require("../assets/plusWhite.png")}
-          />
-        </View>
-      </TouchableOpacity>
-
-      {/* <BottomSheet
-        ref={bottomSheetRef}
-        snapPoints={snapPoints}
-        onChange={handleBottomSheetSwipe}
-        backgroundStyle={styles.sheet}
-        backdropComponent={renderBackdrop}
-        enabledContentTapInteraction={true}
-        style={styles.sheet}
-        handleComponent={() => (
-          <Handle onPress={onPressSheet} swiped={!swiped} />
-        )}
-      >
-        <Think swiped={!swiped} submitted={submitted}></Think>
-      </BottomSheet> */}
+      <View style={styles.addPositionView}>
+        <TouchableOpacity style={styles.addPosition} onPress={goToThinkScreen}>
+          <View style={styles.addThoughtButton}>
+            <Image
+              style={styles.addThoughtPlus}
+              source={require("../assets/plusWhite.png")}
+            />
+          </View>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
@@ -355,19 +299,6 @@ const styles = StyleSheet.create({
   rhs: {
     flexDirection: "row",
   },
-  shuffle: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    width: "100%",
-    position: "absolute",
-    marginTop: 16,
-  },
-  shuffleButton: {
-    width: 18,
-    height: 15,
-    alignSelf: "center",
-  },
   title: {
     color: colors.primary_5,
     fontFamily: "Nunito-Bold",
@@ -397,28 +328,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginHorizontal: 16,
   },
-  touchable: {
-    flex: 1,
-    paddingRight: 20,
-    width: "100%",
-    height: 10,
-  },
-  backdrop: {
-    // marginTop: 0,
-  },
-  sheet: {
-    backgroundColor: colors.almost_white,
-    shadowColor: colors.gray_5,
-    shadowOffset: {
-      width: 0,
-      height: -4,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 20,
-    flex: 1,
-    elevation: 10,
-    borderRadius: 15,
-  },
   empty: {
     position: "absolute",
     marginTop: 24,
@@ -436,10 +345,16 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito-SemiBold",
     fontSize: 20,
   },
-  addPosition: {
+  addPositionView: {
     position: "absolute",
     bottom: 64,
     right: 16,
+  },
+  addPosition: {
+    padding: 12,
+    marginRight: -12,
+    marginBottom: -12,
+    // backgroundColor: "purple",
   },
   addThoughtButton: {
     backgroundColor: colors.primary_5,
