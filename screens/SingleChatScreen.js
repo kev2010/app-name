@@ -75,6 +75,7 @@ const SingleChatScreen = ({ navigation, route }) => {
     // }))
   }, [data]);
 
+  // TODO: this seems to be continuously updating the time
   useEffect(() => {
     const interval = setInterval(() => {
       setTime(Date.now()), 60000;

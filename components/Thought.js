@@ -69,7 +69,6 @@ const Thought = (props) => {
   };
 
   const userAddEmoji = () => {
-    console.log("ahahaha", props.thoughtUID, user.uid);
     addEmoji(props.thoughtUID, user.uid, "rizz").then(() => {
       setEmojiCount((emojiCount) => emojiCount + 1);
     });
@@ -107,6 +106,22 @@ const Thought = (props) => {
             </TouchableOpacity>
           )
         ) : null}
+        {emojiCount > 0 ? (
+          <TouchableOpacity style={styles.gas} onPress={userAddEmoji}>
+            <Image
+              style={styles.flame}
+              source={require("../assets/flame.png")}
+            />
+            <Text style={styles.flameNumber}>{emojiCount}</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={styles.gas} onPress={userAddEmoji}>
+            <Image
+              style={styles.flame}
+              source={require("../assets/noFlame.png")}
+            />
+          </TouchableOpacity>
+        )}
       </View>
       <View
         style={[
@@ -132,26 +147,21 @@ const Thought = (props) => {
           <Image style={styles.photo} source={{ uri: props.imageURL }} />
         </View>
       ) : null}
-
-      {props.reactions > 0 || collabsText != "" || emojiCount > 0 ? (
-        <View style={styles.row4}>
-          <View style={styles.actions}>
-            <TouchableOpacity style={styles.profile} onPress={userAddEmoji}>
+      <View style={styles.row4}>
+        <View style={styles.actions}>
+          <TouchableOpacity>
+            <View style={styles.addPhotoButton}>
               <Image
-                style={styles.emojis}
-                source={require("../assets/stars.png")}
-                //   source={{uri: props.img}}
-                // resizeMode="stretch"
+                style={styles.addPhotoPlus}
+                source={require("../assets/plus.png")}
               />
-            </TouchableOpacity>
-            {emojiCount > 0 ? (
-              <Text style={styles.number}>{emojiCount}</Text>
-            ) : null}
-          </View>
-          <Text style={styles.thought}>{collabsText}</Text>
-          <View style={styles.actions}>
-            {/* <Text style={styles.emojis}>&#10024;</Text> */}
-            {props.reactions > 0 ? (
+            </View>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.thought}>{collabsText}</Text>
+        <View style={styles.actions}>
+          {/* <Text style={styles.emojis}>&#10024;</Text> */}
+          {/* {props.reactions > 0 ? (
               <>
                 <Image
                   style={styles.comments}
@@ -161,11 +171,15 @@ const Thought = (props) => {
                 />
                 <Text style={styles.number}>{props.reactions}</Text>
               </>
-            ) : null}
-          </View>
+            ) : null} */}
+          <Image
+            style={styles.people}
+            source={require("../assets/people.png")}
+          />
+          <Text style={styles.number}>{props.reactions}</Text>
         </View>
-      ) : (
-        <View style={styles.row4}>
+      </View>
+      {/* <View style={styles.row4}>
           <View style={styles.actions}>
             <TouchableOpacity style={styles.profile} onPress={userAddEmoji}>
               <Image
@@ -174,8 +188,7 @@ const Thought = (props) => {
               />
             </TouchableOpacity>
           </View>
-        </View>
-      )}
+        </View> */}
     </View>
   );
 };
@@ -188,13 +201,14 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     paddingHorizontal: 24,
     paddingVertical: 16,
-    marginBottom: 16,
-    shadowColor: "#000",
+    marginBottom: 12,
+    shadowColor: colors.gray_2,
     shadowOffset: {
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.6,
+    shadowRadius: 0,
   },
   profile: {
     flexDirection: "row",
@@ -217,6 +231,7 @@ const styles = StyleSheet.create({
   row1: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     marginBottom: 12,
   },
   row2: {
@@ -275,18 +290,50 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  addPhotoButton: {
+    backgroundColor: colors.primary_1,
+    width: 24,
+    height: 24,
+    borderRadius: 100,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  addPhotoPlus: {
+    width: 8,
+    height: 8,
+  },
   emojis: {
     width: 14,
     height: 20,
     marginRight: 8,
   },
-  comments: {
-    width: 16,
+  gas: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    marginRight: -12,
+  },
+  flame: {
+    width: 12.45,
     height: 16,
-    marginRight: 8,
+    marginBottom: 2,
+  },
+  flameNumber: {
+    color: colors.accent2_5,
+    fontFamily: "Nunito-Bold",
+    fontSize: 14,
+    marginLeft: 4,
+  },
+  people: {
+    width: 18.36,
+    height: 12,
+    marginRight: 4,
+    // Weird - but to align things??
+    marginBottom: 1,
   },
   number: {
-    color: colors.primary_4,
+    color: colors.gray_3,
     fontFamily: "Nunito-SemiBold",
     fontSize: 14,
   },

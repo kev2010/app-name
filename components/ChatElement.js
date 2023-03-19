@@ -24,6 +24,7 @@ const ChatElement = ({
 }) => {
   const [time, setTime] = useState(Date.now());
 
+  // TODO: this seems to be continuously updating the time
   useEffect(() => {
     const interval = setInterval(() => {
       setTime(Date.now()), 60000;
