@@ -187,7 +187,13 @@ export async function getThought(uid) {
   });
 }
 
-export async function addThought(uid, profileURL, username, thought) {
+export async function addThought(
+  uid,
+  profileURL,
+  username,
+  thought,
+  lastReaction
+) {
   return new Promise((resolve, reject) => {
     const currentUserRef = doc(db, "users", uid);
     addDoc(collection(db, "thoughts"), {
@@ -201,6 +207,7 @@ export async function addThought(uid, profileURL, username, thought) {
       thought: thought,
       time: serverTimestamp(),
       lastInteraction: serverTimestamp(),
+      participants: [username],
     }).then((docRef) => {
       addDoc(collection(db, `thoughts/${docRef.id}/reactions`), {
         imageURL: "",
@@ -211,7 +218,21 @@ export async function addThought(uid, profileURL, username, thought) {
         time: serverTimestamp(),
         username: username,
       }).then(() => {
-        resolve(docRef.id);
+        updateDoc(docRef, {
+          lastReaction: lastReaction
+            ? {
+                imageURL: "",
+                name: currentUserRef,
+                originalThought: docRef.id,
+                photoURL: profileURL,
+                text: thought,
+                time: serverTimestamp(),
+                username: username,
+              }
+            : {},
+        }).then(() => {
+          resolve(docRef.id);
+        });
       });
     });
   });
@@ -230,6 +251,15 @@ export async function addImageToThought(
 
     await updateDoc(docRef, {
       imageURL: imageURL,
+      lastReaction: {
+        imageURL: imageURL,
+        name: currentUserRef,
+        originalThought: docRef.id,
+        photoURL: profileURL,
+        text: "",
+        time: serverTimestamp(),
+        username: username,
+      },
     });
 
     await addDoc(collection(db, `thoughts/${thoughtUID}/reactions`), {

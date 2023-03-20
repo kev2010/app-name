@@ -63,32 +63,36 @@ const ThinkScreen = ({ navigation, route }) => {
   const onSubmit = () => {
     console.log("about to submit ", thought);
     setLoading(true);
-    addThought(user.uid, user.imageURL, user.username, thought).then(
-      (docID) => {
-        console.log("uploaded the thought!", docID);
-        uploadThoughtImage(image, docID).then((downloadURL) => {
-          console.log("good news! we're gooD!", downloadURL);
-          addImageToThought(
-            user.uid,
-            docID,
-            user.imageURL,
-            user.username,
-            downloadURL
-          ).then(() => {
-            refreshFeed(user.uid).then((data) => {
-              setFeedData(data);
-              checkUserPostedToday(user.uid).then((posted) => {
-                setLocked(!posted);
-                setThought("");
-                setImage(null);
-                setLoading(false);
-                navigation.goBack();
-              });
+    addThought(
+      user.uid,
+      user.imageURL,
+      user.username,
+      thought,
+      image === null
+    ).then((docID) => {
+      console.log("uploaded the thought!", docID);
+      uploadThoughtImage(image, docID).then((downloadURL) => {
+        console.log("good news! we're gooD!", downloadURL);
+        addImageToThought(
+          user.uid,
+          docID,
+          user.imageURL,
+          user.username,
+          downloadURL
+        ).then(() => {
+          refreshFeed(user.uid).then((data) => {
+            setFeedData(data);
+            checkUserPostedToday(user.uid).then((posted) => {
+              setLocked(!posted);
+              setThought("");
+              setImage(null);
+              setLoading(false);
+              navigation.goBack();
             });
           });
         });
-      }
-    );
+      });
+    });
   };
 
   const goBack = () => {
