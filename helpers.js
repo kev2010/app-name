@@ -23,7 +23,7 @@ export const calculateTimeDiffFromNow = (time) => {
     return Math.floor(interval) + "m";
   }
 
-  return Math.floor(seconds) + "s";
+  return "Just Now";
 };
 
 export const displayParticipants = (participants, currentUsername) => {

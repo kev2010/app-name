@@ -35,6 +35,7 @@ const ChatsDisplay = ({ navigation }) => {
   const [user, setUser] = useRecoilState(userState);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [time, setTime] = useState(Date.now());
 
   useEffect(() => {
     let cutoff = new Date();
@@ -57,6 +58,15 @@ const ChatsDisplay = ({ navigation }) => {
     // Clean up the listener when the component is unmounted
     return () => {
       unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(Date.now());
+    }, 30000);
+    return () => {
+      clearInterval(interval);
     };
   }, []);
 

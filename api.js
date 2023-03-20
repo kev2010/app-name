@@ -341,6 +341,7 @@ export async function addComment(
           imageURL: "",
           photoURL: userProfilePic,
         },
+        participants: arrayUnion(username),
       }).then(() => {
         resolve(true);
       });

@@ -62,23 +62,9 @@ const SingleChatScreen = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    // setProfilePictures(data.map(message => {
-    //   getUser(message.name.id).then((userDoc) => {
-    //     getProfilePicture(reactionDoc.data().name.id).then((profileURL) => {
-    //       return {
-    //         id: message.id,
-    //         profileURL: getProfilePicture(message.name.id)
-    //       }
-    //     })
-    //   })
-    // }))
-  }, [data]);
-
-  // TODO: this seems to be continuously updating the time
-  useEffect(() => {
     const interval = setInterval(() => {
-      setTime(Date.now()), 60000;
-    });
+      setTime(Date.now());
+    }, 30000);
     return () => {
       clearInterval(interval);
     };
@@ -97,7 +83,6 @@ const SingleChatScreen = ({ navigation, route }) => {
       // Make sure we don't send a push notification if the user replies to their own post!
       if (route.params.creatorID != user.uid) {
         getUser(route.params.creatorID).then((creator) => {
-          console.log();
           if (
             creator.data().notificationToken != "" &&
             creator.data().notificationToken != undefined
@@ -119,7 +104,7 @@ const SingleChatScreen = ({ navigation, route }) => {
         reactions.forEach((reactionDoc) => {
           if (
             reactionDoc.data().name.id != user.uid &&
-            reactionDoc.data().name.id != creatorID
+            reactionDoc.data().name.id != route.params.creatorID
           ) {
             getUser(reactionDoc.data().name.id).then((userData) => {
               seen.add(userData.data().notificationToken);
