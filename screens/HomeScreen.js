@@ -28,9 +28,10 @@ import {
 import * as Notifications from "expo-notifications";
 import { CONSTANTS } from "../constants";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { useCollectionData } from "react-firebase-hooks/firestore";
-import { doc, where, collection, query, orderBy } from "firebase/firestore";
-import { db, storage } from "../firebaseConfig";
+import { changePhotoURLThoughts } from "../api";
+// import { useCollectionData } from "react-firebase-hooks/firestore";
+// import { doc, where, collection, query, orderBy } from "firebase/firestore";
+// import { db, storage } from "../firebaseConfig";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -50,7 +51,6 @@ const HomeScreen = ({ navigation }) => {
   const friendsStyle = useFriendsStyle(friendsFeed);
   const [user, setUser] = useRecoilState(userState);
   const [requestsNotification, setRequestsNotification] = useState(false);
-  const [imageURL, setImageURL] = useState("");
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
@@ -133,14 +133,25 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
+  const getProfilePicture = async () => {
+    return await getUser(user.uid).then(
+      (currentUser) => currentUser.data().photoURL
+    );
+  };
+
+  useEffect(() => {
+    getProfilePicture().then((url) => {
+      if (url != user.imageURL) {
+        changePhotoURLThoughts(user.uid, user.imageURL);
+      }
+    });
+  });
+
   useEffect(() => {
     Keyboard.dismiss();
     const unsubscribe = navigation.addListener("focus", () => {
       // The screen is focused
       // Call any action and update data
-      if (user.imageURL != null) {
-        setImageURL(user.imageURL);
-      }
       getFriendsData();
     });
 
@@ -223,8 +234,8 @@ const HomeScreen = ({ navigation }) => {
             <Image
               style={styles.profile}
               source={
-                imageURL != ""
-                  ? { uri: imageURL }
+                user.imageURL != ""
+                  ? { uri: user.imageURL }
                   : require("../assets/default.jpeg")
               }
             />

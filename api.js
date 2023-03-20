@@ -475,6 +475,39 @@ export async function updateProfilePicture(uid, imageAsset) {
   }
 }
 
+// Change photoURL in user profile, thoughts, and reactions
+export async function changePhotoURLThoughts(uid, url) {
+  const thoughtsQuery = query(
+    collection(db, "thoughts"),
+    where("name", "==", doc(db, "users", uid))
+  );
+
+  const reactionsQuery = query(
+    collectionGroup(db, "reactions"),
+    where("name", "==", doc(db, "users", uid))
+  );
+
+  updateDoc(doc(db, "users", uid), {
+    photoURL: url,
+  });
+
+  getDocs(thoughtsQuery).then((thoughts) => {
+    thoughts.docs.forEach((thoughtDoc) => {
+      updateDoc(doc(db, "thoughts", thoughtDoc.id), {
+        profileURL: url,
+      });
+    });
+  });
+
+  getDocs(reactionsQuery).then((reactions) => {
+    reactions.docs.forEach((reactionDoc) => {
+      updateDoc(reactionDoc.ref, {
+        photoURL: url,
+      });
+    });
+  });
+}
+
 // TODO: Repeated code from getThoughtImage, so merge into one function that just reads images
 export async function getProfilePicture(userUID) {
   try {
