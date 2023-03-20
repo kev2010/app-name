@@ -13,7 +13,12 @@ import {
 } from "react-native";
 import UploadImage from "../components/UploadImage";
 import { useRecoilState } from "recoil";
-import { addThought, uploadThoughtImage, checkUserPostedToday } from "../api";
+import {
+  addThought,
+  uploadThoughtImage,
+  checkUserPostedToday,
+  addImageToThought,
+} from "../api";
 import colors from "../assets/colors";
 import { userState, feedDataState, feedLockedState } from "../globalState";
 import { CONSTANTS } from "../constants";
@@ -58,22 +63,32 @@ const ThinkScreen = ({ navigation, route }) => {
   const onSubmit = () => {
     console.log("about to submit ", thought);
     setLoading(true);
-    addThought(user.uid, thought).then((docID) => {
-      console.log("uploaded the thought!", docID);
-      uploadThoughtImage(image, docID).then((downloadURL) => {
-        console.log("good news! we're gooD!", downloadURL);
-        refreshFeed(user.uid).then((data) => {
-          setFeedData(data);
-          checkUserPostedToday(user.uid).then((posted) => {
-            setLocked(!posted);
-            submitted();
-            setThought("");
-            setImage(null);
-            setLoading(false);
+    addThought(user.uid, user.imageURL, user.username, thought).then(
+      (docID) => {
+        console.log("uploaded the thought!", docID);
+        uploadThoughtImage(image, docID).then((downloadURL) => {
+          console.log("good news! we're gooD!", downloadURL);
+          addImageToThought(
+            user.uid,
+            docID,
+            user.imageURL,
+            user.username,
+            downloadURL
+          ).then(() => {
+            refreshFeed(user.uid).then((data) => {
+              setFeedData(data);
+              checkUserPostedToday(user.uid).then((posted) => {
+                setLocked(!posted);
+                setThought("");
+                setImage(null);
+                setLoading(false);
+                navigation.goBack();
+              });
+            });
           });
         });
-      });
-    });
+      }
+    );
   };
 
   const goBack = () => {

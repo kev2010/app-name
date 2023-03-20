@@ -149,7 +149,7 @@ const SingleChatScreen = ({ navigation, route }) => {
         username: message.username,
         sender: message.name.id === user.uid ? "self" : "other",
         profileURL: message.photoURL,
-        imageURL: "",
+        imageURL: message.imageURL,
         text: message.text,
         timestamp:
           message.time === null
@@ -513,6 +513,7 @@ const styles = StyleSheet.create({
     borderColor: colors.gray_2,
     borderWidth: 0.5,
     overflow: "hidden",
+    backgroundColor: colors.almost_white,
   },
   photo: {
     width: "100%",

@@ -135,21 +135,47 @@ export async function addEmojiSizeToThoughts() {
   });
 }
 
-// // Adding original thought to all reactions
-// export async function addOriginalThoughtToReactions() {
-//   getDocs(collection(db, "thoughts")).then((results) => {
-//     results.docs.forEach((docData) => {
-//       addDoc(collection(db, `thoughts/${docData.id}/reactions`), {
-//
-//
-//   // getDocs(query(collectionGroup(db, "reactions"))).then((results) => {
-//   //   results.docs.forEach((docData) => {
-//   //     getDoc(docData.data().originalThought).then((thoughtDoc) => {
-//   //       console.log(thoughtDoc.id);
-//   //       // updateDoc(doc(db, docData.ref.path), {
-//   //       //   originalThought: thoughtDoc.data().text,
-//   //       // });
-//   //     });
-//   //   });
-//   // });
-// }
+// Add imageURL field to all reactions
+export async function addImageURLToReactions() {
+  getDocs(query(collectionGroup(db, "reactions"))).then((results) => {
+    results.docs.forEach((docData) => {
+      updateDoc(doc(db, docData.ref.path), {
+        imageURL: "",
+      });
+    });
+  });
+}
+
+// Adding original thought to all reactions
+export async function addOriginalThoughtToReactions() {
+  getDocs(collection(db, "thoughts")).then((results) => {
+    results.docs.forEach((docData) => {
+      // Send as two separate reactions if there is an image
+      addDoc(collection(db, `thoughts/${docData.id}/reactions`), {
+        imageURL: "",
+        name: docData.data().name,
+        originalThought: docData.id,
+        photoURL: docData.data().profileURL,
+        text: docData.data().thought,
+        time: docData.data().time,
+        username:
+          docData.data().username === undefined ? "" : docData.data().username,
+      });
+
+      if (docData.data().imageURL !== "") {
+        addDoc(collection(db, `thoughts/${docData.id}/reactions`), {
+          imageURL: docData.data().imageURL,
+          name: docData.data().name,
+          originalThought: docData.id,
+          photoURL: docData.data().profileURL,
+          text: "",
+          time: docData.data().time,
+          username:
+            docData.data().username === undefined
+              ? ""
+              : docData.data().username,
+        });
+      }
+    });
+  });
+}

@@ -187,20 +187,61 @@ export async function getThought(uid) {
   });
 }
 
-export async function addThought(uid, thought) {
+export async function addThought(uid, profileURL, username, thought) {
   return new Promise((resolve, reject) => {
     const currentUserRef = doc(db, "users", uid);
     addDoc(collection(db, "thoughts"), {
       collabs: [],
+      emojiSize: 0,
+      imageURL: "",
+      profileURL: profileURL,
+      username: username,
       name: currentUserRef,
       tags: [],
       thought: thought,
       time: serverTimestamp(),
       lastInteraction: serverTimestamp(),
     }).then((docRef) => {
-      resolve(docRef.id);
+      addDoc(collection(db, `thoughts/${docRef.id}/reactions`), {
+        imageURL: "",
+        name: currentUserRef,
+        originalThought: docRef.id,
+        photoURL: profileURL,
+        text: thought,
+        time: serverTimestamp(),
+        username: username,
+      }).then(() => {
+        resolve(docRef.id);
+      });
     });
   });
+}
+
+export async function addImageToThought(
+  uid,
+  thoughtUID,
+  profileURL,
+  username,
+  imageURL
+) {
+  if (imageURL != null && imageURL !== "") {
+    const currentUserRef = doc(db, "users", uid);
+    const docRef = doc(db, "thoughts", thoughtUID);
+
+    await updateDoc(docRef, {
+      imageURL: imageURL,
+    });
+
+    await addDoc(collection(db, `thoughts/${thoughtUID}/reactions`), {
+      imageURL: imageURL,
+      name: currentUserRef,
+      originalThought: docRef.id,
+      photoURL: profileURL,
+      text: "",
+      time: serverTimestamp(),
+      username: username,
+    });
+  }
 }
 
 export async function deleteThought(uid) {
@@ -372,17 +413,12 @@ export async function uploadThoughtImage(imageAsset, thoughtUID) {
   try {
     // Why are we using XMLHttpRequest? See:
     // https://github.com/expo/expo/issues/2402#issuecomment-443726662
-    console.log("in the uploadthoughtimage api.js");
     const blob = await new Promise((resolve, reject) => {
-      console.log("inside the promise!!!");
       const xhr = new XMLHttpRequest();
       xhr.onload = function () {
-        console.log("onload", xhr);
-        console.log("onload222", JSON.stringify(xhr.response));
         resolve(xhr.response);
       };
       xhr.onerror = function (e) {
-        console.log("uh oh!");
         console.log(e);
         reject(new TypeError("Network request failed"));
       };
@@ -396,7 +432,6 @@ export async function uploadThoughtImage(imageAsset, thoughtUID) {
     const result = await uploadBytes(fileRef, blob);
 
     // We're done with the blob, close and release it
-    console.log("we're done!", result);
     blob.close();
 
     return await getDownloadURL(fileRef);

@@ -32,6 +32,9 @@ import { changePhotoURLThoughts } from "../api";
 // import { useCollectionData } from "react-firebase-hooks/firestore";
 // import { doc, where, collection, query, orderBy } from "firebase/firestore";
 // import { db, storage } from "../firebaseConfig";
+import { addOriginalThoughtToReactions } from "../databaseManagement";
+
+// addOriginalThoughtToReactions();
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
