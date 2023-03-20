@@ -114,6 +114,7 @@ const Feed = ({ navigation, uid }) => {
               thought: item.thought,
             });
           }}
+          delayPressIn={200}
           disabled={
             // uid === item.creatorID || !checkIfTodayCycle(item.postTime)
             // uid === item.creatorID ? false : locked

@@ -22,6 +22,7 @@ import {
   getThought,
   getThoughtImage,
   addComment,
+  updateLastReadTimestamps,
 } from "../api";
 import { calculateTimeDiffFromNow } from "../helpers";
 import { useRecoilState } from "recoil";
@@ -88,6 +89,10 @@ const SingleChatScreen = ({ navigation, route }) => {
       clearInterval(interval);
     };
   }, []);
+
+  useEffect(() => {
+    updateLastReadTimestamps(route.params.id, user.username);
+  }, [data]);
 
   const onSendMessage = () => {
     console.log("Sending message: " + message);

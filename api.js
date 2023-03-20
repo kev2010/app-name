@@ -230,6 +230,7 @@ export async function addThought(
                 username: username,
               }
             : {},
+          [`lastReadTimestamps.${username}`]: serverTimestamp(),
         }).then(() => {
           resolve(docRef.id);
         });
@@ -260,6 +261,7 @@ export async function addImageToThought(
         time: serverTimestamp(),
         username: username,
       },
+      [`lastReadTimestamps.${username}`]: serverTimestamp(),
     });
 
     await addDoc(collection(db, `thoughts/${thoughtUID}/reactions`), {
@@ -342,6 +344,7 @@ export async function addComment(
           photoURL: userProfilePic,
         },
         participants: arrayUnion(username),
+        [`lastReadTimestamps.${username}`]: serverTimestamp(),
       }).then(() => {
         resolve(true);
       });
@@ -716,4 +719,11 @@ export async function getOriginalThoughtsFromReactions(reactions, cutoff) {
   });
 
   return Promise.all(results);
+}
+
+export async function updateLastReadTimestamps(thoughtUID, username) {
+  const thoughtsRef = doc(db, "thoughts", thoughtUID);
+  updateDoc(thoughtsRef, {
+    [`lastReadTimestamps.${username}`]: serverTimestamp(),
+  });
 }

@@ -10,6 +10,7 @@ import {
   limit,
   getDoc,
   collectionGroup,
+  serverTimestamp,
 } from "firebase/firestore";
 import {
   getProfilePicture,
@@ -196,7 +197,6 @@ export async function addParticipantsToThoughts() {
   getDocs(collection(db, "thoughts")).then((results) => {
     results.docs.forEach((docData) => {
       calculateParticipantsInThought(docData.id).then((participants) => {
-        console.log(participants);
         updateDoc(doc(db, "thoughts", docData.id), {
           participants: participants,
         });
@@ -230,6 +230,57 @@ export async function addMostRecentReactionToThoughts() {
         updateDoc(doc(db, "thoughts", docData.id), {
           lastReaction: mostRecentReaction[0].data(),
         });
+      });
+    });
+  });
+}
+
+// Change participants array in thoughts to a map
+export async function changeParticipantsArrayToMap() {
+  getDocs(collection(db, "thoughts")).then((results) => {
+    results.docs.forEach((docData) => {
+      // Check if participants is an array
+      if (Array.isArray(docData.data().participants)) {
+        let participantsMap = {};
+        docData.data().participants.forEach((participant) => {
+          participantsMap[participant] = serverTimestamp();
+        });
+        updateDoc(doc(db, "thoughts", docData.id), {
+          participants: participantsMap,
+        });
+      }
+    });
+  });
+}
+
+// Reverse participants map in thoughts to an array
+export async function reverseParticipantsMapToArray() {
+  getDocs(collection(db, "thoughts")).then((results) => {
+    results.docs.forEach((docData) => {
+      // Check if participants is an array
+      if (typeof docData.data().participants === "object") {
+        let participantsArray = [];
+        Object.keys(docData.data().participants).forEach((participant) => {
+          participantsArray.push(participant);
+        });
+        updateDoc(doc(db, "thoughts", docData.id), {
+          participants: participantsArray,
+        });
+      }
+    });
+  });
+}
+
+// Add lastReadTimestamps object to all thoughts, where the fields are the usernames of the participants
+export async function addLastReadTimestampsToThoughts() {
+  getDocs(collection(db, "thoughts")).then((results) => {
+    results.docs.forEach((docData) => {
+      let lastReadTimestamps = {};
+      docData.data().participants.forEach((participant) => {
+        lastReadTimestamps[participant] = serverTimestamp();
+      });
+      updateDoc(doc(db, "thoughts", docData.id), {
+        lastReadTimestamps: lastReadTimestamps,
       });
     });
   });
