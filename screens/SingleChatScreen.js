@@ -29,8 +29,11 @@ import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import Autolink from "react-native-autolink";
 import { sendPushNotification } from "../notifications";
-import { useCollectionData } from "react-firebase-hooks/firestore";
-import { collection, query, orderBy } from "firebase/firestore";
+import {
+  useCollectionData,
+  useDocumentData,
+} from "react-firebase-hooks/firestore";
+import { collection, query, orderBy, doc } from "firebase/firestore";
 import { db, storage } from "../firebaseConfig";
 
 const SingleChatScreen = ({ navigation, route }) => {
@@ -45,7 +48,42 @@ const SingleChatScreen = ({ navigation, route }) => {
   const [data] = useCollectionData(query(messagesRef, orderBy("time")), {
     idField: "id",
   });
+  const thoughtRef = doc(db, "thoughts", route.params.id);
+  const [thoughtData] = useDocumentData(thoughtRef, {
+    idField: "id",
+  });
   const [profilePictures, setProfilePictures] = useState([]);
+
+  const [lastReadMessageIndices, setLastReadMessageIndices] = useState({});
+
+  const updateLastReadMessageIndices = () => {
+    const newLastReadMessageIndices = {};
+
+    if (thoughtData && data && thoughtData.lastReadTimestamps) {
+      // Iterate through the lastReadTimestamps map
+      for (const [username, timestamp] of Object.entries(
+        thoughtData.lastReadTimestamps
+      )) {
+        // Find the last message index that the user has read
+        for (let i = data.length - 1; i >= 0; i--) {
+          if (
+            timestamp &&
+            data[i].time &&
+            timestamp.toDate() >= data[i].time.toDate()
+          ) {
+            newLastReadMessageIndices[username] = i;
+            break;
+          }
+        }
+      }
+    }
+
+    setLastReadMessageIndices(newLastReadMessageIndices);
+  };
+
+  useEffect(() => {
+    updateLastReadMessageIndices();
+  }, [thoughtData, data]);
 
   const scrollViewRef = useRef(null);
 
@@ -93,6 +131,36 @@ const SingleChatScreen = ({ navigation, route }) => {
   useEffect(() => {
     updateLastReadTimestamps(route.params.id, user.username);
   }, [data]);
+
+  const renderReadReceipts = (messageIndex) => {
+    // Render the mini profile pictures only at the last message a user has read
+    return Object.entries(lastReadMessageIndices).map(
+      ([username, lastIndex], index) => {
+        if (messageIndex === lastIndex && username != user.username) {
+          const profile = data.find((msg) => msg.username === username);
+          return (
+            <Image
+              key={index}
+              source={
+                profile != undefined && profile.photoURL != ""
+                  ? { uri: profile.photoURL }
+                  : require("../assets/default.jpeg")
+              }
+              style={{
+                width: 18,
+                height: 18,
+                borderRadius: 12,
+                marginRight: 4,
+                marginBottom: 8,
+                marginTop: 4,
+              }}
+            />
+          );
+        }
+        return null;
+      }
+    );
+  };
 
   const onSendMessage = () => {
     console.log("Sending message: " + message);
@@ -178,41 +246,52 @@ const SingleChatScreen = ({ navigation, route }) => {
         ) {
           // This is for the last message from the user
           return (
-            <View
-              key={index}
-              style={{
-                flexDirection: "row",
-                alignItems: "flex-end",
-                marginBottom: 12,
-              }}
-            >
-              <Image
-                source={
-                  message.profileURL != ""
-                    ? { uri: message.profileURL }
-                    : require("../assets/default.jpeg")
-                }
+            <View style={{ flexDirection: "column" }}>
+              <View
+                key={index}
                 style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 16,
-                  marginRight: 8,
+                  flexDirection: "row",
+                  alignItems: "flex-end",
+                  marginBottom: 12,
                 }}
-              />
-              {message.imageURL != "" ? (
-                <View style={styles.photoView}>
-                  <Image
-                    style={styles.photo}
-                    source={{ uri: message.imageURL }}
-                  />
-                </View>
-              ) : (
-                <View style={{ maxWidth: "82%", alignItems: "flex-start" }}>
-                  <View style={styles.otherTextBubble}>
-                    <Autolink style={styles.otherText} text={message.text} />
+              >
+                <Image
+                  source={
+                    message.profileURL != ""
+                      ? { uri: message.profileURL }
+                      : require("../assets/default.jpeg")
+                  }
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 16,
+                    marginRight: 8,
+                  }}
+                />
+                {message.imageURL != "" ? (
+                  <View style={styles.photoView}>
+                    <Image
+                      style={styles.photo}
+                      source={{ uri: message.imageURL }}
+                    />
                   </View>
-                </View>
-              )}
+                ) : (
+                  <View style={{ maxWidth: "82%", alignItems: "flex-start" }}>
+                    <View style={styles.otherTextBubble}>
+                      <Autolink style={styles.otherText} text={message.text} />
+                    </View>
+                  </View>
+                )}
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "flex-end",
+                  justifyContent: "flex-end",
+                }}
+              >
+                {renderReadReceipts(index)}
+              </View>
             </View>
           );
         } else if (
@@ -223,37 +302,48 @@ const SingleChatScreen = ({ navigation, route }) => {
         ) {
           // This is for the middle messages from the user
           return (
-            <View
-              key={index}
-              style={{
-                flexDirection: "row",
-                alignItems: "flex-end",
-                marginBottom: 4,
-              }}
-            >
-              <Image
+            <View style={{ flexDirection: "column" }}>
+              <View
+                key={index}
                 style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 16,
-                  marginRight: 8,
-                  opacity: 0,
+                  flexDirection: "row",
+                  alignItems: "flex-end",
+                  marginBottom: 4,
                 }}
-              />
-              {message.imageURL != "" ? (
-                <View style={styles.photoView}>
-                  <Image
-                    style={styles.photo}
-                    source={{ uri: message.imageURL }}
-                  />
-                </View>
-              ) : (
-                <View style={{ maxWidth: "82%", alignItems: "flex-start" }}>
-                  <View style={styles.otherTextBubble}>
-                    <Autolink style={styles.otherText} text={message.text} />
+              >
+                <Image
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 16,
+                    marginRight: 8,
+                    opacity: 0,
+                  }}
+                />
+                {message.imageURL != "" ? (
+                  <View style={styles.photoView}>
+                    <Image
+                      style={styles.photo}
+                      source={{ uri: message.imageURL }}
+                    />
                   </View>
-                </View>
-              )}
+                ) : (
+                  <View style={{ maxWidth: "82%", alignItems: "flex-start" }}>
+                    <View style={styles.otherTextBubble}>
+                      <Autolink style={styles.otherText} text={message.text} />
+                    </View>
+                  </View>
+                )}
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "flex-end",
+                  justifyContent: "flex-end",
+                }}
+              >
+                {renderReadReceipts(index)}
+              </View>
             </View>
           );
         } else if (
@@ -263,99 +353,121 @@ const SingleChatScreen = ({ navigation, route }) => {
         ) {
           // This is the start of a group of messages from the user
           return (
-            <View
-              key={index}
-              style={{
-                flexDirection: "row",
-                alignItems: "flex-end",
-                marginBottom: 4,
-                marginTop: index === 0 ? 12 : 0,
-              }}
-            >
-              <Image
+            <View style={{ flexDirection: "column" }}>
+              <View
+                key={index}
                 style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 16,
-                  marginRight: 8,
-                  opacity: 0,
+                  flexDirection: "row",
+                  alignItems: "flex-end",
+                  marginBottom: 4,
+                  marginTop: index === 0 ? 12 : 0,
                 }}
-              />
-              {message.imageURL != "" ? (
-                <View>
-                  <View style={styles.info}>
-                    <Text style={styles.username}>{message.username}</Text>
-                    <Text style={styles.timestamp}>{message.timestamp}</Text>
+              >
+                <Image
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 16,
+                    marginRight: 8,
+                    opacity: 0,
+                  }}
+                />
+                {message.imageURL != "" ? (
+                  <View>
+                    <View style={styles.info}>
+                      <Text style={styles.username}>{message.username}</Text>
+                      <Text style={styles.timestamp}>{message.timestamp}</Text>
+                    </View>
+                    <View style={styles.photoView}>
+                      <Image
+                        style={styles.photo}
+                        source={{ uri: message.imageURL }}
+                      />
+                    </View>
                   </View>
-                  <View style={styles.photoView}>
-                    <Image
-                      style={styles.photo}
-                      source={{ uri: message.imageURL }}
-                    />
+                ) : (
+                  <View style={{ maxWidth: "82%", alignItems: "flex-start" }}>
+                    <View style={styles.info}>
+                      <Text style={styles.username}>{message.username}</Text>
+                      <Text style={styles.timestamp}>{message.timestamp}</Text>
+                    </View>
+                    <View style={styles.otherTextBubble}>
+                      <Autolink style={styles.otherText} text={message.text} />
+                    </View>
                   </View>
-                </View>
-              ) : (
-                <View style={{ maxWidth: "82%", alignItems: "flex-start" }}>
-                  <View style={styles.info}>
-                    <Text style={styles.username}>{message.username}</Text>
-                    <Text style={styles.timestamp}>{message.timestamp}</Text>
-                  </View>
-                  <View style={styles.otherTextBubble}>
-                    <Autolink style={styles.otherText} text={message.text} />
-                  </View>
-                </View>
-              )}
+                )}
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "flex-end",
+                  justifyContent: "flex-end",
+                }}
+              >
+                {renderReadReceipts(index)}
+              </View>
             </View>
           );
         } else {
           // This is for a single message from a user
           return (
-            <View
-              key={index}
-              style={{
-                flexDirection: "row",
-                alignItems: "flex-end",
-                marginBottom: 12,
-                marginTop: index === 0 ? 12 : 0,
-              }}
-            >
-              <Image
-                source={
-                  message.profileURL != ""
-                    ? { uri: message.profileURL }
-                    : require("../assets/default.jpeg")
-                }
+            <View style={{ flexDirection: "column" }}>
+              <View
+                key={index}
                 style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 16,
-                  marginRight: 8,
+                  flexDirection: "row",
+                  alignItems: "flex-end",
+                  marginBottom: 12,
+                  marginTop: index === 0 ? 12 : 0,
                 }}
-              />
-              {message.imageURL != "" ? (
-                <View>
-                  <View style={styles.info}>
-                    <Text style={styles.username}>{message.username}</Text>
-                    <Text style={styles.timestamp}>{message.timestamp}</Text>
+              >
+                <Image
+                  source={
+                    message.profileURL != ""
+                      ? { uri: message.profileURL }
+                      : require("../assets/default.jpeg")
+                  }
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 16,
+                    marginRight: 8,
+                  }}
+                />
+                {message.imageURL != "" ? (
+                  <View>
+                    <View style={styles.info}>
+                      <Text style={styles.username}>{message.username}</Text>
+                      <Text style={styles.timestamp}>{message.timestamp}</Text>
+                    </View>
+                    <View style={styles.photoView}>
+                      <Image
+                        style={styles.photo}
+                        source={{ uri: message.imageURL }}
+                      />
+                    </View>
                   </View>
-                  <View style={styles.photoView}>
-                    <Image
-                      style={styles.photo}
-                      source={{ uri: message.imageURL }}
-                    />
+                ) : (
+                  <View style={{ maxWidth: "82%", alignItems: "flex-start" }}>
+                    <View style={styles.info}>
+                      <Text style={styles.username}>{message.username}</Text>
+                      <Text style={styles.timestamp}>{message.timestamp}</Text>
+                    </View>
+                    <View style={styles.otherTextBubble}>
+                      <Autolink style={styles.otherText} text={message.text} />
+                    </View>
                   </View>
-                </View>
-              ) : (
-                <View style={{ maxWidth: "82%", alignItems: "flex-start" }}>
-                  <View style={styles.info}>
-                    <Text style={styles.username}>{message.username}</Text>
-                    <Text style={styles.timestamp}>{message.timestamp}</Text>
-                  </View>
-                  <View style={styles.otherTextBubble}>
-                    <Autolink style={styles.otherText} text={message.text} />
-                  </View>
-                </View>
-              )}
+                )}
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "flex-end",
+                  justifyContent: "flex-end",
+                }}
+              >
+                {renderReadReceipts(index)}
+              </View>
             </View>
           );
         }
@@ -365,7 +477,7 @@ const SingleChatScreen = ({ navigation, route }) => {
           <View
             key={index}
             style={{
-              flexDirection: "row",
+              flexDirection: "column",
               justifyContent: "flex-end",
               alignItems: "flex-end",
               marginTop: index === 0 ? 12 : 2,
@@ -397,6 +509,15 @@ const SingleChatScreen = ({ navigation, route }) => {
                 </View>
               </View>
             )}
+            <View
+              key={index}
+              style={{
+                flexDirection: "row",
+                alignItems: "flex-end",
+              }}
+            >
+              {renderReadReceipts(index)}
+            </View>
           </View>
         );
       }
