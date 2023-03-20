@@ -7,6 +7,7 @@ import {
   ScrollView,
   Image,
   TextInput,
+  Keyboard,
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
@@ -37,6 +38,7 @@ const SingleChatScreen = ({ navigation, route }) => {
   const [originalThought, setOriginalThought] = useState("");
   const [message, setMessage] = useState("");
   const [time, setTime] = useState(Date.now());
+  const [disable, setDisable] = useState(true);
 
   const messagesRef = collection(db, `thoughts/${route.params.id}/reactions`);
   const [data] = useCollectionData(query(messagesRef, orderBy("time")), {
@@ -60,6 +62,23 @@ const SingleChatScreen = ({ navigation, route }) => {
       );
     });
   };
+
+  const checkLength = (text) => {
+    setDisable(text.length === 0);
+  };
+
+  useEffect(() => {
+    const keyboardWillShowListener = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      () => {
+        scrollViewRef.current.scrollToEnd({ animated: true });
+      }
+    );
+
+    return () => {
+      keyboardWillShowListener.remove();
+    };
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -411,10 +430,19 @@ const SingleChatScreen = ({ navigation, route }) => {
             value={message}
             onChangeText={(text) => {
               setMessage(text);
+              checkLength(text);
             }}
           />
-          <TouchableOpacity onPress={onSendMessage}>
-            <Image style={styles.send} source={require("../assets/send.png")} />
+          <TouchableOpacity onPress={onSendMessage} disabled={disable}>
+            <Image
+              style={[
+                styles.send,
+                {
+                  opacity: message.length > 0 ? 1 : 0.3,
+                },
+              ]}
+              source={require("../assets/send.png")}
+            />
           </TouchableOpacity>
         </View>
       </SafeAreaView>
