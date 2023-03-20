@@ -8,7 +8,6 @@ import {
   getUserAllChats,
   getParticipants,
 } from "../api";
-import { getThoughtData } from "../logic";
 import { useRecoilState } from "recoil";
 import { userState, feedDataState } from "../globalState";
 import colors from "../assets/colors";
@@ -17,8 +16,6 @@ const ChatsDisplay = ({ navigation }) => {
   const [user, setUser] = useRecoilState(userState);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [feedData, setFeedData] = useRecoilState(feedDataState);
-  const [fetchingDataIndex, setFetchingDataIndex] = useState(null);
 
   const updateData = (newData, currentData) => {
     const updatedData = currentData.map((item) => {
@@ -176,22 +173,8 @@ const ChatsDisplay = ({ navigation }) => {
             <TouchableOpacity
               key={index.toString()}
               onPress={async () => {
-                setFetchingDataIndex(index);
-                const itemData = await getThoughtData(item.uid);
-                setFetchingDataIndex(null);
-
                 navigation.navigate("Reactions", {
-                  creatorID: itemData.creatorID,
-                  id: itemData.id,
-                  imageURL: itemData.imageURL,
-                  profileURL: itemData.profileURL,
-                  name: itemData.name,
-                  time: itemData.time,
-                  collabs: itemData.collabs,
-                  emojis: itemData.emojis,
-                  reactions: itemData.reactions,
-                  thoughtUID: itemData.thoughtUID,
-                  thought: itemData.thought,
+                  id: item.uid,
                 });
               }}
             >
@@ -201,7 +184,6 @@ const ChatsDisplay = ({ navigation }) => {
                 lastInteraction={item.lastInteraction}
                 profileURL={item.profileURL}
                 participants={item.participants}
-                loading={fetchingDataIndex === index}
                 currentUser={user.username}
                 username={item.username}
                 text={item.text}

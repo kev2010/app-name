@@ -187,6 +187,34 @@ export async function getThought(uid) {
   });
 }
 
+export async function getUsersOfThoughts(thoughts) {
+  var results = [];
+  thoughts.forEach(function (docData) {
+    // push promise from get into results
+    results.push(getDoc(docData.name));
+  });
+  return Promise.all(results);
+}
+
+export async function getUsersFromRefList(refs) {
+  var results = [];
+  refs.forEach(function (doc) {
+    results.push(getDoc(doc));
+  });
+  return Promise.all(results);
+}
+
+export async function getCollabsOfThoughts(thoughts) {
+  var results = [];
+  thoughts.forEach(function (docData) {
+    // doc.data().collabs = [ref1, ref2, ...]
+    // Key thing to remember is to push promises, otherwise things will NOT return in the right order!
+    results.push(getUsersFromRefList(docData.collabs));
+  });
+  // results = [[obj1, obj2], [obj3], ...]
+  return Promise.all(results);
+}
+
 export async function addThought(uid, thought) {
   return new Promise((resolve, reject) => {
     const currentUserRef = doc(db, "users", uid);
@@ -231,6 +259,19 @@ export async function getEmojis(thoughtUID) {
       resolve(result);
     });
   });
+}
+
+export async function getEmojisSizeOfThoughts(thoughts) {
+  var results = [];
+  thoughts.forEach(function (docData) {
+    results.push(
+      getDocs(collection(db, `thoughts/${docData.id}/emojis`)).then(
+        (collection) => collection.size
+      )
+    );
+  });
+
+  return Promise.all(results);
 }
 
 export async function getEmojiSizeOfThought(thoughtUID) {
@@ -298,6 +339,19 @@ export async function getParticipants(thoughtUID) {
   }
 
   return [...new Set(results)];
+}
+
+export async function getReactionsSizeOfThoughts(thoughts) {
+  var results = [];
+  thoughts.forEach(function (docData) {
+    results.push(
+      getDocs(collection(db, `thoughts/${docData.id}/reactions`)).then(
+        (collection) => collection.size
+      )
+    );
+  });
+
+  return Promise.all(results);
 }
 
 export async function sendFriendRequest(uid, friendUID) {
@@ -405,6 +459,14 @@ export async function uploadThoughtImage(imageAsset, thoughtUID) {
   }
 }
 
+export async function getImagesOfThoughts(thoughts) {
+  var results = [];
+  thoughts.forEach(async function (docData) {
+    results.push(getThoughtImage(docData.id));
+  });
+  return Promise.all(results);
+}
+
 export async function getThoughtImage(thoughtUID) {
   try {
     return new Promise((resolve, reject) => {
@@ -475,6 +537,14 @@ export async function updateProfilePicture(uid, imageAsset) {
   }
 }
 
+export async function getProfilePicturesOfUsers(users) {
+  var results = [];
+  users.forEach(async function (docData) {
+    results.push(getProfilePicture(docData.id));
+  });
+  return Promise.all(results);
+}
+
 // TODO: Repeated code from getThoughtImage, so merge into one function that just reads images
 export async function getProfilePicture(userUID) {
   try {
@@ -513,6 +583,34 @@ export async function getProfilePicture(userUID) {
   } catch (error) {
     console.log(error);
   }
+}
+
+export async function getLastInteractionOfThoughts(thoughts) {
+  var results = [];
+  thoughts.forEach(async function (docData) {
+    results.push(getLastInteraction(docData.id));
+  });
+  return Promise.all(results);
+}
+
+// Adding a lastInteraction field to all thoughts documents so that we can keep showing thoughts that have new comments on it
+export async function getLastInteraction(thoughtUID) {
+  return new Promise((resolve, reject) => {
+    getDoc(doc(db, "thoughts", thoughtUID)).then((docData) => {
+      getRecentReaction(docData.id).then((recentReaction) => {
+        if (recentReaction.length > 0) {
+          resolve(
+            recentReaction[0].data().time.toDate() >=
+              docData.data().time.toDate()
+              ? recentReaction[0].data().time.toDate()
+              : docData.data().time.toDate()
+          );
+        } else {
+          resolve(docData.data().time.toDate());
+        }
+      });
+    });
+  });
 }
 
 export async function getRecentReaction(thoughtUID) {

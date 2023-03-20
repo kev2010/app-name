@@ -3,6 +3,7 @@ import {
   collection,
   doc,
   getDocs,
+  addDoc,
   updateDoc,
   query,
   orderBy,
@@ -10,6 +11,11 @@ import {
   getDoc,
   collectionGroup,
 } from "firebase/firestore";
+import {
+  getProfilePicture,
+  getThoughtImage,
+  getEmojiSizeOfThought,
+} from "./api";
 import { db } from "./firebaseConfig";
 
 // Adding a lastInteraction field to all thoughts documents so that we can keep showing thoughts that have new comments on it
@@ -49,13 +55,9 @@ export async function getRecentReaction(thoughtUID) {
 
 // Adding a username field to all reactions
 export async function addUsernameToReactions() {
-  console.log("adding username to reactions");
   getDocs(query(collectionGroup(db, "reactions"))).then((results) => {
-    console.log("got reactions", results.docs.length);
     results.docs.forEach((docData) => {
-      console.log("got reaction doc", docData.id, docData.data().name);
       getDoc(docData.data().name).then((userDoc) => {
-        console.log("got user doc", userDoc.id, docData.ref.path);
         updateDoc(doc(db, docData.ref.path), {
           username: userDoc.data().username,
         });
@@ -63,3 +65,91 @@ export async function addUsernameToReactions() {
     });
   });
 }
+
+// Adding a photoURL field to all reactions
+export async function addPhotoURLToReactions() {
+  getDocs(query(collectionGroup(db, "reactions"))).then((results) => {
+    results.docs.forEach((docData) => {
+      getProfilePicture(docData.data().name.id).then((photoURL) => {
+        // console.log(photoURL);
+        updateDoc(doc(db, docData.ref.path), {
+          photoURL: photoURL,
+        });
+      });
+    });
+  });
+}
+
+// Adding a photoURL field to all user docs
+export async function addPhotoURLToUsers() {
+  getDocs(collection(db, "users")).then((results) => {
+    results.docs.forEach((docData) => {
+      getProfilePicture(docData.id).then((photoURL) => {
+        updateDoc(doc(db, "users", docData.id), {
+          photoURL: photoURL,
+        });
+      });
+    });
+  });
+}
+
+// Add profile picture and image url to all thoughts
+export async function addProfilePictureAndImageURLToThoughts() {
+  getDocs(collection(db, "thoughts")).then((results) => {
+    results.docs.forEach((docData) => {
+      getProfilePicture(docData.data().name.id).then((photoURL) => {
+        getThoughtImage(docData.id).then((imageURL) => {
+          updateDoc(doc(db, "thoughts", docData.id), {
+            profileURL: photoURL,
+            imageURL: imageURL,
+          });
+        });
+      });
+    });
+  });
+}
+
+// Add username field to all thoughts
+export async function addUsernameToThoughts() {
+  getDocs(collection(db, "thoughts")).then((results) => {
+    results.docs.forEach((docData) => {
+      getDoc(docData.data().name).then((userDoc) => {
+        updateDoc(doc(db, "thoughts", docData.id), {
+          username: userDoc.data().username,
+        });
+      });
+    });
+  });
+}
+
+// Add emojiSize field to all thoughts
+export async function addEmojiSizeToThoughts() {
+  getDocs(collection(db, "thoughts")).then((results) => {
+    results.docs.forEach((docData) => {
+      getEmojiSizeOfThought(docData.id).then((emojiSize) => {
+        updateDoc(doc(db, "thoughts", docData.id), {
+          emojiSize: emojiSize,
+        });
+      });
+    });
+  });
+}
+
+// // Adding original thought to all reactions
+// export async function addOriginalThoughtToReactions() {
+//   getDocs(collection(db, "thoughts")).then((results) => {
+//     results.docs.forEach((docData) => {
+//       addDoc(collection(db, `thoughts/${docData.id}/reactions`), {
+//
+//
+//   // getDocs(query(collectionGroup(db, "reactions"))).then((results) => {
+//   //   results.docs.forEach((docData) => {
+//   //     getDoc(docData.data().originalThought).then((thoughtDoc) => {
+//   //       console.log(thoughtDoc.id);
+//   //       // updateDoc(doc(db, docData.ref.path), {
+//   //       //   originalThought: thoughtDoc.data().text,
+//   //       // });
+//   //     });
+//   //   });
+//   // });
+// }

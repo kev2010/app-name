@@ -88,7 +88,13 @@ const SingleChatScreen = ({ navigation, route }) => {
   const onSendMessage = () => {
     console.log("Sending message: " + message);
     setLoading(true);
-    addComment(route.params.id, user.uid, user.username, message).then(() => {
+    addComment(
+      route.params.id,
+      user.uid,
+      user.imageURL,
+      user.username,
+      message
+    ).then(() => {
       // Make sure we don't send a push notification if the user replies to their own post!
       if (creatorID != user.uid) {
         getUser(creatorID).then((creator) => {
@@ -142,7 +148,7 @@ const SingleChatScreen = ({ navigation, route }) => {
       return {
         username: message.username,
         sender: message.name.id === user.uid ? "self" : "other",
-        profileURL: "",
+        profileURL: message.photoURL,
         imageURL: "",
         text: message.text,
         timestamp:
