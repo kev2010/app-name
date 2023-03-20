@@ -26,12 +26,12 @@ const ChatElement = ({
 
   // TODO: this seems to be continuously updating the time
   useEffect(() => {
-    const interval = setInterval(() => {
-      setTime(Date.now()), 60000;
-    });
-    return () => {
-      clearInterval(interval);
-    };
+    // const interval = setInterval(() => {
+    //   setTime(Date.now()), 60000;
+    // });
+    // return () => {
+    //   clearInterval(interval);
+    // };
   }, []);
 
   return (
@@ -87,7 +87,10 @@ const ChatElement = ({
           </Text>
           <Text style={styles.timeText}>
             {" "}
-            · {calculateTimeDiffFromNow(lastInteraction.toDate())}
+            ·{" "}
+            {lastInteraction === undefined || lastInteraction === null
+              ? "0s"
+              : calculateTimeDiffFromNow(lastInteraction.toDate())}
           </Text>
         </View>
       </View>

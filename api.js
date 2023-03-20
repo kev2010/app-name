@@ -297,10 +297,20 @@ export async function addComment(
       username: username,
       text: comment,
       time: serverTimestamp(),
+      imageURL: "",
       photoURL: userProfilePic,
     }).then(() => {
       updateDoc(originalThoughtRef, {
         lastInteraction: serverTimestamp(),
+        lastReaction: {
+          name: currentUserRef,
+          originalThought: originalThoughtRef,
+          username: username,
+          text: comment,
+          time: serverTimestamp(),
+          imageURL: "",
+          photoURL: userProfilePic,
+        },
       }).then(() => {
         resolve(true);
       });

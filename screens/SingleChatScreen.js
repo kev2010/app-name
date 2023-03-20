@@ -34,7 +34,6 @@ import { db, storage } from "../firebaseConfig";
 const SingleChatScreen = ({ navigation, route }) => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useRecoilState(userState);
-  const [creatorID, setCreatorID] = useState("");
   const [originalThought, setOriginalThought] = useState("");
   const [message, setMessage] = useState("");
   const [time, setTime] = useState(Date.now());
@@ -96,8 +95,9 @@ const SingleChatScreen = ({ navigation, route }) => {
       message
     ).then(() => {
       // Make sure we don't send a push notification if the user replies to their own post!
-      if (creatorID != user.uid) {
-        getUser(creatorID).then((creator) => {
+      if (route.params.creatorID != user.uid) {
+        getUser(route.params.creatorID).then((creator) => {
+          console.log();
           if (
             creator.data().notificationToken != "" &&
             creator.data().notificationToken != undefined

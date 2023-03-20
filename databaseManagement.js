@@ -154,7 +154,7 @@ export async function addOriginalThoughtToReactions() {
       addDoc(collection(db, `thoughts/${docData.id}/reactions`), {
         imageURL: "",
         name: docData.data().name,
-        originalThought: docData.id,
+        originalThought: doc(db, "thoughts", docData.id),
         photoURL: docData.data().profileURL,
         text: docData.data().thought,
         time: docData.data().time,
@@ -166,7 +166,7 @@ export async function addOriginalThoughtToReactions() {
         addDoc(collection(db, `thoughts/${docData.id}/reactions`), {
           imageURL: docData.data().imageURL,
           name: docData.data().name,
-          originalThought: docData.id,
+          originalThought: doc(db, "thoughts", docData.id),
           photoURL: docData.data().profileURL,
           text: "",
           time: docData.data().time,
@@ -176,6 +176,61 @@ export async function addOriginalThoughtToReactions() {
               : docData.data().username,
         });
       }
+    });
+  });
+}
+
+// Change original thought to all reactions
+export async function changeOriginalThoughtToReactions() {
+  getDocs(query(collectionGroup(db, "reactions"))).then((results) => {
+    results.docs.forEach((docData) => {
+      updateDoc(doc(db, docData.ref.path), {
+        originalThought: doc(db, "thoughts", docData.ref.parent.parent.id),
+      });
+    });
+  });
+}
+
+// Add participants field to all thoughts
+export async function addParticipantsToThoughts() {
+  getDocs(collection(db, "thoughts")).then((results) => {
+    results.docs.forEach((docData) => {
+      calculateParticipantsInThought(docData.id).then((participants) => {
+        console.log(participants);
+        updateDoc(doc(db, "thoughts", docData.id), {
+          participants: participants,
+        });
+      });
+    });
+  });
+}
+
+// Calculate participants in a thought
+export async function calculateParticipantsInThought(thoughtUID) {
+  return new Promise((resolve, reject) => {
+    getDocs(query(collection(db, `thoughts/${thoughtUID}/reactions`))).then(
+      (results) => {
+        let participants = [];
+        results.docs.forEach((docData) => {
+          if (!participants.includes(docData.data().username)) {
+            participants.push(docData.data().username);
+          }
+        });
+        resolve(participants);
+      }
+    );
+  });
+}
+
+// Add most recent reaction to all thoughts
+export async function addMostRecentReactionToThoughts() {
+  getDocs(collection(db, "thoughts")).then((results) => {
+    results.docs.forEach((docData) => {
+      getRecentReaction(docData.id).then((mostRecentReaction) => {
+        updateDoc(doc(db, "thoughts", docData.id), {
+          lastReaction: mostRecentReaction[0].data(),
+        });
+      });
     });
   });
 }
