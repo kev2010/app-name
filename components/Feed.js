@@ -129,7 +129,7 @@ const Feed = ({ navigation, uid }) => {
             time={item.time}
             collabs={item.collabs}
             emojis={item.emojis}
-            reactions={item.reactions}
+            participants={item.participants}
             thoughtUID={item.thoughtUID}
             thought={item.thought}
             showTrash={false}

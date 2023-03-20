@@ -176,7 +176,7 @@ const Thought = (props) => {
             style={styles.people}
             source={require("../assets/people.png")}
           />
-          <Text style={styles.number}>{props.reactions}</Text>
+          <Text style={styles.number}>{props.participants.length}</Text>
         </View>
       </View>
       {/* <View style={styles.row4}>
