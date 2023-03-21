@@ -16,23 +16,13 @@ const ChatElement = ({
   text,
   currentUser,
   username,
-  loading,
   profileURL,
   participants,
+  unread,
   lastInteraction,
   thought,
 }) => {
   const [time, setTime] = useState(Date.now());
-
-  // TODO: this seems to be continuously updating the time
-  useEffect(() => {
-    // const interval = setInterval(() => {
-    //   setTime(Date.now()), 60000;
-    // });
-    // return () => {
-    //   clearInterval(interval);
-    // };
-  }, []);
 
   return (
     <View
@@ -45,26 +35,26 @@ const ChatElement = ({
       ]}
     >
       <View style={styles.column1}>
-        {loading ? (
-          <ActivityIndicator
-            size="small"
-            style={{ width: 12, height: 12 }}
-            color={colors.primary_5}
-          />
-        ) : (
-          <View
-            style={[
-              styles.notificationCircle,
-              {
-                opacity: 0,
-              },
-            ]}
-          />
-        )}
+        <View
+          style={[
+            styles.notificationCircle,
+            {
+              opacity: unread ? 1 : 0,
+            },
+          ]}
+        />
       </View>
       <View style={styles.column2}>
         <View style={styles.row1}>
-          <Text style={styles.thought} numberOfLines={1}>
+          <Text
+            style={[
+              styles.thought,
+              {
+                fontFamily: unread ? "Nunito-ExtraBold" : "Nunito-Regular",
+              },
+            ]}
+            numberOfLines={1}
+          >
             {thought.replace(/\r?\n|\r/g, " ")}
           </Text>
         </View>
@@ -82,7 +72,16 @@ const ChatElement = ({
                 : require("../assets/default.jpeg")
             }
           />
-          <Text style={styles.messageText} numberOfLines={1}>
+          <Text
+            style={[
+              styles.messageText,
+              {
+                fontFamily: unread ? "Nunito-ExtraBold" : "Nunito-Regular",
+                color: unread ? colors.gray_9 : colors.gray_3,
+              },
+            ]}
+            numberOfLines={1}
+          >
             {username}: {text}
           </Text>
           <Text style={styles.timeText}>
@@ -148,7 +147,6 @@ const styles = StyleSheet.create({
   },
   thought: {
     color: colors.primary_9,
-    fontFamily: "Nunito-Regular",
     fontSize: 16,
     width: "100%",
   },
@@ -167,7 +165,6 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   messageText: {
-    color: colors.primary_9,
     fontFamily: "Nunito-Regular",
     fontSize: 14,
   },

@@ -37,6 +37,14 @@ const ChatsDisplay = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [time, setTime] = useState(Date.now());
 
+  const isChatUnread = (lastReadTimestamps, lastInteraction, currentUser) => {
+    const userLastReadTimestamp = lastReadTimestamps[currentUser];
+    if (!userLastReadTimestamp) {
+      return true;
+    }
+    return lastInteraction > lastReadTimestamps[currentUser];
+  };
+
   useEffect(() => {
     let cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - 30);
@@ -125,6 +133,9 @@ const ChatsDisplay = ({ navigation }) => {
                 currentUser={user.username}
                 username={item.lastReaction.username}
                 text={item.lastReaction.text}
+                unread={
+                  item.lastInteraction > item.lastReadTimestamps[user.username]
+                }
               />
             </TouchableOpacity>
           )}
