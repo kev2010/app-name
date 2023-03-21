@@ -3,6 +3,9 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Text,
+  View,
+  StyleSheet,
+  Image,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import ChatElement from "./ChatElement";
@@ -12,6 +15,8 @@ import {
   getProfilePicture,
   getUserAllChats,
   getParticipants,
+  addManuallyMarkedUnread,
+  removeManuallyMarkedUnread,
 } from "../api";
 import { useRecoilState } from "recoil";
 import { userState, feedDataState } from "../globalState";
@@ -19,6 +24,7 @@ import colors from "../assets/colors";
 import {
   useCollectionData,
   useCollection,
+  useDocumentData,
 } from "react-firebase-hooks/firestore";
 import {
   doc,
@@ -30,6 +36,7 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import { db, storage } from "../firebaseConfig";
+import { Swipeable } from "react-native-gesture-handler";
 
 const ChatsDisplay = ({ navigation }) => {
   const [user, setUser] = useRecoilState(userState);
@@ -37,13 +44,38 @@ const ChatsDisplay = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [time, setTime] = useState(Date.now());
 
-  const isChatUnread = (lastReadTimestamps, lastInteraction, currentUser) => {
-    const userLastReadTimestamp = lastReadTimestamps[currentUser];
-    if (!userLastReadTimestamp) {
-      return true;
-    }
-    return lastInteraction > lastReadTimestamps[currentUser];
+  const userRef = doc(db, "users", user.uid);
+  const [userData] = useDocumentData(userRef, {
+    idField: "id",
+  });
+
+  const markUnread = (thoughtUID) => {
+    addManuallyMarkedUnread(user.uid, thoughtUID);
   };
+
+  const renderRightActions = (item) => (
+    <View style={styles.rightActions}>
+      <TouchableOpacity
+        style={styles.action}
+        onPress={() => {
+          markUnread(item.uid);
+        }}
+      >
+        <Image
+          style={styles.unreadImage}
+          source={require("../assets/unread.png")}
+        />
+        <Text style={styles.unreadText}>Mark Unread</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.action}>
+        <Image
+          style={styles.archiveImage}
+          source={require("../assets/archive.png")}
+        />
+        <Text style={styles.archiveText}>Archive</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   useEffect(() => {
     let cutoff = new Date();
@@ -115,29 +147,40 @@ const ChatsDisplay = ({ navigation }) => {
             // .slice(0, 10)
           }
           renderItem={({ item, index }) => (
-            <TouchableOpacity
-              key={index.toString()}
-              onPress={async () => {
-                navigation.navigate("Reactions", {
-                  id: item.uid,
-                  creatorID: item.name.id,
-                });
-              }}
+            <Swipeable
+              renderRightActions={() => renderRightActions(item)}
+              // overshootRight={false}
             >
-              <ChatElement
-                index={index === 0 ? 0 : index === data.length - 1 ? -1 : index}
-                thought={item.thought}
-                lastInteraction={item.lastInteraction}
-                profileURL={item.lastReaction.photoURL}
-                participants={item.participants}
-                currentUser={user.username}
-                username={item.lastReaction.username}
-                text={item.lastReaction.text}
-                unread={
-                  item.lastInteraction > item.lastReadTimestamps[user.username]
-                }
-              />
-            </TouchableOpacity>
+              <TouchableOpacity
+                key={index.toString()}
+                onPress={async () => {
+                  removeManuallyMarkedUnread(user.uid, item.uid);
+                  navigation.navigate("Reactions", {
+                    id: item.uid,
+                    creatorID: item.name.id,
+                  });
+                }}
+                delayPressIn={200}
+              >
+                <ChatElement
+                  index={
+                    index === 0 ? 0 : index === data.length - 1 ? -1 : index
+                  }
+                  thought={item.thought}
+                  lastInteraction={item.lastInteraction}
+                  profileURL={item.lastReaction.photoURL}
+                  participants={item.participants}
+                  currentUser={user.username}
+                  username={item.lastReaction.username}
+                  text={item.lastReaction.text}
+                  unread={
+                    userData.manuallyMarkedUnread.includes(item.uid) ||
+                    item.lastInteraction >
+                      item.lastReadTimestamps[user.username]
+                  }
+                />
+              </TouchableOpacity>
+            </Swipeable>
           )}
           keyExtractor={(item) => item.uid}
         />
@@ -145,5 +188,39 @@ const ChatsDisplay = ({ navigation }) => {
     </>
   );
 };
+
+const styles = StyleSheet.create({
+  rightActions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+  },
+  unreadText: {
+    color: colors.accent1_4,
+    fontFamily: "Nunito-SemiBold",
+    fontSize: 16,
+  },
+  action: {
+    flexDirection: "column",
+    alignItems: "center",
+    marginLeft: 12,
+    marginRight: 12,
+  },
+  unreadImage: {
+    width: 30,
+    height: 24,
+    marginBottom: 4,
+  },
+  archiveText: {
+    color: colors.primary_5,
+    fontFamily: "Nunito-SemiBold",
+    fontSize: 16,
+  },
+  archiveImage: {
+    width: 24,
+    height: 24,
+    marginBottom: 4,
+  },
+});
 
 export default ChatsDisplay;

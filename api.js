@@ -55,6 +55,8 @@ export async function createUser(uid, displayName, username) {
     friends: [],
     friendRequests: [],
     sentRequests: [],
+    manuallyMarkedUnread: [],
+    photoURL: "",
   });
 }
 
@@ -725,5 +727,19 @@ export async function updateLastReadTimestamps(thoughtUID, username) {
   const thoughtsRef = doc(db, "thoughts", thoughtUID);
   updateDoc(thoughtsRef, {
     [`lastReadTimestamps.${username}`]: serverTimestamp(),
+  });
+}
+
+export async function addManuallyMarkedUnread(userUID, thoughtUID) {
+  const userRef = doc(db, "users", userUID);
+  updateDoc(userRef, {
+    manuallyMarkedUnread: arrayUnion(thoughtUID),
+  });
+}
+
+export async function removeManuallyMarkedUnread(userUID, thoughtUID) {
+  const userRef = doc(db, "users", userUID);
+  updateDoc(userRef, {
+    manuallyMarkedUnread: arrayRemove(thoughtUID),
   });
 }

@@ -7,6 +7,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useAssets } from "expo-asset";
 import { RecoilRoot } from "recoil";
 import Nav from "./Nav";
+import "react-native-gesture-handler";
 
 export default function App() {
   // TODO: Either write out a whole ass test suite OR make a checklist of manual runs

@@ -32,7 +32,8 @@ import { changePhotoURLThoughts } from "../api";
 // import { useCollectionData } from "react-firebase-hooks/firestore";
 // import { doc, where, collection, query, orderBy } from "firebase/firestore";
 // import { db, storage } from "../firebaseConfig";
-// import { addLastReadTimestampsToThoughts } from "../databaseManagement";
+import { addManuallyMarkedUnreadToUsers } from "../databaseManagement";
+addManuallyMarkedUnreadToUsers();
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({

@@ -285,3 +285,14 @@ export async function addLastReadTimestampsToThoughts() {
     });
   });
 }
+
+// Add a manuallyMarkedUnread array field to all users
+export async function addManuallyMarkedUnreadToUsers() {
+  getDocs(collection(db, "users")).then((results) => {
+    results.docs.forEach((docData) => {
+      updateDoc(doc(db, "users", docData.id), {
+        manuallyMarkedUnread: [],
+      });
+    });
+  });
+}
