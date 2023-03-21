@@ -17,6 +17,8 @@ import {
   getParticipants,
   addManuallyMarkedUnread,
   removeManuallyMarkedUnread,
+  addArchived,
+  removeArchived,
 } from "../api";
 import { useRecoilState } from "recoil";
 import { userState, feedDataState } from "../globalState";
@@ -38,7 +40,7 @@ import {
 import { db, storage } from "../firebaseConfig";
 import { Swipeable } from "react-native-gesture-handler";
 
-const ChatsDisplay = ({ navigation }) => {
+const ChatsDisplay = ({ navigation, archived }) => {
   const [user, setUser] = useRecoilState(userState);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +55,15 @@ const ChatsDisplay = ({ navigation }) => {
     addManuallyMarkedUnread(user.uid, thoughtUID);
   };
 
-  const renderRightActions = (item) => (
+  const markArchived = (thoughtUID) => {
+    addArchived(user.uid, thoughtUID);
+  };
+
+  const markUnarchived = (thoughtUID) => {
+    removeArchived(user.uid, thoughtUID);
+  };
+
+  const renderRightActions = (item, archived) => (
     <View style={styles.rightActions}>
       <TouchableOpacity
         style={styles.action}
@@ -67,12 +77,27 @@ const ChatsDisplay = ({ navigation }) => {
         />
         <Text style={styles.unreadText}>Mark Unread</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.action}>
+      <TouchableOpacity
+        style={styles.action}
+        onPress={() => {
+          if (archived) {
+            markUnarchived(item.uid);
+          } else {
+            markArchived(item.uid);
+          }
+        }}
+      >
         <Image
           style={styles.archiveImage}
-          source={require("../assets/archive.png")}
+          source={
+            archived
+              ? require("../assets/unarchive.png")
+              : require("../assets/archiveOrange.png")
+          }
         />
-        <Text style={styles.archiveText}>Archive</Text>
+        <Text style={styles.archiveText}>
+          {archived ? "Unarchive" : "Archive"}
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -140,15 +165,18 @@ const ChatsDisplay = ({ navigation }) => {
         <FlatList
           showsVerticalScrollIndicator={false}
           // TODO: make more performant - rn i'm loading everything, then just displaying 30 of them??
-          data={
-            data.sort(function (x, y) {
+          data={data
+            .filter((thought) =>
+              archived
+                ? userData.archived.includes(thought.uid)
+                : !userData.archived.includes(thought.uid)
+            )
+            .sort(function (x, y) {
               return y.lastInteraction - x.lastInteraction;
-            })
-            // .slice(0, 10)
-          }
+            })}
           renderItem={({ item, index }) => (
             <Swipeable
-              renderRightActions={() => renderRightActions(item)}
+              renderRightActions={() => renderRightActions(item, archived)}
               // overshootRight={false}
             >
               <TouchableOpacity
@@ -212,7 +240,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   archiveText: {
-    color: colors.primary_5,
+    color: colors.accent2_5,
     fontFamily: "Nunito-SemiBold",
     fontSize: 16,
   },

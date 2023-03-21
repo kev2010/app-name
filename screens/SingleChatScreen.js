@@ -177,7 +177,8 @@ const SingleChatScreen = ({ navigation, route }) => {
         getUser(route.params.creatorID).then((creator) => {
           if (
             creator.data().notificationToken != "" &&
-            creator.data().notificationToken != undefined
+            creator.data().notificationToken != undefined &&
+            !creator.data().archived.includes(route.params.id)
           ) {
             sendPushNotification(
               creator.data().notificationToken,
@@ -199,7 +200,9 @@ const SingleChatScreen = ({ navigation, route }) => {
             reactionDoc.data().name.id != route.params.creatorID
           ) {
             getUser(reactionDoc.data().name.id).then((userData) => {
-              seen.add(userData.data().notificationToken);
+              if (!userData.data().archived.includes(route.params.id)) {
+                seen.add(userData.data().notificationToken);
+              }
 
               itemsProcessed++;
               if (itemsProcessed === reactions.size) {
@@ -246,9 +249,8 @@ const SingleChatScreen = ({ navigation, route }) => {
         ) {
           // This is for the last message from the user
           return (
-            <View style={{ flexDirection: "column" }}>
+            <View key={index} style={{ flexDirection: "column" }}>
               <View
-                key={index}
                 style={{
                   flexDirection: "row",
                   alignItems: "flex-end",
@@ -302,9 +304,8 @@ const SingleChatScreen = ({ navigation, route }) => {
         ) {
           // This is for the middle messages from the user
           return (
-            <View style={{ flexDirection: "column" }}>
+            <View key={index} style={{ flexDirection: "column" }}>
               <View
-                key={index}
                 style={{
                   flexDirection: "row",
                   alignItems: "flex-end",
@@ -353,9 +354,8 @@ const SingleChatScreen = ({ navigation, route }) => {
         ) {
           // This is the start of a group of messages from the user
           return (
-            <View style={{ flexDirection: "column" }}>
+            <View key={index} style={{ flexDirection: "column" }}>
               <View
-                key={index}
                 style={{
                   flexDirection: "row",
                   alignItems: "flex-end",
@@ -411,9 +411,8 @@ const SingleChatScreen = ({ navigation, route }) => {
         } else {
           // This is for a single message from a user
           return (
-            <View style={{ flexDirection: "column" }}>
+            <View key={index} style={{ flexDirection: "column" }}>
               <View
-                key={index}
                 style={{
                   flexDirection: "row",
                   alignItems: "flex-end",
@@ -510,7 +509,6 @@ const SingleChatScreen = ({ navigation, route }) => {
               </View>
             )}
             <View
-              key={index}
               style={{
                 flexDirection: "row",
                 alignItems: "flex-end",

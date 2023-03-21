@@ -9,19 +9,37 @@ import {
 import React from "react";
 import colors from "../assets/colors";
 
-const ChatsHeader = ({ goBack }) => {
+const ChatsHeader = ({ goBack, archived, seeArchived }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.text}>
-          <Text style={styles.title}>Messages</Text>
+          <Text style={styles.title}>{archived ? "Archived" : "Messages"}</Text>
           <Text style={styles.note}>
-            Chats auto-archive after a week of inactivity
+            {archived
+              ? "No notifications on archived chats"
+              : "Chats auto-archive after a week of inactivity"}
           </Text>
         </View>
         <View style={styles.top}>
           <TouchableOpacity onPress={goBack} style={styles.button}>
             <Image style={styles.back} source={require("../assets/back.png")} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={seeArchived} style={styles.button}>
+            <Image
+              style={[
+                styles.archive,
+                {
+                  width: archived ? 22.5 : 18,
+                  height: 18,
+                },
+              ]}
+              source={
+                archived
+                  ? require("../assets/unread.png")
+                  : require("../assets/archive.png")
+              }
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -70,6 +88,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     // TODO: Arbitrary numbers????
     marginLeft: 4,
+    marginTop: 6,
+  },
+  archive: {
+    alignSelf: "center",
+    marginRight: -4,
     marginTop: 6,
   },
 });

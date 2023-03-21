@@ -743,3 +743,17 @@ export async function removeManuallyMarkedUnread(userUID, thoughtUID) {
     manuallyMarkedUnread: arrayRemove(thoughtUID),
   });
 }
+
+export async function addArchived(userUID, thoughtUID) {
+  const userRef = doc(db, "users", userUID);
+  updateDoc(userRef, {
+    archived: arrayUnion(thoughtUID),
+  });
+}
+
+export async function removeArchived(userUID, thoughtUID) {
+  const userRef = doc(db, "users", userUID);
+  updateDoc(userRef, {
+    archived: arrayRemove(thoughtUID),
+  });
+}

@@ -1,17 +1,27 @@
 import { View, SafeAreaView, StyleSheet } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import colors from "../assets/colors";
 import ChatsHeader from "../components/ChatsHeader";
 import ChatsDisplay from "../components/ChatsDisplay";
 
 const ChatsScreen = ({ navigation }) => {
+  const [archived, setArchived] = useState(false);
+
   const goBack = () => {
     navigation.goBack();
   };
 
+  const seeArchived = () => {
+    setArchived(!archived);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <ChatsHeader goBack={goBack} />
+      <ChatsHeader
+        goBack={goBack}
+        archived={archived}
+        seeArchived={seeArchived}
+      />
       <View
         style={{
           marginTop: 16,
@@ -21,7 +31,7 @@ const ChatsScreen = ({ navigation }) => {
         }}
       />
       <View style={styles.display}>
-        <ChatsDisplay navigation={navigation} />
+        <ChatsDisplay navigation={navigation} archived={archived} />
       </View>
     </SafeAreaView>
   );

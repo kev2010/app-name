@@ -296,3 +296,14 @@ export async function addManuallyMarkedUnreadToUsers() {
     });
   });
 }
+
+// Add a archive array field to all users
+export async function addArchiveToUsers() {
+  getDocs(collection(db, "users")).then((results) => {
+    results.docs.forEach((docData) => {
+      updateDoc(doc(db, "users", docData.id), {
+        archived: [],
+      });
+    });
+  });
+}

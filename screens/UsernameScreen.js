@@ -59,6 +59,7 @@ const UsernameScreen = ({ route, navigation }) => {
             friendRequests: [],
             sentRequests: [],
             imageURL: "",
+            archived: [],
           });
         } else {
           setError(true);
