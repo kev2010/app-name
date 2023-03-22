@@ -18,7 +18,7 @@ const ChatsHeader = ({ goBack, archived, seeArchived }) => {
           <Text style={styles.note}>
             {archived
               ? "No notifications on archived chats"
-              : "Chats auto-archive after a week of inactivity"}
+              : "Chats in the past 30 days are shown here"}
           </Text>
         </View>
         <View style={styles.top}>

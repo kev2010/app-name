@@ -642,7 +642,6 @@ const styles = StyleSheet.create({
   },
   photoView: {
     flexDirection: "row",
-    alignSelf: "center",
     // Breaking the system!
     width: 300,
     height: 300,

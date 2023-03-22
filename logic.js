@@ -20,6 +20,7 @@ export async function refreshFeed(uid) {
               profileURL: docData.profileURL,
               time: calculateTimeDiffFromNow(docData.time.toDate()),
               participants: docData.participants,
+              views: docData.views.length,
               // TODO: For some reason, the image loading puts things out of order
               rawTime: docData.lastInteraction,
               postTime: docData.time.toDate(),

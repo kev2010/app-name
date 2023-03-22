@@ -210,6 +210,7 @@ export async function addThought(
       time: serverTimestamp(),
       lastInteraction: serverTimestamp(),
       participants: [username],
+      views: [],
     }).then((docRef) => {
       addDoc(collection(db, `thoughts/${docRef.id}/reactions`), {
         imageURL: "",
@@ -755,5 +756,12 @@ export async function removeArchived(userUID, thoughtUID) {
   const userRef = doc(db, "users", userUID);
   updateDoc(userRef, {
     archived: arrayRemove(thoughtUID),
+  });
+}
+
+export async function addView(userUID, thoughtUID) {
+  const thoughtRef = doc(db, "thoughts", thoughtUID);
+  updateDoc(thoughtRef, {
+    views: arrayUnion(userUID),
   });
 }

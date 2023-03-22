@@ -307,3 +307,14 @@ export async function addArchiveToUsers() {
     });
   });
 }
+
+// Add views field to all thoughts
+export async function addViewsToThoughts() {
+  getDocs(collection(db, "thoughts")).then((results) => {
+    results.docs.forEach((docData) => {
+      updateDoc(doc(db, "thoughts", docData.id), {
+        views: [],
+      });
+    });
+  });
+}
