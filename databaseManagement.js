@@ -318,3 +318,24 @@ export async function addViewsToThoughts() {
     });
   });
 }
+
+// Change each friend reference in friends array of users to a map of usernames as keys and ID, name, and photoURL as values
+export async function changeFriendsArrayToMap() {
+  getDocs(collection(db, "users")).then((results) => {
+    results.docs.forEach((docData) => {
+      let friendsMap = {};
+      docData.data().friends.forEach((friend) => {
+        getDoc(friend).then((friendDoc) => {
+          friendsMap[friendDoc.username] = {
+            id: friendDoc.id,
+            name: friendDoc.name,
+            photoURL: friendDoc.photoURL,
+          };
+        });
+      });
+      updateDoc(doc(db, "users", docData.id), {
+        friends: friendsMap,
+      });
+    });
+  });
+}

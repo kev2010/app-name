@@ -10,6 +10,7 @@ import ProfileScreen from "./screens/ProfileScreen";
 import ChatsScreen from "./screens/ChatsScreen";
 import SingleChatScreen from "./screens/SingleChatScreen";
 import ThinkScreen from "./screens/ThinkScreen";
+import InviteScreen from "./screens/InviteScreen";
 import { useRecoilState } from "recoil";
 import { userState } from "./globalState";
 import { NavigationContainer } from "@react-navigation/native";
@@ -42,6 +43,7 @@ const Nav = ({}) => {
             <Stack.Screen name="Profile" component={ProfileScreen} />
             <Stack.Screen name="Chats" component={ChatsScreen} />
             <Stack.Screen name="Think" component={ThinkScreen} />
+            <Stack.Screen name="Invite" component={InviteScreen} />
           </>
         )}
       </Stack.Navigator>

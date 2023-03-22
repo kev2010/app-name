@@ -53,3 +53,8 @@ export const feedLockedState = atom({
   key: "feedLockedState",
   default: true,
 });
+
+export const invitedState = atom({
+  key: "invitedState",
+  default: [],
+});

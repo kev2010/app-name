@@ -20,7 +20,12 @@ import {
   addImageToThought,
 } from "../api";
 import colors from "../assets/colors";
-import { userState, feedDataState, feedLockedState } from "../globalState";
+import {
+  userState,
+  feedDataState,
+  feedLockedState,
+  invitedState,
+} from "../globalState";
 import { CONSTANTS } from "../constants";
 import { refreshFeed } from "../logic";
 
@@ -41,6 +46,7 @@ const ThinkScreen = ({ navigation, route }) => {
   const [keyboardDidShowListener, setKeyboardDidShowListener] = useState(null);
   const [image, setImage] = useState(null);
   const [locked, setLocked] = useRecoilState(feedLockedState);
+  const [invited, setInvited] = useRecoilState(invitedState);
 
   useEffect(() => {
     // TODO: I don't quite understand why inputRef is ever null? But it throws "TypeError: null is not an object (evaluating 'inputRef.current.focus')" right after login flow
@@ -95,7 +101,14 @@ const ThinkScreen = ({ navigation, route }) => {
     });
   };
 
+  const goToInviteScreen = () => {
+    navigation.navigate("Invite", {
+      previousSelected: invited,
+    });
+  };
+
   const goBack = () => {
+    setInvited([]);
     navigation.goBack();
   };
 
@@ -159,7 +172,12 @@ const ThinkScreen = ({ navigation, route }) => {
         )}
       </Animated.View>
       <View style={[styles.options, bottomStyle]}>
-        <UploadImage image={image} updateImage={updateImage} />
+        <View style={styles.leftOptions}>
+          <UploadImage image={image} updateImage={updateImage} />
+          <TouchableOpacity onPress={goToInviteScreen}>
+            <Text style={styles.inviteText}>{invited.length} invited</Text>
+          </TouchableOpacity>
+        </View>
         <Text style={styles.charCount}>
           {thought.length}/{CONSTANTS.MAX_LENGTH}
         </Text>
@@ -267,6 +285,15 @@ const styles = StyleSheet.create({
     // TODO: Arbitrary numbers????
     marginLeft: 4,
     marginTop: 6,
+  },
+  leftOptions: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  inviteText: {
+    color: colors.primary_5,
+    fontFamily: "Nunito-SemiBold",
+    fontSize: 14,
   },
 });
 
