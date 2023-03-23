@@ -297,6 +297,13 @@ export async function addEmoji(thoughtUID, userUID, emoji) {
       emoji: emoji,
       time: serverTimestamp(),
     }).then(() => {
+      // Update emoji size in original thought
+      getEmojiSizeOfThought(thoughtUID).then((size) => {
+        updateDoc(originalThoughtRef, {
+          emojiSize: size,
+        });
+      });
+
       resolve(true);
     });
   });
