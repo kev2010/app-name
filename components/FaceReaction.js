@@ -11,13 +11,16 @@ import {
 import { uploadFaceReactionToThought, addFaceReactionToThought } from "../api";
 import { useRecoilState } from "recoil";
 import colors from "../assets/colors";
-import { userState } from "../globalState";
+import { userState, refreshingState, feedDataState } from "../globalState";
 import { ActivityIndicator } from "react-native-paper";
+import { refreshFeed } from "../logic";
 
 const FaceReaction = ({ thoughtUID, goBack }) => {
   const [user, setUser] = useRecoilState(userState);
   const [type, setType] = useState(CameraType.front);
+  const [feedData, setFeedData] = useRecoilState(feedDataState);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useRecoilState(refreshingState);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const cameraRef = useRef(null);
 
@@ -42,7 +45,15 @@ const FaceReaction = ({ thoughtUID, goBack }) => {
       console.log("took it!");
       uploadFaceReactionToThought(photo, user.uid, thoughtUID).then(
         (downloadURL) => {
-          addFaceReactionToThought(user.username, thoughtUID, downloadURL);
+          addFaceReactionToThought(user.username, thoughtUID, downloadURL).then(
+            () => {
+              setRefreshing(true);
+              refreshFeed(user.uid).then((data) => {
+                setFeedData(data);
+                setRefreshing(false);
+              });
+            }
+          );
           console.log("downloadURL", downloadURL);
           setLoading(false);
           goBack();

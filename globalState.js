@@ -58,3 +58,8 @@ export const invitedState = atom({
   key: "invitedState",
   default: [],
 });
+
+export const refreshingState = atom({
+  key: "refreshingState",
+  default: false,
+});

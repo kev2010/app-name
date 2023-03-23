@@ -706,6 +706,17 @@ export async function getProfilePicture(userUID) {
   }
 }
 
+export async function getProfilePictureByUsername(username) {
+  // Get user UID from username
+  const userQuery = query(
+    collection(db, "users"),
+    where("username", "==", username)
+  );
+  const userQuerySnapshot = await getDocs(userQuery);
+  const userUID = userQuerySnapshot.docs[0].id;
+  return getProfilePicture(userUID);
+}
+
 export async function getRecentReaction(thoughtUID) {
   return new Promise((resolve, reject) => {
     const reactionsRef = collection(db, `thoughts/${thoughtUID}/reactions`);

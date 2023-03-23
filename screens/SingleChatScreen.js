@@ -17,7 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 import colors from "../assets/colors";
 import {
   getUser,
-  getProfilePicture,
+  getProfilePictureByUsername,
   getReactions,
   getThought,
   getThoughtImage,
@@ -52,7 +52,7 @@ const SingleChatScreen = ({ navigation, route }) => {
   const [thoughtData] = useDocumentData(thoughtRef, {
     idField: "id",
   });
-  const [profilePictures, setProfilePictures] = useState([]);
+  const [pendingProfilePictures, setPendingProfilePictures] = useState([]);
 
   const [lastReadMessageIndices, setLastReadMessageIndices] = useState({});
 
@@ -137,7 +137,28 @@ const SingleChatScreen = ({ navigation, route }) => {
     return Object.entries(lastReadMessageIndices).map(
       ([username, lastIndex], index) => {
         if (messageIndex === lastIndex && username != user.username) {
-          const profile = data.find((msg) => msg.username === username);
+          let profile = data.find((msg) => msg.username === username);
+          if (profile === undefined) {
+            // Check if we already have the profile picture
+            const existingProfile = pendingProfilePictures.find(
+              (p) => p.username === username
+            );
+            if (existingProfile) {
+              profile = { photoURL: existingProfile.photoURL };
+            } else {
+              // Call getProfilePictureByUsername and update profilePictures when the URL is returned
+              getProfilePictureByUsername(username).then((url) => {
+                if (url != undefined) {
+                  const newProfilePictures = [
+                    ...pendingProfilePictures,
+                    { username, photoURL: url },
+                  ];
+                  setPendingProfilePictures(newProfilePictures);
+                }
+              });
+            }
+          }
+          console.log("idgi", profile, username);
           return (
             <Image
               key={index}
