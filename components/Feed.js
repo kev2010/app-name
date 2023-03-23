@@ -14,7 +14,7 @@ import { feedDataState, feedLockedState, userState } from "../globalState";
 import { checkUserPostedToday, checkUserCommentedToday } from "../api";
 import { CONSTANTS } from "../constants";
 
-const Feed = ({ navigation, uid }) => {
+const Feed = ({ navigation, uid, setOpenCamera, setCameraThought }) => {
   // TODO: Right now we're only grabbing thoughts in the past 3 days. We'll have to do some pagination later
   // See: https://www.google.com/search?q=how+to+load+a+feed+react+native+without+loading+a+ton+of+data+at+once&sxsrf=AJOqlzX4EO9TgZEKFx0oBmRud5J92fOyqA%3A1674762643643&ei=k9nSY9PnJuik5NoPkZGy4AQ&ved=0ahUKEwiT_dODgeb8AhVoElkFHZGIDEwQ4dUDCBA&uact=5&oq=how+to+load+a+feed+react+native+without+loading+a+ton+of+data+at+once&gs_lcp=Cgxnd3Mtd2l6LXNlcnAQAzoKCAAQRxDWBBCwAzoFCCEQoAE6CAghEBYQHhAdOgUIIRCrAkoECEEYAEoECEYYAFDOEFi0lQlgoJYJaAJwAXgDgAGcAogBjiiSAQYyMS44LjmYAQCgAQHIAQjAAQE&sclient=gws-wiz-serp
   // And: https://stackoverflow.com/questions/71285002/react-native-flatlist-handling-large-data
@@ -139,6 +139,8 @@ const Feed = ({ navigation, uid }) => {
               // uid === item.creatorID ? false : locked
               false
             }
+            setOpenCamera={setOpenCamera}
+            setCameraThought={setCameraThought}
           />
         </TouchableOpacity>
       )}

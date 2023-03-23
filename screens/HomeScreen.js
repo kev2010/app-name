@@ -2,15 +2,18 @@ import { StatusBar } from "expo-status-bar";
 import {
   SafeAreaView,
   StyleSheet,
+  Modal,
   Text,
   View,
   TouchableOpacity,
+  TouchableHighlight,
   Keyboard,
   Pressable,
   Image,
 } from "react-native";
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import colors from "../assets/colors";
+import FaceReaction from "../components/FaceReaction";
 import FriendsIcon from "../components/FriendsIcon";
 import ChatIcon from "../components/ChatIcon";
 import Feed from "../components/Feed";
@@ -50,6 +53,8 @@ const HomeScreen = ({ navigation }) => {
   const globalStyle = useGlobalStyle(globalFeed);
   const friendsStyle = useFriendsStyle(friendsFeed);
   const [user, setUser] = useRecoilState(userState);
+  const [openCamera, setOpenCamera] = useState(false);
+  const [cameraThought, setCameraThought] = useState("");
   const [requestsNotification, setRequestsNotification] = useState(false);
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
@@ -105,6 +110,11 @@ const HomeScreen = ({ navigation }) => {
       }));
       setRequestsNotification(userRequests.length > 0);
     });
+  };
+
+  const onPressModalBackground = () => {
+    setOpenCamera(false);
+    setCameraThought("");
   };
 
   const getNotificationToken = async () => {
@@ -228,6 +238,18 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Modal visible={openCamera} transparent={true} animationType="slide">
+        <TouchableHighlight
+          style={styles.modalBackground}
+          onPress={onPressModalBackground}
+          underlayColor={"rgba(0, 0, 0, 0.5)"}
+        >
+          <FaceReaction
+            thoughtUID={cameraThought}
+            goBack={onPressModalBackground}
+          />
+        </TouchableHighlight>
+      </Modal>
       <View style={styles.header}>
         <StatusBar barStyle={"light-content"} />
         <Text style={styles.title}>{CONSTANTS.APP_NAME}</Text>
@@ -280,7 +302,12 @@ const HomeScreen = ({ navigation }) => {
         ]}
         pointerEvents={globalFeed ? "none" : "auto"}
       >
-        <Feed navigation={navigation} uid={user.uid}></Feed>
+        <Feed
+          navigation={navigation}
+          uid={user.uid}
+          setOpenCamera={setOpenCamera}
+          setCameraThought={setCameraThought}
+        ></Feed>
       </View>
 
       <View style={styles.addPositionView}>
@@ -401,6 +428,12 @@ const styles = StyleSheet.create({
   addThoughtPlus: {
     width: 16,
     height: 16,
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

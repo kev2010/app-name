@@ -55,6 +55,12 @@
         {
           "photosPermission": "The app accesses your photos/videos to let you share them with your friends."
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow App Name to access your camera."
+        }
       ]
     ],
     "extra": {

@@ -38,6 +38,11 @@ const Thought = (props) => {
     }
   };
 
+  const goToCamera = () => {
+    props.setOpenCamera(true);
+    props.setCameraThought(props.thoughtUID);
+  };
+
   useEffect(() => {
     setEmojiCount(props.emojis);
   }, [props.emojis]);
@@ -149,7 +154,7 @@ const Thought = (props) => {
       ) : null}
       <View style={styles.row4}>
         <View style={styles.actions}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={goToCamera}>
             <View style={styles.addPhotoButton}>
               <Image
                 style={styles.addPhotoPlus}
