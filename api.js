@@ -212,6 +212,7 @@ export async function addThought(
       time: serverTimestamp(),
       lastInteraction: serverTimestamp(),
       participants: [username],
+      faceReactions: [],
       views: [],
     }).then((docRef) => {
       addDoc(collection(db, `thoughts/${docRef.id}/reactions`), {
@@ -277,6 +278,42 @@ export async function addImageToThought(
       text: "",
       time: serverTimestamp(),
       username: username,
+    });
+  }
+}
+
+export async function addFaceReactionToThought(
+  username,
+  thoughtUID,
+  reactionURL
+) {
+  if (reactionURL != null && reactionURL !== "") {
+    const docRef = doc(db, "thoughts", thoughtUID);
+    await getDoc(docRef).then((doc) => {
+      // check if user has already reacted
+      if (
+        doc
+          .data()
+          .faceReactions.filter((reaction) => reaction.username === username)
+          .length > 0
+      ) {
+        // If so, update the reaction
+        updateDoc(docRef, {
+          faceReactions: doc.data().faceReactions.map((reaction) => {
+            if (reaction.username === username) {
+              reaction.url = reactionURL;
+            }
+            return reaction;
+          }),
+        });
+      } else {
+        updateDoc(docRef, {
+          faceReactions: arrayUnion({
+            username: username,
+            url: reactionURL,
+          }),
+        });
+      }
     });
   }
 }

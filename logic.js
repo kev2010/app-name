@@ -15,7 +15,8 @@ export async function refreshFeed(uid) {
               docData.emojiSize,
               docData.participants,
               docData.time.toDate(),
-              docData.lastInteraction.toDate()
+              docData.lastInteraction.toDate(),
+              docData.faceReactions
             );
 
             data[docData.id] = {
@@ -36,6 +37,7 @@ export async function refreshFeed(uid) {
               thoughtUID: docData.id,
               thought: docData.thought,
               score: score,
+              faceReactions: docData.faceReactions,
             };
           }
           resolve(data);
@@ -51,7 +53,8 @@ export function calculateScore(
   emojis,
   participants,
   postTime,
-  lastInteractionTime
+  lastInteractionTime,
+  faceReactions
 ) {
   // Calulate difference in days between postTime and now
   const millisecondsPerHalfDay = 1000 * 60 * 60 * 12;
@@ -61,6 +64,7 @@ export function calculateScore(
     (1 + Math.floor(Math.abs(new Date() - postTime) / millisecondsPerHalfDay));
   const emojiScore = emojis * 1;
   const participantScore = (participants.length - 1) * 3;
+  const faceReactionScore = faceReactions.length * 2;
   const interactionScore =
     1 /
     10 **
@@ -68,5 +72,11 @@ export function calculateScore(
         Math.abs(new Date() - lastInteractionTime) / millisecondsPerMinute
       );
 
-  return timeScore + emojiScore + participantScore + interactionScore;
+  return (
+    timeScore +
+    emojiScore +
+    participantScore +
+    faceReactionScore +
+    interactionScore
+  );
 }

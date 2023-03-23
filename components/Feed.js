@@ -141,6 +141,7 @@ const Feed = ({ navigation, uid, setOpenCamera, setCameraThought }) => {
             }
             setOpenCamera={setOpenCamera}
             setCameraThought={setCameraThought}
+            faceReactions={item.faceReactions}
           />
         </TouchableOpacity>
       )}

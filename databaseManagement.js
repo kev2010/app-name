@@ -350,3 +350,14 @@ export async function addInvitedArrayToThoughts() {
     });
   });
 }
+
+// Add faceReactions array to each thought
+export async function addFaceReactionsArrayToThoughts() {
+  getDocs(collection(db, "thoughts")).then((results) => {
+    results.docs.forEach((docData) => {
+      updateDoc(doc(db, "thoughts", docData.id), {
+        faceReactions: [],
+      });
+    });
+  });
+}

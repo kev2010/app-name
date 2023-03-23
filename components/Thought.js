@@ -162,6 +162,53 @@ const Thought = (props) => {
               />
             </View>
           </TouchableOpacity>
+          {props.faceReactions &&
+            props.faceReactions.map((faceReaction, index) => {
+              if (index < 4) {
+                return (
+                  <Image
+                    key={index}
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 16,
+                      borderColor: colors.almost_white,
+                      borderWidth: 1,
+                      marginLeft: index == 0 ? 4 : -6,
+                    }}
+                    source={{ uri: faceReaction.url }}
+                  />
+                );
+              } else if (index === 4) {
+                return (
+                  <View
+                    key={index}
+                    style={{
+                      width: 36,
+                      height: 28,
+                      borderRadius: 14,
+                      borderColor: colors.almost_white,
+                      borderWidth: 1,
+                      marginLeft: 2,
+                      backgroundColor: colors.gray_1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: colors.gray_3,
+                        fontSize: 14,
+                        fontWeight: "bold",
+                        fontFamily: "Nunito-SemiBold",
+                      }}
+                    >
+                      +{props.faceReactions.length - 4}
+                    </Text>
+                  </View>
+                );
+              }
+            })}
         </View>
         <Text style={styles.thought}>{collabsText}</Text>
         <View style={styles.actions}>

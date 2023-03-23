@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { uploadFaceReactionToThought } from "../api";
+import { uploadFaceReactionToThought, addFaceReactionToThought } from "../api";
 import { useRecoilState } from "recoil";
 import colors from "../assets/colors";
 import { userState } from "../globalState";
@@ -42,6 +42,7 @@ const FaceReaction = ({ thoughtUID, goBack }) => {
       console.log("took it!");
       uploadFaceReactionToThought(photo, user.uid, thoughtUID).then(
         (downloadURL) => {
+          addFaceReactionToThought(user.username, thoughtUID, downloadURL);
           console.log("downloadURL", downloadURL);
           setLoading(false);
           goBack();
