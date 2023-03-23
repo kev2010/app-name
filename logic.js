@@ -57,7 +57,7 @@ export function calculateScore(
   const millisecondsPerDay = 1000 * 60 * 60 * 24;
   const millisecondsPerMinute = 1000 * 60;
   const timeScore =
-    10000000000000 /
+    10000000 /
     10 ** Math.floor(Math.abs(new Date() - postTime) / millisecondsPerDay);
   const emojiScore = emojis * 10;
   const participantScore = (participants.length - 1) * 30;
