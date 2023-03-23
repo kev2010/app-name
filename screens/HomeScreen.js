@@ -23,7 +23,8 @@ import {
   updateNotificationToken,
   updateUserPhoneNumber,
 } from "../api";
-import { userState } from "../globalState";
+import { userState, refreshingState, feedDataState } from "../globalState";
+import { refreshFeed } from "../logic";
 import {
   registerForPushNotificationsAsync,
   sendPushNotification,
@@ -35,7 +36,7 @@ import { changePhotoURLThoughts } from "../api";
 // import { useCollectionData } from "react-firebase-hooks/firestore";
 // import { doc, where, collection, query, orderBy } from "firebase/firestore";
 // import { db, storage } from "../firebaseConfig";
-// import { addFaceReactionsArrayToThoughts } from "../databaseManagement";
+// import { addVisibilityFieldToThoughts } from "../databaseManagement";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -54,6 +55,8 @@ const HomeScreen = ({ navigation }) => {
   const globalStyle = useGlobalStyle(globalFeed);
   const friendsStyle = useFriendsStyle(friendsFeed);
   const [user, setUser] = useRecoilState(userState);
+  const [feedData, setFeedData] = useRecoilState(feedDataState);
+  const [refreshing, setRefreshing] = useRecoilState(refreshingState);
   const [openCamera, setOpenCamera] = useState(false);
   const [cameraThought, setCameraThought] = useState("");
   const [requestsNotification, setRequestsNotification] = useState(false);
@@ -210,6 +213,12 @@ const HomeScreen = ({ navigation }) => {
     if (!globalFeed) {
       setGlobal(true);
       setFriends(false);
+
+      setRefreshing(true);
+      refreshFeed(user.uid, true).then((data) => {
+        setFeedData(data);
+        setRefreshing(false);
+      });
     }
   };
 
@@ -217,6 +226,12 @@ const HomeScreen = ({ navigation }) => {
     if (!friendsFeed) {
       setGlobal(false);
       setFriends(true);
+
+      setRefreshing(true);
+      refreshFeed(user.uid, false).then((data) => {
+        setFeedData(data);
+        setRefreshing(false);
+      });
     }
   };
 
@@ -276,14 +291,14 @@ const HomeScreen = ({ navigation }) => {
         </View>
         <View style={styles.feed}>
           <TouchableOpacity onPress={onPressGlobal}>
-            <Text style={[styles.type, globalStyle]}>Global</Text>
+            <Text style={[styles.type, globalStyle]}>Discover</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={onPressFriends}>
             <Text style={[styles.type, friendsStyle]}>Friends</Text>
           </TouchableOpacity>
         </View>
       </View>
-      <View
+      {/* <View
         style={[
           styles.empty,
           {
@@ -293,21 +308,14 @@ const HomeScreen = ({ navigation }) => {
       >
         <Text style={styles.thought}>🚧</Text>
         <Text style={styles.subtitle}>Coming later...</Text>
-      </View>
-      <View
-        style={[
-          styles.displayFeed,
-          {
-            opacity: globalFeed ? 0 : 1,
-          },
-        ]}
-        pointerEvents={globalFeed ? "none" : "auto"}
-      >
+      </View> */}
+      <View style={styles.displayFeed}>
         <Feed
           navigation={navigation}
           uid={user.uid}
           setOpenCamera={setOpenCamera}
           setCameraThought={setCameraThought}
+          discover={globalFeed}
         ></Feed>
       </View>
 

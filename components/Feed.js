@@ -19,7 +19,13 @@ import {
 import { checkUserPostedToday, checkUserCommentedToday } from "../api";
 import { CONSTANTS } from "../constants";
 
-const Feed = ({ navigation, uid, setOpenCamera, setCameraThought }) => {
+const Feed = ({
+  navigation,
+  uid,
+  setOpenCamera,
+  setCameraThought,
+  discover,
+}) => {
   // TODO: Right now we're only grabbing thoughts in the past 3 days. We'll have to do some pagination later
   // See: https://www.google.com/search?q=how+to+load+a+feed+react+native+without+loading+a+ton+of+data+at+once&sxsrf=AJOqlzX4EO9TgZEKFx0oBmRud5J92fOyqA%3A1674762643643&ei=k9nSY9PnJuik5NoPkZGy4AQ&ved=0ahUKEwiT_dODgeb8AhVoElkFHZGIDEwQ4dUDCBA&uact=5&oq=how+to+load+a+feed+react+native+without+loading+a+ton+of+data+at+once&gs_lcp=Cgxnd3Mtd2l6LXNlcnAQAzoKCAAQRxDWBBCwAzoFCCEQoAE6CAghEBYQHhAdOgUIIRCrAkoECEEYAEoECEYYAFDOEFi0lQlgoJYJaAJwAXgDgAGcAogBjiiSAQYyMS44LjmYAQCgAQHIAQjAAQE&sclient=gws-wiz-serp
   // And: https://stackoverflow.com/questions/71285002/react-native-flatlist-handling-large-data
@@ -71,7 +77,7 @@ const Feed = ({ navigation, uid, setOpenCamera, setCameraThought }) => {
   // TODO: Should this logic be placed in the Feed componenet or HomeScreen?
   const refreshThoughts = () => {
     setRefreshing(true);
-    refreshFeed(uid).then((data) => {
+    refreshFeed(uid, discover).then((data) => {
       checkUserPostedToday(uid).then((posted) => {
         // checkUserCommentedToday(uid, 2).then((commented) => {
         setLocked(!posted);

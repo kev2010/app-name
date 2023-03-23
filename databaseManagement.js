@@ -361,3 +361,14 @@ export async function addFaceReactionsArrayToThoughts() {
     });
   });
 }
+
+// Add visibility field to each thought
+export async function addVisibilityFieldToThoughts() {
+  getDocs(collection(db, "thoughts")).then((results) => {
+    results.docs.forEach((docData) => {
+      updateDoc(doc(db, "thoughts", docData.id), {
+        visibility: "friends",
+      });
+    });
+  });
+}

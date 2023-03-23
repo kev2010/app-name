@@ -2,11 +2,11 @@ import { getUser, getThoughts } from "./api";
 import { calculateTimeDiffFromNow } from "./helpers";
 
 // TODO: there are definitely other logic functions that should be extracted from components and placed in this file
-export async function refreshFeed(uid) {
+export async function refreshFeed(uid, discover) {
   try {
     return new Promise((resolve, reject) => {
       getUser(uid).then((currentUser) => {
-        getThoughts(currentUser).then((thoughts) => {
+        getThoughts(currentUser, discover).then((thoughts) => {
           // thoughtCollabs = [[obj1, obj2], [obj3], ...]
           var data = {};
           for (var i = 0; i < thoughts.length; i++) {

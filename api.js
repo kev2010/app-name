@@ -143,27 +143,42 @@ export async function checkUserCommentedToday(uid) {
 
 // TODO: Figure out if we want to display user's own thoughts in the feed
 // TODO: Right now we're only grabbing thoughts in the past 3 days. We'll have to do some pagination later
-export async function getThoughts(currentUser) {
+export async function getThoughts(currentUser, discover) {
   try {
     let cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - 30);
+    cutoff.setDate(cutoff.getDate() - 1000);
     const currentUserRef = doc(db, "users", currentUser.id);
     const batches = [];
-    const allValid = [...currentUser.data().friends, currentUserRef];
+    let allValid = [...currentUser.data().friends, currentUserRef];
+
+    // if we're on the discover page, we want to grab all thoughts in friends of friends
+    if (discover) {
+      await getRefsOfFriendsOfFriends(currentUser).then((friendsOfFriends) => {
+        allValid = friendsOfFriends;
+      });
+    }
+
+    console.log("looking at", allValid.length);
 
     while (allValid.length) {
       // firestore limits batches to 10
       const batch = allValid.splice(0, 10);
-
-      // add the batch request to to a queue
-      batches.push(
-        getDocs(
-          query(
+      const thoughtsQuery = discover
+        ? query(
+            collection(db, "thoughts"),
+            where("name", "in", batch),
+            where("visibility", "==", "2nd degree"),
+            where("lastInteraction", ">=", cutoff)
+          )
+        : query(
             collection(db, "thoughts"),
             where("name", "in", batch),
             where("lastInteraction", ">=", cutoff)
-          )
-        ).then((results) =>
+          );
+
+      // add the batch request to to a queue
+      batches.push(
+        getDocs(thoughtsQuery).then((results) =>
           results.docs.map((result) => ({
             id: result.id,
             ...result.data(),
@@ -176,6 +191,31 @@ export async function getThoughts(currentUser) {
   } catch (error) {
     console.log(error);
   }
+}
+
+export async function getRefsOfFriendsOfFriends(currentUser) {
+  const friendsOfFriends = [];
+  const friends = await getDocs(
+    query(
+      collection(db, "users"),
+      where("friends", "array-contains", currentUser.ref)
+    )
+  );
+
+  friends.forEach((friend) => {
+    friend.data().friends.forEach((friendOfFriend) => {
+      if (
+        !friendsOfFriends.some((user) => user.id === friendOfFriend.id) &&
+        friendOfFriend.id !== currentUser.id &&
+        !currentUser
+          .data()
+          .friends.some((user) => user.id === friendOfFriend.id)
+      ) {
+        friendsOfFriends.push(doc(db, "users", friendOfFriend.id));
+      }
+    });
+  });
+  return friendsOfFriends;
 }
 
 export async function getThought(uid) {
@@ -195,7 +235,8 @@ export async function addThought(
   username,
   thought,
   invited,
-  lastReaction
+  lastReaction,
+  visibility
 ) {
   return new Promise((resolve, reject) => {
     const currentUserRef = doc(db, "users", uid);
@@ -214,6 +255,7 @@ export async function addThought(
       participants: [username],
       faceReactions: [],
       views: [],
+      visibility: visibility,
     }).then((docRef) => {
       addDoc(collection(db, `thoughts/${docRef.id}/reactions`), {
         imageURL: "",

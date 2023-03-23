@@ -47,6 +47,7 @@ const ThinkScreen = ({ navigation, route }) => {
   const [image, setImage] = useState(null);
   const [locked, setLocked] = useRecoilState(feedLockedState);
   const [invited, setInvited] = useRecoilState(invitedState);
+  const [visibility, setVisibility] = useState("friends");
 
   useEffect(() => {
     // TODO: I don't quite understand why inputRef is ever null? But it throws "TypeError: null is not an object (evaluating 'inputRef.current.focus')" right after login flow
@@ -75,7 +76,8 @@ const ThinkScreen = ({ navigation, route }) => {
       user.username,
       thought,
       invited,
-      image === null
+      image === null,
+      visibility
     ).then((docID) => {
       console.log("uploaded the thought!", docID);
       uploadThoughtImage(image, docID).then((downloadURL) => {
@@ -114,6 +116,10 @@ const ThinkScreen = ({ navigation, route }) => {
     navigation.goBack();
   };
 
+  const changeVisibility = () => {
+    setVisibility(visibility === "friends" ? "2nd degree" : "friends");
+  };
+
   const hide = {
     // opacity: swiped ? 1 : 0,
     opacity: 1,
@@ -138,6 +144,18 @@ const ThinkScreen = ({ navigation, route }) => {
       <View style={styles.top}>
         <TouchableOpacity onPress={goBack} style={styles.button}>
           <Image style={styles.back} source={require("../assets/back.png")} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={changeVisibility}
+          style={styles.visibilityRow}
+        >
+          <Image
+            style={styles.visibility}
+            source={require("../assets/friendsGreen.png")}
+          />
+          <Text style={styles.visibilityText}>
+            {visibility === "friends" ? "Friends" : "2nd degree"}
+          </Text>
         </TouchableOpacity>
       </View>
       <TextInput
@@ -269,7 +287,6 @@ const styles = StyleSheet.create({
   top: {
     flexDirection: "row",
     justifyContent: "space-between",
-    // backgroundColor: "pink",
     width: "90%",
     alignSelf: "center",
     marginTop: 4,
@@ -287,6 +304,25 @@ const styles = StyleSheet.create({
     // TODO: Arbitrary numbers????
     marginLeft: 4,
     marginTop: 6,
+  },
+  visibilityRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    // paddingRight: 16,
+    paddingBottom: 16,
+    marginBottom: 16,
+    marginTop: 6,
+  },
+  visibility: {
+    width: 24,
+    height: 18,
+    alignSelf: "center",
+    marginRight: 4,
+  },
+  visibilityText: {
+    color: colors.accent1_5,
+    fontFamily: "Nunito-SemiBold",
+    fontSize: 14,
   },
   leftOptions: {
     flexDirection: "row",
