@@ -74,6 +74,7 @@ const ThinkScreen = ({ navigation, route }) => {
       user.imageURL,
       user.username,
       thought,
+      invited,
       image === null
     ).then((docID) => {
       console.log("uploaded the thought!", docID);
@@ -91,6 +92,7 @@ const ThinkScreen = ({ navigation, route }) => {
             checkUserPostedToday(user.uid).then((posted) => {
               setLocked(!posted);
               setThought("");
+              setInvited([]);
               setImage(null);
               setLoading(false);
               navigation.goBack();

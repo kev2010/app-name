@@ -31,7 +31,10 @@ export const displayParticipants = (participants, currentUsername) => {
     (username) => username !== currentUsername
   );
   if (participants.length === 1) {
-    return `Just you :)`;
+    if (participants[0] === currentUsername) {
+      return `Just you :)`;
+    }
+    return `${participants[0]}`;
   } else if (participants.length === 2) {
     // This means just you and one other person
     return `${participantsWithoutYou[0]} and you`;

@@ -1,25 +1,18 @@
 import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  ActivityIndicator,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import colors from "../assets/colors";
+import { acceptInvite, rejectInvite } from "../api";
 import { calculateTimeDiffFromNow, displayParticipants } from "../helpers";
 
-const ChatElement = ({
+const InviteChatElement = ({
   index,
-  text,
   currentUser,
+  invitedObject,
   username,
   profileURL,
   participants,
-  unread,
-  lastInteraction,
+  createdTime,
+  thoughtUID,
   thought,
 }) => {
   return (
@@ -33,26 +26,50 @@ const ChatElement = ({
       ]}
     >
       <View style={styles.column1}>
-        <View
-          style={[
-            styles.notificationCircle,
-            {
-              opacity: unread ? 1 : 0,
-            },
-          ]}
-        />
+        <TouchableOpacity
+          style={{
+            height: 32,
+            width: 32,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: colors.accent1_1,
+            borderRadius: 100,
+            marginRight: 16,
+          }}
+          onPress={() => acceptInvite(invitedObject, thoughtUID)}
+        >
+          <Image
+            style={{
+              height: 13.844,
+              width: 18,
+            }}
+            source={require("../assets/check.png")}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            height: 32,
+            width: 32,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: colors.primary_1,
+            borderRadius: 100,
+            marginRight: 4,
+          }}
+          onPress={() => rejectInvite(invitedObject, thoughtUID)}
+        >
+          <Image
+            style={{
+              height: 15.42,
+              width: 15.42,
+            }}
+            source={require("../assets/x.png")}
+          />
+        </TouchableOpacity>
       </View>
       <View style={styles.column2}>
         <View style={styles.row1}>
-          <Text
-            style={[
-              styles.thought,
-              {
-                fontFamily: unread ? "Nunito-ExtraBold" : "Nunito-Regular",
-              },
-            ]}
-            numberOfLines={1}
-          >
+          <Text style={styles.thought} numberOfLines={1}>
             {thought.replace(/\r?\n|\r/g, " ")}
           </Text>
         </View>
@@ -74,20 +91,20 @@ const ChatElement = ({
             style={[
               styles.messageText,
               {
-                fontFamily: unread ? "Nunito-ExtraBold" : "Nunito-Regular",
-                color: unread ? colors.gray_9 : colors.gray_3,
+                fontFamily: "Nunito-Regular",
+                color: colors.primary_9,
               },
             ]}
             numberOfLines={1}
           >
-            {username}: {text}
+            {username} invited you!
           </Text>
           <Text style={styles.timeText}>
             {" "}
             ·{" "}
-            {lastInteraction === undefined || lastInteraction === null
-              ? "0s"
-              : calculateTimeDiffFromNow(lastInteraction.toDate())}
+            {createdTime === undefined || createdTime === null
+              ? "Just Now"
+              : calculateTimeDiffFromNow(createdTime.toDate())}
           </Text>
         </View>
       </View>
@@ -113,20 +130,13 @@ const styles = StyleSheet.create({
   },
   column1: {
     paddingHorizontal: 12,
-  },
-  notificationCircle: {
-    width: 12,
-    height: 12,
-    borderRadius: 24,
-    backgroundColor: colors.primary_5,
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: "row",
   },
   column2: {
     flexDirection: "column",
     alignItems: "flex-start",
     paddingRight: 32,
-    width: "100%",
+    width: "80%",
   },
   profileImage: {
     width: 24,
@@ -147,6 +157,7 @@ const styles = StyleSheet.create({
     color: colors.primary_9,
     fontSize: 16,
     width: "100%",
+    fontFamily: "Nunito-Regular",
   },
   row2: {
     marginTop: 4,
@@ -179,4 +190,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatElement;
+export default InviteChatElement;

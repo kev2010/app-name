@@ -28,6 +28,7 @@ const ChatIcon = ({ hasNotification }) => {
       if (
         (ofUser === null ||
           !ofUser.manuallyMarkedUnread.includes(thought.uid)) &&
+        thought.lastReadTimestamps !== undefined &&
         thought.lastInteraction > thought.lastReadTimestamps[user.username]
       ) {
         unreadThoughts.push(thought.uid);
@@ -38,6 +39,7 @@ const ChatIcon = ({ hasNotification }) => {
   };
 
   useEffect(() => {
+    console.log("CHECKING", user);
     setNotificationCount(getNotificationCount(userData));
   }, [userData, data]);
 

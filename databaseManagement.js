@@ -339,3 +339,14 @@ export async function changeFriendsArrayToMap() {
     });
   });
 }
+
+// Add invited array to each thought
+export async function addInvitedArrayToThoughts() {
+  getDocs(collection(db, "thoughts")).then((results) => {
+    results.docs.forEach((docData) => {
+      updateDoc(doc(db, "thoughts", docData.id), {
+        invited: [],
+      });
+    });
+  });
+}

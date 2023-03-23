@@ -194,6 +194,7 @@ export async function addThought(
   profileURL,
   username,
   thought,
+  invited,
   lastReaction
 ) {
   return new Promise((resolve, reject) => {
@@ -206,6 +207,7 @@ export async function addThought(
       username: username,
       name: currentUserRef,
       tags: [],
+      invited: invited,
       thought: thought,
       time: serverTimestamp(),
       lastInteraction: serverTimestamp(),
@@ -763,5 +765,20 @@ export async function addView(userUID, thoughtUID) {
   const thoughtRef = doc(db, "thoughts", thoughtUID);
   updateDoc(thoughtRef, {
     views: arrayUnion(userUID),
+  });
+}
+
+export async function acceptInvite(userObject, thoughtUID) {
+  const thoughtRef = doc(db, "thoughts", thoughtUID);
+  updateDoc(thoughtRef, {
+    invited: arrayRemove(userObject),
+    participants: arrayUnion(userObject.username),
+  });
+}
+
+export async function rejectInvite(userObject, thoughtUID) {
+  const thoughtRef = doc(db, "thoughts", thoughtUID);
+  updateDoc(thoughtRef, {
+    invited: arrayRemove(userObject),
   });
 }

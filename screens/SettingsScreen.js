@@ -88,7 +88,12 @@ const SettingsScreen = ({ navigation }) => {
         text: "Log Out",
         onPress: () => {
           console.log("LOG OUT", user.uid);
-          setUser({});
+          setUser((user) => {
+            return {
+              ...user,
+              username: null,
+            };
+          });
           navigation.navigate("Name");
         },
         style: "destructive",
