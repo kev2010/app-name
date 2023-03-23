@@ -11,6 +11,12 @@ export async function refreshFeed(uid) {
           var data = {};
           for (var i = 0; i < thoughts.length; i++) {
             const docData = thoughts[i];
+            const score = calculateScore(
+              docData.emojiSize,
+              docData.participants,
+              docData.time.toDate(),
+              docData.lastInteraction.toDate()
+            );
 
             data[docData.id] = {
               id: docData.id,
@@ -29,6 +35,7 @@ export async function refreshFeed(uid) {
               reactions: 0,
               thoughtUID: docData.id,
               thought: docData.thought,
+              score: score,
             };
           }
           resolve(data);
@@ -38,4 +45,28 @@ export async function refreshFeed(uid) {
   } catch (error) {
     console.log(error);
   }
+}
+
+export function calculateScore(
+  emojis,
+  participants,
+  postTime,
+  lastInteractionTime
+) {
+  // Calulate difference in days between postTime and now
+  const millisecondsPerDay = 1000 * 60 * 60 * 24;
+  const millisecondsPerMinute = 1000 * 60;
+  const timeScore =
+    10000000000000 /
+    10 ** Math.floor(Math.abs(new Date() - postTime) / millisecondsPerDay);
+  const emojiScore = emojis * 10;
+  const participantScore = (participants.length - 1) * 30;
+  const interactionScore =
+    10 /
+    10 **
+      Math.floor(
+        Math.abs(new Date() - lastInteractionTime) / millisecondsPerMinute
+      );
+
+  return timeScore + emojiScore + participantScore + interactionScore;
 }
