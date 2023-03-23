@@ -54,15 +54,15 @@ export function calculateScore(
   lastInteractionTime
 ) {
   // Calulate difference in days between postTime and now
-  const millisecondsPerDay = 1000 * 60 * 60 * 24;
+  const millisecondsPerHalfDay = 1000 * 60 * 60 * 12;
   const millisecondsPerMinute = 1000 * 60;
   const timeScore =
-    10000000 /
-    10 ** Math.floor(Math.abs(new Date() - postTime) / millisecondsPerDay);
-  const emojiScore = emojis * 10;
-  const participantScore = (participants.length - 1) * 30;
+    10000 /
+    (1 + Math.floor(Math.abs(new Date() - postTime) / millisecondsPerHalfDay));
+  const emojiScore = emojis * 1;
+  const participantScore = (participants.length - 1) * 3;
   const interactionScore =
-    10 /
+    1 /
     10 **
       Math.floor(
         Math.abs(new Date() - lastInteractionTime) / millisecondsPerMinute
