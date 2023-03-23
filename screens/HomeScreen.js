@@ -38,13 +38,13 @@ import { changePhotoURLThoughts } from "../api";
 // import { db, storage } from "../firebaseConfig";
 // import { addVisibilityFieldToThoughts } from "../databaseManagement";
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-  }),
-});
+// Notifications.setNotificationHandler({
+//   handleNotification: async () => ({
+//     shouldShowAlert: true,
+//     shouldPlaySound: false,
+//     shouldSetBadge: false,
+//   }),
+// });
 
 const HomeScreen = ({ navigation }) => {
   // TODO: Make keyboard go away when you switch between screens - for some reason it defaults to being active
