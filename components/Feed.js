@@ -97,7 +97,7 @@ const Feed = ({
 
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, discover]);
 
   //TODO: VirtualizedList: You have a large list that is slow to update - make sure your renderItem function renders components that follow React performance best practices like PureComponent, shouldComponentUpdate, etc. {"contentLength": 3376.666748046875, "dt": 866, "prevDt": 61523}
   return Object.values(feedData).length > 0 ? (
@@ -153,6 +153,8 @@ const Feed = ({
             setOpenCamera={setOpenCamera}
             setCameraThought={setCameraThought}
             faceReactions={item.faceReactions}
+            visibility={item.visibility}
+            discover={discover}
           />
         </TouchableOpacity>
       )}

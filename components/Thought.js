@@ -93,6 +93,19 @@ const Thought = (props) => {
           />
           <Text style={styles.name}>{props.name}</Text>
           <Text style={styles.time}>{props.time}</Text>
+          {props.visibility === "2nd degree" && !props.discover && (
+            <Image
+              style={[
+                {
+                  width: 24,
+                  height: 12.7,
+                  alignSelf: "center",
+                  marginLeft: 8,
+                },
+              ]}
+              source={require("../assets/secondDegree.png")}
+            />
+          )}
         </TouchableOpacity>
         {props.creatorID == user.uid && props.showTrash ? (
           loading ? (

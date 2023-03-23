@@ -38,6 +38,7 @@ export async function refreshFeed(uid, discover) {
               thought: docData.thought,
               score: score,
               faceReactions: docData.faceReactions,
+              visibility: docData.visibility,
             };
           }
           resolve(data);

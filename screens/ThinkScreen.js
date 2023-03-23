@@ -150,8 +150,18 @@ const ThinkScreen = ({ navigation, route }) => {
           style={styles.visibilityRow}
         >
           <Image
-            style={styles.visibility}
-            source={require("../assets/friendsGreen.png")}
+            style={[
+              styles.visibility,
+              {
+                width: visibility === "friends" ? 24 : 34,
+                height: 18,
+              },
+            ]}
+            source={
+              visibility === "friends"
+                ? require("../assets/friendsGreen.png")
+                : require("../assets/secondDegree.png")
+            }
           />
           <Text style={styles.visibilityText}>
             {visibility === "friends" ? "Friends" : "2nd degree"}
@@ -314,8 +324,6 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   visibility: {
-    width: 24,
-    height: 18,
     alignSelf: "center",
     marginRight: 4,
   },
