@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
   Text,
@@ -88,17 +87,13 @@ const UsernameScreen = ({ route, navigation }) => {
   }, []);
 
   return (
-    // maybe use Safe Area view instead?
     <SafeAreaView style={styles.container}>
       <View>
-        {/* <StatusBar barStyle={"light-content"} /> */}
         <Text style={styles.title}>{CONSTANTS.APP_NAME}</Text>
         <Text style={styles.subtitle}>Finally, choose a unique username!</Text>
         <TextInput
           ref={inputRef}
-          // autoFocus={swiped}
           style={styles.input}
-          // multiline={true}
           textAlign="center"
           selectionColor={colors.primary_4}
           placeholderTextColor={colors.gray_3}
@@ -110,16 +105,12 @@ const UsernameScreen = ({ route, navigation }) => {
           }}
         />
         <Text style={errorStyle}>{errorMessage}</Text>
-        {/* <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      > */}
       </View>
       <Animated.View style={[positionStyle]}>
         <TouchableOpacity onPress={onSubmit} disabled={disable}>
           <Text style={[styles.continue, continueStyle]}>Continue</Text>
         </TouchableOpacity>
       </Animated.View>
-      {/* </KeyboardAvoidingView> */}
     </SafeAreaView>
   );
 };

@@ -8,10 +8,9 @@ import {
   TouchableOpacity,
   TouchableHighlight,
   Keyboard,
-  Pressable,
   Image,
 } from "react-native";
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import colors from "../assets/colors";
 import FaceReaction from "../components/FaceReaction";
 import FriendsIcon from "../components/FriendsIcon";
@@ -33,10 +32,6 @@ import * as Notifications from "expo-notifications";
 import { CONSTANTS } from "../constants";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { changePhotoURLThoughts } from "../api";
-// import { useCollectionData } from "react-firebase-hooks/firestore";
-// import { doc, where, collection, query, orderBy } from "firebase/firestore";
-// import { db, storage } from "../firebaseConfig";
-// import { addVisibilityFieldToThoughts } from "../databaseManagement";
 
 // Notifications.setNotificationHandler({
 //   handleNotification: async () => ({
@@ -63,24 +58,6 @@ const HomeScreen = ({ navigation }) => {
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
-
-  // // TODO: Hook in for real time, but can't rn b/c Firebase only supports max 10 for "in" queries
-  // const friendRefs = user.friends.map((friend) => {
-  //   doc(db, "users", friend);
-  // });
-  // let cutoff = new Date();
-  // cutoff.setDate(cutoff.getDate() - 15);
-  // const thoughtsRef = collection(db, `thoughts`);
-  // const [data] = useCollectionData(
-  //   query(
-  //     thoughtsRef,
-  //     where("name", "in", [...friendRefs, doc(db, "users", user.uid)]),
-  //     where("lastInteraction", ">=", cutoff)
-  //   ),
-  //   {
-  //     idField: "id",
-  //   }
-  // );
 
   const getFriendsData = () => {
     // Can't set recoil state user with list of firebase userrefs (throws "FIRESTORE (9.15.0) INTERNAL ASSERTION FAILED: Unexpected state" & others)
@@ -298,17 +275,6 @@ const HomeScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-      {/* <View
-        style={[
-          styles.empty,
-          {
-            opacity: globalFeed ? 1 : 0,
-          },
-        ]}
-      >
-        <Text style={styles.thought}>🚧</Text>
-        <Text style={styles.subtitle}>Coming later...</Text>
-      </View> */}
       <View style={styles.displayFeed}>
         <Feed
           navigation={navigation}

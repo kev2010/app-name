@@ -29,7 +29,7 @@ import {
 import { CONSTANTS } from "../constants";
 import { refreshFeed } from "../logic";
 
-const ThinkScreen = ({ navigation, route }) => {
+const ThinkScreen = ({ navigation }) => {
   // TODO: disable keyboard when the bottom sheet is deactivated (currently can click on the "hidden" component and keyboard will come up)
   // TODO: can't tap to move cursor (have to hold down spacebar) - problem exists for Commenting too I think
   const [thought, setThought] = useState("");

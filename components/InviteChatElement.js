@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
 import colors from "../assets/colors";
 import { acceptInvite, rejectInvite } from "../api";

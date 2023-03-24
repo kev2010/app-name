@@ -37,7 +37,7 @@ const Nav = ({}) => {
           // User is signed in
           <>
             <Stack.Screen name="Home" component={HomeScreen} />
-            <Stack.Screen name="Reactions" component={SingleChatScreen} />
+            <Stack.Screen name="SingleChat" component={SingleChatScreen} />
             <Stack.Screen name="Friends" component={FriendsScreen} />
             <Stack.Screen name="Settings" component={SettingsScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />

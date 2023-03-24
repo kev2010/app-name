@@ -158,7 +158,6 @@ const SingleChatScreen = ({ navigation, route }) => {
               });
             }
           }
-          console.log("idgi", profile, username);
           return (
             <Image
               key={index}

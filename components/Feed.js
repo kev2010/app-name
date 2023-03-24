@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   FlatList,
   TouchableOpacity,
@@ -10,13 +10,8 @@ import colors from "../assets/colors";
 import { calculateTimeDiffFromNow } from "../helpers";
 import { refreshFeed } from "../logic";
 import { useRecoilState } from "recoil";
-import {
-  feedDataState,
-  feedLockedState,
-  userState,
-  refreshingState,
-} from "../globalState";
-import { checkUserPostedToday, checkUserCommentedToday } from "../api";
+import { feedDataState, refreshingState } from "../globalState";
+import { checkUserPostedToday } from "../api";
 import { CONSTANTS } from "../constants";
 
 const Feed = ({
@@ -31,8 +26,6 @@ const Feed = ({
   // And: https://stackoverflow.com/questions/71285002/react-native-flatlist-handling-large-data
   const [refreshing, setRefreshing] = useRecoilState(refreshingState);
   const [feedData, setFeedData] = useRecoilState(feedDataState);
-  const [locked, setLocked] = useRecoilState(feedLockedState);
-  const [user, setUser] = useRecoilState(userState);
 
   const DEFAULT = [
     {
@@ -48,43 +41,12 @@ const Feed = ({
     },
   ];
 
-  // const TEMP = [
-  //   {
-  //     id: 0,
-  //     creatorID: "TAKLar06V3UPXUMll72Kqj51CfG2",
-  //     profileURL: "",
-  //     name: "The Algorithm",
-  //     time: calculateTimeDiffFromNow(new Date()),
-  //     collabs: ["You!"],
-  //     reactions: 420,
-  //     emojis: 42,
-  //     imageURL: "",
-  //     thought: `Thank you for beta testing, ${user.username}! App Name 2.0 is being built rn with a completely new experience based on your feedback :). Stay tuned!`,
-  //   },
-  // ];
-
-  const checkIfTodayCycle = (time) => {
-    // Each cycle starts at 9am ET, 2pm UTC
-    const currentTime = new Date();
-    const startOfToday = new Date();
-    startOfToday.setUTCHours(14, 0, 0, 0);
-    if (startOfToday >= currentTime) {
-      startOfToday.setUTCHours(-10, 0, 0, 0);
-    }
-    return time >= startOfToday;
-  };
-
   // TODO: Should this logic be placed in the Feed componenet or HomeScreen?
   const refreshThoughts = () => {
     setRefreshing(true);
     refreshFeed(uid, discover).then((data) => {
-      checkUserPostedToday(uid).then((posted) => {
-        // checkUserCommentedToday(uid, 2).then((commented) => {
-        setLocked(!posted);
-        setFeedData(data);
-        setRefreshing(false);
-        // });
-      });
+      setFeedData(data);
+      setRefreshing(false);
     });
   };
 
@@ -111,26 +73,13 @@ const Feed = ({
         <TouchableOpacity
           key={index.toString()}
           onPress={() => {
-            navigation.navigate("Reactions", {
+            navigation.navigate("SingleChat", {
               creatorID: item.creatorID,
               id: item.id,
-              imageURL: item.imageURL,
-              profileURL: item.profileURL,
-              name: item.name,
-              time: item.time,
-              collabs: item.collabs,
-              emojis: item.emojis,
-              reactions: item.reactions,
-              thoughtUID: item.thoughtUID,
-              thought: item.thought,
             });
           }}
           delayPressIn={200}
-          disabled={
-            // uid === item.creatorID || !checkIfTodayCycle(item.postTime)
-            // uid === item.creatorID ? false : locked
-            false
-          }
+          disabled={false}
         >
           <Thought
             navigation={navigation}
@@ -145,11 +94,7 @@ const Feed = ({
             thoughtUID={item.thoughtUID}
             thought={item.thought}
             showTrash={false}
-            locked={
-              // uid === item.creatorID || !checkIfTodayCycle(item.postTime)
-              // uid === item.creatorID ? false : locked
-              false
-            }
+            locked={false}
             setOpenCamera={setOpenCamera}
             setCameraThought={setCameraThought}
             faceReactions={item.faceReactions}
@@ -206,37 +151,6 @@ const Feed = ({
       }
     />
   );
-
-  // return (
-  //   <FlatList
-  //     data={TEMP}
-  //     renderItem={({ item, index }) => (
-  //       <Thought
-  //         navigation={navigation}
-  //         creatorID={item.creatorID}
-  //         imageURL={item.imageURL}
-  //         profileURL={item.profileURL}
-  //         name={item.name}
-  //         time={item.time}
-  //         collabs={item.collabs}
-  //         emojis={item.emojis}
-  //         reactions={item.reactions}
-  //         thoughtUID={item.thoughtUID}
-  //         thought={item.thought}
-  //         showTrash={false}
-  //       />
-  //     )}
-  //     keyExtractor={(item) => item.id}
-  //     refreshControl={
-  //       <RefreshControl
-  //         refreshing={refreshing}
-  //         onRefresh={refreshThoughts}
-  //         colors={[colors.primary_5]}
-  //         tintColor={colors.primary_5}
-  //       />
-  //     }
-  //   />
-  // );
 };
 
 export default Feed;

@@ -156,24 +156,6 @@ const ChatsDisplay = ({ navigation, archived }) => {
     };
   }, []);
 
-  //   // TODO: Hook in for real time, but can't rn b/c Firebase only supports max 10 for "in" queries
-  //   let cutoff = new Date();
-  //   cutoff.setDate(cutoff.getDate() - 15);
-  //   const [data] = useCollectionData(
-  //     query(
-  //       collection(db, "thoughts"),
-  //       where("participants", "array-contains", user.username),
-  //       where("time", ">=", cutoff)
-  //     ),
-  //     {
-  //       idField: "id",
-  //     }
-  //   );
-  //
-  //   useEffect(() => {
-  //     console.log("data", data);
-  //   }, [data]);
-
   return (
     <>
       {loading ? (
@@ -199,7 +181,6 @@ const ChatsDisplay = ({ navigation, archived }) => {
               }),
           ]}
           renderItem={({ item, index }) => {
-            console.log("Rendering item:", item);
             // Check if we're looking at invited thoughts or not
             if (
               invitedData.some(
@@ -210,7 +191,7 @@ const ChatsDisplay = ({ navigation, archived }) => {
                 <TouchableOpacity
                   key={index.toString()}
                   onPress={async () => {
-                    navigation.navigate("Reactions", {
+                    navigation.navigate("SingleChat", {
                       id: item.uid,
                       creatorID: item.name.id,
                     });
@@ -246,13 +227,12 @@ const ChatsDisplay = ({ navigation, archived }) => {
               return (
                 <Swipeable
                   renderRightActions={() => renderRightActions(item, archived)}
-                  // overshootRight={false}
                 >
                   <TouchableOpacity
                     key={index.toString()}
                     onPress={async () => {
                       removeManuallyMarkedUnread(user.uid, item.uid);
-                      navigation.navigate("Reactions", {
+                      navigation.navigate("SingleChat", {
                         id: item.uid,
                         creatorID: item.name.id,
                       });

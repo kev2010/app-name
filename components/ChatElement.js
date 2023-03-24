@@ -1,13 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  ActivityIndicator,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
+import React from "react";
+import { StyleSheet, Text, View, Image } from "react-native";
 import colors from "../assets/colors";
 import { calculateTimeDiffFromNow, displayParticipants } from "../helpers";
 
@@ -134,11 +126,6 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     marginRight: 4,
   },
-  chat: {
-    flexDirection: "column",
-    flex: 1,
-    flexShrink: 1,
-  },
   row1: {
     width: "100%",
     flexDirection: "row",
@@ -171,11 +158,6 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito-Regular",
     fontSize: 14,
     textAlign: "right",
-  },
-  time: {
-    color: colors.gray_3,
-    fontFamily: "Nunito-Regular",
-    fontSize: 14,
   },
 });
 

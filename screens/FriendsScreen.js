@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import {
   View,
   Text,
@@ -47,7 +46,6 @@ const FriendsScreen = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <SafeAreaView style={styles.container}>
-        {/* <StatusBar barStyle={"light-content"} /> */}
         <FriendsHeader
           goBack={goBack}
           displayFriends={displayFriends}

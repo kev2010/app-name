@@ -30,19 +30,11 @@ const FaceReaction = ({ thoughtUID, goBack }) => {
     }
   }, [permission]);
 
-  function toggleCameraType() {
-    setType((current) =>
-      current === CameraType.back ? CameraType.front : CameraType.back
-    );
-  }
-
   async function captureAndUploadPhoto() {
     if (cameraRef.current) {
       setLoading(true);
-      console.log("taking");
       const options = { quality: 0.5, base64: true };
       const photo = await cameraRef.current.takePictureAsync(options);
-      console.log("took it!");
       uploadFaceReactionToThought(photo, user.uid, thoughtUID).then(
         (downloadURL) => {
           addFaceReactionToThought(user.username, thoughtUID, downloadURL).then(
@@ -54,7 +46,6 @@ const FaceReaction = ({ thoughtUID, goBack }) => {
               });
             }
           );
-          console.log("downloadURL", downloadURL);
           setLoading(false);
           goBack();
         }
@@ -65,12 +56,9 @@ const FaceReaction = ({ thoughtUID, goBack }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.circularMask}>
-        <Camera style={styles.camera} type={type} ref={cameraRef}></Camera>
+        <Camera style={styles.camera} type={type} ref={cameraRef} />
       </View>
       <View style={styles.buttonContainer}>
-        {/* <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
-          <Text style={styles.text}>Flip Camera</Text>
-        </TouchableOpacity> */}
         {loading ? (
           <ActivityIndicator
             size="large"

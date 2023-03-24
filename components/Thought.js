@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import colors from "../assets/colors";
 import { useRecoilState } from "recoil";
-import { userState, feedDataState } from "../globalState";
+import { userState } from "../globalState";
 import Autolink from "react-native-autolink";
 import { addEmoji, deleteThought } from "../api";
 
@@ -225,18 +225,6 @@ const Thought = (props) => {
         </View>
         <Text style={styles.thought}>{collabsText}</Text>
         <View style={styles.actions}>
-          {/* <Text style={styles.emojis}>&#10024;</Text> */}
-          {/* {props.reactions > 0 ? (
-              <>
-                <Image
-                  style={styles.comments}
-                  source={require("../assets/comment2.png")}
-                  //   source={{uri: props.img}}
-                  // resizeMode="stretch"
-                />
-                <Text style={styles.number}>{props.reactions}</Text>
-              </>
-            ) : null} */}
           <Image
             style={styles.people}
             source={require("../assets/people.png")}
@@ -246,16 +234,6 @@ const Thought = (props) => {
           </Text>
         </View>
       </View>
-      {/* <View style={styles.row4}>
-          <View style={styles.actions}>
-            <TouchableOpacity style={styles.profile} onPress={userAddEmoji}>
-              <Image
-                style={styles.emojis}
-                source={require("../assets/stars.png")}
-              />
-            </TouchableOpacity>
-          </View>
-        </View> */}
     </View>
   );
 };

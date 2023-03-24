@@ -115,7 +115,7 @@ const SettingsScreen = ({ navigation }) => {
         Logged in as {user.name} with username {user.username}
       </Text>
 
-      <View style={styles.switch}>
+      {/* <View style={styles.switch}>
         <Switch
           trackColor={{ false: colors.gray_9, true: colors.accent1_5 }}
           thumbColor={colors.gray_1}
@@ -126,7 +126,7 @@ const SettingsScreen = ({ navigation }) => {
         <Text style={styles.notify}>
           Notify me when users reply to a thought I replied to
         </Text>
-      </View>
+      </View> */}
 
       {loading && (
         <ActivityIndicator

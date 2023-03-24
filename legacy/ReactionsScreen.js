@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-import Handle from "../components/Handle";
+import Handle from "./Handle";
 import React, { useState, useRef, useMemo, useEffect } from "react";
 import colors from "../assets/colors";
 import Thought from "../components/Thought";

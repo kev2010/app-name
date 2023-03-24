@@ -37,9 +37,6 @@ const NameScreen = ({ navigation }) => {
     navigation.navigate("Phone", {
       paramKey: fullName,
     });
-    // There seems to be a delay between the local variable and global state update?
-    // console.log("harhar", globalFullName);
-    // console.log("huh", fullNameState);
   };
 
   useEffect(() => {
@@ -66,9 +63,7 @@ const NameScreen = ({ navigation }) => {
         <Text style={styles.subtitle}>Welcome! What's your name?</Text>
         <TextInput
           ref={inputRef}
-          // autoFocus={swiped}
           style={styles.input}
-          // multiline={true}
           textAlign="center"
           selectionColor={colors.primary_4}
           placeholderTextColor={colors.gray_3}

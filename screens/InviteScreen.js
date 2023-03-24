@@ -10,17 +10,12 @@ import {
 } from "react-native";
 import InviteElement from "../components/InviteElement";
 import colors from "../assets/colors";
-import { useDocumentOnce } from "react-firebase-hooks/firestore";
-import { doc, db } from "../firebaseConfig";
 import { useRecoilState } from "recoil";
 import { userState, invitedState } from "../globalState";
 import { getUser, getProfilePicture } from "../api";
 
 const InviteScreen = ({ navigation, route }) => {
   const [user, setUser] = useRecoilState(userState);
-  const [selectedFriends, setSelectedFriends] = useState([]);
-  //   const userRef = doc(db, "users", user.uid);
-  //   const [userData, loading, error, reload] = useDocumentOnce(userRef);
   const [data, setData] = useState([]);
   const [invited, setInvited] = useRecoilState(invitedState);
   const [layout, setLayout] = useState({
@@ -76,9 +71,6 @@ const InviteScreen = ({ navigation, route }) => {
   };
 
   const renderItem = ({ item, index }) => (
-    // <TouchableOpacity onPress={() => toggleFriendSelection(item.id)}>
-    //   <Text style={{ padding: 10 }}>{item.username}</Text>
-    // </TouchableOpacity>
     <InviteElement
       last={index === data.length - 1}
       user={item}

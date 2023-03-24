@@ -17,7 +17,6 @@ import {
   sendFriendRequest,
 } from "../api";
 import OutsideUserElement from "./OutsideUserElement";
-import { getLetters } from "react-native-country-picker-modal/lib/CountryService";
 
 const SuggestedDisplay = () => {
   const [user, setUser] = useRecoilState(userState);
