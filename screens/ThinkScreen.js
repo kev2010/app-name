@@ -120,14 +120,8 @@ const ThinkScreen = ({ navigation }) => {
     setVisibility(visibility === "friends" ? "2nd degree" : "friends");
   };
 
-  const changeThought = (text) => {
-    if (text.length <= CONSTANTS.MAX_LENGTH) {
-      setThought(text);
-    }
-  };
-
   const checkLength = (text) => {
-    setDisable(text.length === 0);
+    setDisable(text.length === 0 || text.length > CONSTANTS.MAX_LENGTH);
   };
 
   const updateImage = (image) => {
@@ -177,7 +171,7 @@ const ThinkScreen = ({ navigation }) => {
         value={thought}
         editable={true}
         onChangeText={(text) => {
-          changeThought(text);
+          setThought(text);
           checkLength(text);
         }}
       />
@@ -203,9 +197,41 @@ const ThinkScreen = ({ navigation }) => {
             <Text style={styles.inviteText}>{invited.length} invited</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.charCount}>
-          {thought.length}/{CONSTANTS.MAX_LENGTH}
-        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            paddingBottom: 4,
+            paddingRight: 24,
+          }}
+        >
+          <Text
+            style={[
+              styles.charCount,
+              {
+                fontFamily:
+                  thought.length > CONSTANTS.MAX_LENGTH
+                    ? "Nunito-Bold"
+                    : "Nunito-Regular",
+                color:
+                  thought.length > CONSTANTS.MAX_LENGTH
+                    ? colors.primary_5
+                    : colors.primary_3,
+              },
+            ]}
+          >
+            {thought.length}
+          </Text>
+          <Text
+            style={[
+              styles.charCount,
+              {
+                color: colors.primary_3,
+              },
+            ]}
+          >
+            /{CONSTANTS.MAX_LENGTH}
+          </Text>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -219,7 +245,10 @@ const useAudioStyle = (thought) => {
 
 const useSubmitStyle = (thought) => {
   return {
-    backgroundColor: thought.length > 0 ? colors.primary_5 : colors.primary_2,
+    backgroundColor:
+      thought.length > 0 && thought.length <= 280
+        ? colors.primary_5
+        : colors.primary_2,
   };
 };
 
@@ -283,11 +312,8 @@ const styles = StyleSheet.create({
     zIndex: -1,
   },
   charCount: {
-    color: colors.primary_3,
     fontFamily: "Nunito-Regular",
     fontSize: 12,
-    paddingBottom: 4,
-    paddingRight: 24,
   },
   top: {
     flexDirection: "row",
