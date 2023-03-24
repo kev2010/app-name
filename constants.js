@@ -1,6 +1,6 @@
 export const CONSTANTS = {
-  MAX_LENGTH: 250,
-  MAX_FRIENDS: 30,
+  MAX_LENGTH: 280,
+  MAX_FRIENDS: 50,
   KEYBOARD_OFFSET: 12,
   INPUT_OFFSET: 48,
   APP_NAME: "💬 App Name",

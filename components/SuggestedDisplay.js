@@ -69,7 +69,7 @@ const SuggestedDisplay = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
+    // setLoading(true);
     (async () => {
       const { status } = await Contacts.requestPermissionsAsync();
       if (status === "granted") {
@@ -119,27 +119,11 @@ const SuggestedDisplay = () => {
                         return unique;
                       }, [])
                     );
-                    itemsProcessed++;
-                    if (itemsProcessed === usersData.length) {
-                      setLoading(false);
-                    }
                   });
-                } else {
-                  itemsProcessed++;
-                  if (itemsProcessed === usersData.length) {
-                    setLoading(false);
-                  }
-                }
-              } else {
-                itemsProcessed++;
-                if (itemsProcessed === usersData.length) {
-                  setLoading(false);
                 }
               }
             });
           });
-        } else {
-          setLoading(false);
         }
       }
     })();

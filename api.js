@@ -158,8 +158,6 @@ export async function getThoughts(currentUser, discover) {
       });
     }
 
-    console.log("looking at", allValid.length);
-
     while (allValid.length) {
       // firestore limits batches to 10
       const batch = allValid.splice(0, 10);
