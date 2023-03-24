@@ -81,15 +81,17 @@ const RequestsDisplay = ({ requests }) => {
       onLayout={(event) => setLayout(event.nativeEvent.layout)}
       data={data.sort((a, b) => a.name.localeCompare(b.name))}
       renderItem={({ item }) => (
-        <RequestElement
-          name={item.name}
-          username={item.username}
-          uid={item.uid}
-          imageURL={item.imageURL}
-          acceptRequest={acceptRequest}
-          rejectRequest={rejectRequest}
-          layout={layout}
-        />
+        <View onStartShouldSetResponder={() => true}>
+          <RequestElement
+            name={item.name}
+            username={item.username}
+            uid={item.uid}
+            imageURL={item.imageURL}
+            acceptRequest={acceptRequest}
+            rejectRequest={rejectRequest}
+            layout={layout}
+          />
+        </View>
       )}
       keyExtractor={(item) => item.uid}
     />

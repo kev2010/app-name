@@ -779,8 +779,6 @@ export async function updateNotificationToken(uid, notificationToken) {
 }
 
 export async function getUserAllChats(uid, callback) {
-  console.log("going at it");
-  // return new Promise((resolve, reject) => {
   // TODO: just cutting off activity at 10 days (your thoughts + your last reply to thoughts) for performance
   let cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - 30);
@@ -820,20 +818,6 @@ export async function getUserAllChats(uid, callback) {
   return () => {
     unsubscribeThoughts();
   };
-
-  // getDocs(thoughtsQuery).then((resultsThoughts) => {
-  //   getDocs(reactionsQuery).then((resultsReactions) => {
-  //     getOriginalThoughtsFromReactions(resultsReactions).then(
-  //       (resultsReactionsThoughts) => {
-  //         // Eliminate duplicates
-  //         resolve(
-  //           _.unionBy(resultsReactionsThoughts, resultsThoughts.docs, "id")
-  //         );
-  //       }
-  //     );
-  //   });
-  // });
-  // });
 }
 
 export async function getOriginalThoughtsFromReactions(reactions, cutoff) {
@@ -900,4 +884,20 @@ export async function rejectInvite(userObject, thoughtUID) {
   updateDoc(thoughtRef, {
     invited: arrayRemove(userObject),
   });
+}
+
+export async function getTopUsers(userUID, friendIDs) {
+  const currentUser = await getUser(userUID);
+  const friendsOfFriends = await getRefsOfFriendsOfFriends(currentUser);
+  const topUsers = await Promise.all(
+    _.sampleSize(friendsOfFriends, 100).map(async (friendOfFriend) => {
+      const userDoc = await getDoc(friendOfFriend);
+      const mutualFriends = userDoc
+        .data()
+        .friends.filter((friend) => friendIDs.includes(friend.id)).length;
+      return { user: userDoc, mutualFriends: mutualFriends };
+    })
+  );
+  topUsers.sort((a, b) => (a.mutualFriends > b.mutualFriends ? -1 : 1));
+  return topUsers.slice(0, 10);
 }

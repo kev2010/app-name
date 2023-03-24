@@ -84,7 +84,14 @@ const FriendsScreen = ({ navigation }) => {
             <RequestsDisplay requests={user.friendRequests} />
           </View>
         ) : (
-          <View style={styles.display}>
+          <View
+            style={[
+              styles.display,
+              {
+                paddingBottom: "25%",
+              },
+            ]}
+          >
             <SuggestedDisplay />
           </View>
         )}

@@ -15,12 +15,14 @@ import {
   getMultipleUsersByPhoneNumbers,
   getProfilePicture,
   sendFriendRequest,
+  getTopUsers,
 } from "../api";
-import OutsideUserElement from "./OutsideUserElement";
+import SuggestedElement from "./SuggestedElement";
 
 const SuggestedDisplay = () => {
   const [user, setUser] = useRecoilState(userState);
   const [suggestions, setSuggestions] = useState([]);
+  const [mutuals, setMutuals] = useState([]);
   const [layout, setLayout] = useState({
     width: 0,
     height: 0,
@@ -108,6 +110,7 @@ const SuggestedDisplay = () => {
                           username: document.data().username,
                           uid: document.id,
                           imageURL: profileImage,
+                          type: "phone",
                         },
                       ].reduce((unique, o) => {
                         if (!unique.some((obj) => obj.uid === o.uid)) {
@@ -142,26 +145,55 @@ const SuggestedDisplay = () => {
     })();
   }, []);
 
+  useEffect(() => {
+    setLoading(true);
+    getTopUsers(user.uid, user.friends).then((usersData) => {
+      setMutuals(
+        usersData.map((obj) => {
+          return {
+            name: obj.user.data().name,
+            username: obj.user.data().username,
+            uid: obj.user.id,
+            imageURL: obj.user.data().photoURL,
+            mutuals: obj.mutualFriends,
+            type: "mutual",
+          };
+        })
+      );
+      setLoading(false);
+    });
+  }, []);
+
   return loading ? (
     <ActivityIndicator
       style={{ height: "50%" }}
       size="large"
       color={colors.primary_5}
     />
-  ) : suggestions.length > 0 ? (
+  ) : suggestions.length + mutuals.length > 0 ? (
     <FlatList
       onLayout={(event) => setLayout(event.nativeEvent.layout)}
-      data={suggestions.sort((a, b) => a.name.localeCompare(b.name))}
+      showsVerticalScrollIndicator={false}
+      data={[...suggestions, ...mutuals].reduce((unique, o) => {
+        if (!unique.some((obj) => obj.uid === o.uid)) {
+          unique.push(o);
+        }
+        return unique;
+      }, [])}
       renderItem={({ item }) => (
-        <OutsideUserElement
-          name={item.name}
-          username={item.username}
-          uid={item.uid}
-          imageURL={item.imageURL}
-          addFriend={addUserAsFriend}
-          sent={user.sentRequests}
-          layout={layout}
-        />
+        <View onStartShouldSetResponder={() => true}>
+          <SuggestedElement
+            name={item.name}
+            username={item.username}
+            uid={item.uid}
+            imageURL={item.imageURL}
+            addFriend={addUserAsFriend}
+            sent={user.sentRequests}
+            layout={layout}
+            type={item.type}
+            mutuals={item.type === "phone" ? 0 : item.mutuals}
+          />
+        </View>
       )}
       keyExtractor={(item) => item.uid}
     />
