@@ -120,11 +120,6 @@ const ThinkScreen = ({ navigation }) => {
     setVisibility(visibility === "friends" ? "2nd degree" : "friends");
   };
 
-  const hide = {
-    // opacity: swiped ? 1 : 0,
-    opacity: 1,
-  };
-
   const changeThought = (text) => {
     if (text.length <= CONSTANTS.MAX_LENGTH) {
       setThought(text);

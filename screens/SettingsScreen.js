@@ -14,35 +14,12 @@ import React, { useState, useEffect } from "react";
 import colors from "../assets/colors";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
-import { updateProfilePicture, getUser, updateNotifyReplies } from "../api";
+import { updateProfilePicture } from "../api";
 
 const SettingsScreen = ({ navigation }) => {
   const [user, setUser] = useRecoilState(userState);
   const [imageURL, setImageURL] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isEnabled, setIsEnabled] = useState(false);
-
-  const toggleSwitch = () => {
-    updateNotifyReplies(user.uid, !isEnabled).then(() => {
-      setIsEnabled((previousState) => !previousState);
-    });
-  };
-
-  const getNotifyRepliesSetting = async () => {
-    return await getUser(user.uid).then(
-      (currentUser) => currentUser.data().notifyReplies
-    );
-  };
-
-  useEffect(() => {
-    getNotifyRepliesSetting().then((notifyReplies) => {
-      if (notifyReplies === undefined) {
-        updateNotifyReplies(user.uid, false);
-      } else {
-        setIsEnabled(notifyReplies);
-      }
-    });
-  }, []);
 
   useEffect(() => {
     if (user.imageURL != "" && user.imageURL != null) {
@@ -114,19 +91,6 @@ const SettingsScreen = ({ navigation }) => {
       <Text style={styles.info}>
         Logged in as {user.name} with username {user.username}
       </Text>
-
-      {/* <View style={styles.switch}>
-        <Switch
-          trackColor={{ false: colors.gray_9, true: colors.accent1_5 }}
-          thumbColor={colors.gray_1}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleSwitch}
-          value={isEnabled}
-        />
-        <Text style={styles.notify}>
-          Notify me when users reply to a thought I replied to
-        </Text>
-      </View> */}
 
       {loading && (
         <ActivityIndicator
