@@ -165,7 +165,9 @@ const ThinkScreen = ({ navigation }) => {
             }
           />
           <Text style={styles.visibilityText}>
-            {visibility === "friends" ? "Friends" : "2nd degree"}
+            {visibility === "friends"
+              ? "Friends can see"
+              : "Friends of friends can see"}
           </Text>
         </TouchableOpacity>
       </View>
