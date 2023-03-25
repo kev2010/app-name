@@ -61,8 +61,8 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   image: {
-    width: 60,
-    height: 48,
+    width: 96,
+    height: 72,
     borderColor: "black",
     borderWidth: 1,
     borderRadius: 10,

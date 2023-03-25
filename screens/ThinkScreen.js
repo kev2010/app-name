@@ -167,7 +167,7 @@ const ThinkScreen = ({ navigation }) => {
           <Text style={styles.visibilityText}>
             {visibility === "friends"
               ? "Friends can see"
-              : "Friends of friends can see"}
+              : "Friends of friends can also see"}
           </Text>
         </TouchableOpacity>
       </View>
@@ -205,46 +205,46 @@ const ThinkScreen = ({ navigation }) => {
         )}
       </Animated.View>
       <View style={[styles.options, bottomStyle]}>
-        <View style={styles.leftOptions}>
-          <UploadImage image={image} updateImage={updateImage} />
+        <UploadImage image={image} updateImage={updateImage} />
+        <View style={styles.rightOptions}>
           <TouchableOpacity onPress={goToInviteScreen}>
             <Text style={styles.inviteText}>{invited.length} invited</Text>
           </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            paddingBottom: 4,
-            paddingRight: 24,
-          }}
-        >
-          <Text
-            style={[
-              styles.charCount,
-              {
-                fontFamily:
-                  thought.length > CONSTANTS.MAX_LENGTH
-                    ? "Nunito-Bold"
-                    : "Nunito-Regular",
-                color:
-                  thought.length > CONSTANTS.MAX_LENGTH
-                    ? colors.primary_5
-                    : colors.primary_3,
-              },
-            ]}
+          <View
+            style={{
+              flexDirection: "row",
+              paddingBottom: 4,
+              paddingRight: 24,
+            }}
           >
-            {thought.length}
-          </Text>
-          <Text
-            style={[
-              styles.charCount,
-              {
-                color: colors.primary_3,
-              },
-            ]}
-          >
-            /{CONSTANTS.MAX_LENGTH}
-          </Text>
+            <Text
+              style={[
+                styles.charCount,
+                {
+                  fontFamily:
+                    thought.length > CONSTANTS.MAX_LENGTH
+                      ? "Nunito-Bold"
+                      : "Nunito-Regular",
+                  color:
+                    thought.length > CONSTANTS.MAX_LENGTH
+                      ? colors.primary_5
+                      : colors.primary_3,
+                },
+              ]}
+            >
+              {thought.length}
+            </Text>
+            <Text
+              style={[
+                styles.charCount,
+                {
+                  color: colors.primary_3,
+                },
+              ]}
+            >
+              /{CONSTANTS.MAX_LENGTH}
+            </Text>
+          </View>
         </View>
       </View>
     </SafeAreaView>
@@ -367,14 +367,16 @@ const styles = StyleSheet.create({
     fontFamily: "Nunito-SemiBold",
     fontSize: 14,
   },
-  leftOptions: {
+  rightOptions: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
   },
   inviteText: {
     color: colors.primary_5,
     fontFamily: "Nunito-SemiBold",
     fontSize: 14,
+    marginBottom: 4,
+    marginRight: 24,
   },
 });
 
