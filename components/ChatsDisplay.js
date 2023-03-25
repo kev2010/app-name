@@ -93,7 +93,7 @@ const ChatsDisplay = ({ navigation, archived }) => {
     const q = query(
       collection(db, "thoughts"),
       where("participants", "array-contains", user.username),
-      where("time", ">=", cutoff)
+      where("lastInteraction", ">=", cutoff)
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -123,7 +123,7 @@ const ChatsDisplay = ({ navigation, archived }) => {
         uid: user.uid,
         username: user.username,
       }),
-      where("time", ">=", cutoff)
+      where("lastInteraction", ">=", cutoff)
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
