@@ -125,6 +125,10 @@ const SingleChatScreen = ({ navigation, route }) => {
   }, []);
 
   useEffect(() => {
+    scrollViewRef.current.scrollToEnd({ animated: true });
+  }, [message]);
+
+  useEffect(() => {
     updateLastReadTimestamps(route.params.id, user.username);
   }, [data]);
 
@@ -567,6 +571,8 @@ const SingleChatScreen = ({ navigation, route }) => {
           <TextInput
             style={styles.input}
             placeholder="Message"
+            multiline={true}
+            maxHeight={128}
             value={message}
             onChangeText={(text) => {
               setMessage(text);
@@ -673,7 +679,7 @@ const styles = StyleSheet.create({
   },
   inputView: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
     justifyContent: "space-between",
     padding: 10,
     width: "90%",
@@ -683,7 +689,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.almost_white,
     borderRadius: 15,
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingTop: 8,
+    paddingBottom: 8,
     fontFamily: "Nunito-Regular",
     fontSize: 16,
   },
@@ -691,6 +698,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 21.2,
     marginLeft: 16,
+    marginBottom: 8,
   },
 });
 
