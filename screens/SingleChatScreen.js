@@ -13,14 +13,11 @@ import {
   Platform,
 } from "react-native";
 import SingleChatHeader from "../components/SingleChatHeader";
-import { useNavigation } from "@react-navigation/native";
 import colors from "../assets/colors";
 import {
   getUser,
   getProfilePictureByUsername,
   getReactions,
-  getThought,
-  getThoughtImage,
   addComment,
   updateLastReadTimestamps,
 } from "../api";
@@ -39,7 +36,6 @@ import { db, storage } from "../firebaseConfig";
 const SingleChatScreen = ({ navigation, route }) => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useRecoilState(userState);
-  const [originalThought, setOriginalThought] = useState("");
   const [message, setMessage] = useState("");
   const [time, setTime] = useState(Date.now());
   const [disable, setDisable] = useState(true);
@@ -95,7 +91,7 @@ const SingleChatScreen = ({ navigation, route }) => {
     userNotificationTokens.forEach((token) => {
       sendPushNotification(
         token,
-        `${user.username} to "${originalThought}"`,
+        `${user.username} to "${thoughtData.thought}"`,
         message,
         {}
       );
@@ -202,7 +198,7 @@ const SingleChatScreen = ({ navigation, route }) => {
           ) {
             sendPushNotification(
               creator.data().notificationToken,
-              `${user.username} to "${originalThought}"`,
+              `${user.username} to "${thoughtData.thought}"`,
               message,
               {}
             );
