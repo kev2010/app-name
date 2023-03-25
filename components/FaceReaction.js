@@ -27,8 +27,30 @@ const FaceReaction = ({ thoughtUID, goBack }) => {
   useEffect(() => {
     if (permission && !permission.granted) {
       requestPermission();
+    } else if (permission && permission.granted === false) {
+      requestPermission();
     }
   }, [permission]);
+
+  if (permission && !permission.granted) {
+    // Camera permissions are not granted yet
+    return (
+      <View style={styles.rejectedContainer}>
+        <Text
+          style={{
+            textAlign: "center",
+            color: colors.primary_5,
+            fontFamily: "Nunito-SemiBold",
+            fontSize: 18,
+            padding: 12,
+          }}
+        >
+          To use the camera in the app, please go to your phone settings and
+          grant camera permission to App Name.
+        </Text>
+      </View>
+    );
+  }
 
   async function captureAndUploadPhoto() {
     if (cameraRef.current) {
@@ -84,6 +106,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  rejectedContainer: {
+    // flex: 1,
+    // justifyContent: "center",
+    // alignItems: "center",
+    width: "85%",
+    backgroundColor: colors.primary_1,
+    borderRadius: 15,
   },
   circularMask: {
     width: 350,
