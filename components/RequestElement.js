@@ -12,11 +12,13 @@ import colors from "../assets/colors";
 import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import { CONSTANTS } from "../constants";
+import { sendPushNotification } from "../notifications";
 
 const RequestElement = ({
   name,
   username,
   uid,
+  notificationToken,
   imageURL,
   acceptRequest,
   rejectRequest,
@@ -42,6 +44,12 @@ const RequestElement = ({
           text: "Yes",
           onPress: () => {
             acceptRequest(uid).then(() => {
+              sendPushNotification(
+                notificationToken,
+                `${user.name} [${user.username}]`,
+                `Accepted your friend request!`,
+                {}
+              );
               setLoading(false);
             });
           },

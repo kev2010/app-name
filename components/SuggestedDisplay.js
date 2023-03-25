@@ -108,6 +108,7 @@ const SuggestedDisplay = () => {
                         {
                           name: document.data().name,
                           username: document.data().username,
+                          notificationToken: document.data().notificationToken,
                           uid: document.id,
                           imageURL: profileImage,
                           type: "phone",
@@ -138,6 +139,7 @@ const SuggestedDisplay = () => {
             name: obj.user.data().name,
             username: obj.user.data().username,
             uid: obj.user.id,
+            notificationToken: obj.user.data().notificationToken,
             imageURL: obj.user.data().photoURL,
             mutuals: obj.mutualFriends,
             type: "mutual",
@@ -170,6 +172,7 @@ const SuggestedDisplay = () => {
             name={item.name}
             username={item.username}
             uid={item.uid}
+            notificationToken={item.notificationToken}
             imageURL={item.imageURL}
             addFriend={addUserAsFriend}
             sent={user.sentRequests}

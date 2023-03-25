@@ -34,6 +34,7 @@ const RequestsDisplay = ({ requests }) => {
               {
                 uid: uid,
                 imageURL: imageURL,
+                notificationToken: user.data().notificationToken,
                 name: user.data().name,
                 username: user.data().username,
               },
@@ -87,6 +88,7 @@ const RequestsDisplay = ({ requests }) => {
             username={item.username}
             uid={item.uid}
             imageURL={item.imageURL}
+            notificationToken={item.notificationToken}
             acceptRequest={acceptRequest}
             rejectRequest={rejectRequest}
             layout={layout}

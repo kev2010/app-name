@@ -12,6 +12,7 @@ import { useRecoilState } from "recoil";
 import { userState } from "../globalState";
 import colors from "../assets/colors";
 import { CONSTANTS } from "../constants";
+import { sendPushNotification } from "../notifications";
 
 const SuggestedElement = ({
   name,
@@ -19,6 +20,7 @@ const SuggestedElement = ({
   uid,
   imageURL,
   addFriend,
+  notificationToken,
   sent,
   layout,
   type,
@@ -43,6 +45,12 @@ const SuggestedElement = ({
           text: "Yes",
           onPress: () => {
             addFriend(uid).then(() => {
+              sendPushNotification(
+                notificationToken,
+                `${user.name} [${user.username}]`,
+                `Sent you a friend request!`,
+                {}
+              );
               setLoading(false);
             });
           },

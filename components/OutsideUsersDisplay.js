@@ -37,6 +37,7 @@ const OutsideUsersDisplay = ({ text }) => {
                   uid: otherUser.id,
                   imageURL: imageURL,
                   name: otherUser.data().name,
+                  notificationToken: otherUser.data().notificationToken,
                   username: otherUser.data().username,
                 },
               ].reduce((unique, o) => {
@@ -84,6 +85,7 @@ const OutsideUsersDisplay = ({ text }) => {
             <OutsideUserElement
               name={item.name}
               username={item.username}
+              notificationToken={item.notificationToken}
               uid={item.uid}
               imageURL={item.imageURL}
               addFriend={addUserAsFriend}
