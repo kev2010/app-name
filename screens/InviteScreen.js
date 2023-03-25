@@ -14,7 +14,7 @@ import { useRecoilState } from "recoil";
 import { userState, invitedState } from "../globalState";
 import { getUser, getProfilePicture } from "../api";
 
-const InviteScreen = ({ navigation, route }) => {
+const InviteScreen = ({ navigation }) => {
   const [user, setUser] = useRecoilState(userState);
   const [data, setData] = useState([]);
   const [invited, setInvited] = useRecoilState(invitedState);
@@ -37,6 +37,7 @@ const InviteScreen = ({ navigation, route }) => {
               {
                 uid: uid,
                 imageURL: imageURL,
+                notificationToken: user.data().notificationToken,
                 name: user.data().name,
                 username: user.data().username,
                 // check if the friend uid is in the previous selected friends list of objects

@@ -28,6 +28,7 @@ import {
 } from "../globalState";
 import { CONSTANTS } from "../constants";
 import { refreshFeed } from "../logic";
+import { sendPushNotification } from "../notifications";
 
 const ThinkScreen = ({ navigation }) => {
   // TODO: disable keyboard when the bottom sheet is deactivated (currently can click on the "hidden" component and keyboard will come up)
@@ -67,6 +68,17 @@ const ThinkScreen = ({ navigation }) => {
     };
   }, []);
 
+  const sendNotificationsTo = (userNotificationTokens) => {
+    userNotificationTokens.forEach((token) => {
+      sendPushNotification(
+        token,
+        `${user.name}`,
+        `Sent you a thought: ${thought}`,
+        {}
+      );
+    });
+  };
+
   const onSubmit = () => {
     console.log("about to submit ", thought);
     setLoading(true);
@@ -80,6 +92,8 @@ const ThinkScreen = ({ navigation }) => {
       visibility
     ).then((docID) => {
       console.log("uploaded the thought!", docID);
+      sendNotificationsTo(invited.map((user) => user.notificationToken));
+
       uploadThoughtImage(image, docID).then((downloadURL) => {
         console.log("good news! we're gooD!", downloadURL);
         addImageToThought(
@@ -106,9 +120,7 @@ const ThinkScreen = ({ navigation }) => {
   };
 
   const goToInviteScreen = () => {
-    navigation.navigate("Invite", {
-      previousSelected: invited,
-    });
+    navigation.navigate("Invite");
   };
 
   const goBack = () => {
