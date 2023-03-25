@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "Pontis",
-    "slug": "Pontis",
+    "name": "App Name",
+    "slug": "App-Name",
     "privacy": "unlisted",
-    "version": "1.4.8",
+    "version": "2.0",
     "platforms": [
       "ios",
       "android"
@@ -33,9 +33,10 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.kev2018.firstexpo",
-      "versionCode": 20,
+      "versionCode": 21,
       "permissions": [
-        "android.permission.RECORD_AUDIO"
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA"
       ]
     },
     "web": {
@@ -65,7 +66,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "3db2c8b7-7f82-40a4-9b76-4824f41c08d7"
+        "projectId": "f5f18413-caa2-4eda-af13-46c71adbef66"
       }
     }
   }
