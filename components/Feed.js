@@ -67,7 +67,7 @@ const Feed = ({
       style={{ flex: 1 }}
       showsVerticalScrollIndicator={false}
       data={Object.values(feedData).sort(function (x, y) {
-        return y.score - x.score;
+        return y.postTime - x.postTime;
       })}
       renderItem={({ item, index }) => (
         <TouchableOpacity
