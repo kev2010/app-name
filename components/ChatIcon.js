@@ -9,7 +9,6 @@ import { userState } from "../globalState";
 const ChatIcon = () => {
   const [user, setUser] = useRecoilState(userState);
   const [data, setData] = useState([]);
-  const userRef = doc(db, "users", user.uid);
   const [userData, setUserData] = useState(null);
   const [notificationCount, setNotificationCount] = useState(0);
 
@@ -25,11 +24,13 @@ const ChatIcon = () => {
         unreadThoughts.push(thought.uid);
       }
     });
+    console.log("the count is " + unreadThoughts.length);
     return unreadThoughts.length;
   };
 
   useEffect(() => {
     setNotificationCount(getNotificationCount(userData));
+    console.log("notification count triggered");
   }, [userData, data]);
 
   useEffect(() => {
@@ -38,10 +39,11 @@ const ChatIcon = () => {
     const q = query(
       collection(db, "thoughts"),
       where("participants", "array-contains", user.username),
-      where("time", ">=", cutoff)
+      where("lastInteraction", ">=", cutoff)
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
+      console.log("CHANGING q");
       const newData = snapshot.docs.map((doc) => ({
         ...doc.data(),
         uid: doc.id,
@@ -49,16 +51,35 @@ const ChatIcon = () => {
       setData(newData);
     });
 
-    const unsubscribeUser = onSnapshot(userRef, (snapshot) => {
-      const newUserData = snapshot.data();
-      setUserData(newUserData);
-    });
-
     // Clean up the listener when the component is unmounted
     return () => {
       unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    const userRef = doc(db, "users", user.uid);
+    const unsubscribeUser = onSnapshot(
+      userRef,
+      { includeMetadataChanges: true },
+      (snapshot) => {
+        console.log("CHANGING userRef");
+        const newUserData = snapshot.data();
+        if (
+          newUserData.manuallyMarkedUnread &&
+          JSON.stringify(newUserData.manuallyMarkedUnread) !==
+            JSON.stringify(userData.manuallyMarkedUnread)
+        ) {
+          console.log("SETTING NEW");
+          setUserData(newUserData);
+        }
+      }
+    );
+    // Clean up the listener when the component is unmounted
+    return () => {
+      unsubscribeUser();
+    };
+  }, [userData.manuallyMarkedUnread]);
 
   return (
     <View style={styles.imageContainer}>
