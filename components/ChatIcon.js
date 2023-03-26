@@ -19,6 +19,8 @@ const ChatIcon = () => {
         (ofUser === null ||
           !ofUser.manuallyMarkedUnread.includes(thought.uid)) &&
         thought.lastReadTimestamps !== undefined &&
+        thought.lastReadTimestamps[user.username] !== undefined &&
+        thought.lastReadTimestamps[user.username].time !== null &&
         thought.lastInteraction > thought.lastReadTimestamps[user.username].time
       ) {
         unreadThoughts.push(thought.uid);
