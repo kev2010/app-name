@@ -753,8 +753,7 @@ export async function getProfilePictureByUsername(username) {
     where("username", "==", username)
   );
   const userQuerySnapshot = await getDocs(userQuery);
-  const userUID = userQuerySnapshot.docs[0].id;
-  return getProfilePicture(userUID);
+  return userQuerySnapshot.docs[0].data().photoURL;
 }
 
 export async function getRecentReaction(thoughtUID) {

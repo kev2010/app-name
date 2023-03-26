@@ -24,13 +24,11 @@ const ChatIcon = () => {
         unreadThoughts.push(thought.uid);
       }
     });
-    console.log("the count is " + unreadThoughts.length);
     return unreadThoughts.length;
   };
 
   useEffect(() => {
     setNotificationCount(getNotificationCount(userData));
-    console.log("notification count triggered");
   }, [userData, data]);
 
   useEffect(() => {
@@ -63,14 +61,12 @@ const ChatIcon = () => {
       userRef,
       { includeMetadataChanges: true },
       (snapshot) => {
-        console.log("CHANGING userRef");
         const newUserData = snapshot.data();
         if (
           newUserData.manuallyMarkedUnread &&
           JSON.stringify(newUserData.manuallyMarkedUnread) !==
             JSON.stringify(userData.manuallyMarkedUnread)
         ) {
-          console.log("SETTING NEW");
           setUserData(newUserData);
         }
       }
