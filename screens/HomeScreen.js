@@ -104,6 +104,12 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
+  const getUsername = async () => {
+    return await getUser(user.uid).then(
+      (currentUser) => currentUser.data().username
+    );
+  };
+
   const registerNotification = () => {
     getNotificationToken().then((token) => {
       if (token === undefined || token === "") {
@@ -182,6 +188,19 @@ const HomeScreen = ({ navigation }) => {
             updateUserPhoneNumber(user.uid, user.phoneNumber);
           }
         });
+      }
+    });
+  }, []);
+
+  // Syncing firebase username with async storage username - was causing issues with grabbing profile pictures
+  useEffect(() => {
+    getUsername().then((username) => {
+      if (username != user.username) {
+        console.log("changing username", username, user.username);
+        setUser((user) => ({
+          ...user,
+          username: username,
+        }));
       }
     });
   }, []);

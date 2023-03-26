@@ -276,7 +276,10 @@ export async function addThought(
                 username: username,
               }
             : {},
-          [`lastReadTimestamps.${username}`]: serverTimestamp(),
+          [`lastReadTimestamps.${username}`]: {
+            time: serverTimestamp(),
+            photoURL: profileURL,
+          },
         }).then(() => {
           resolve(docRef.id);
         });
@@ -307,7 +310,10 @@ export async function addImageToThought(
         time: serverTimestamp(),
         username: username,
       },
-      [`lastReadTimestamps.${username}`]: serverTimestamp(),
+      [`lastReadTimestamps.${username}`]: {
+        time: serverTimestamp(),
+        photoURL: profileURL,
+      },
     });
 
     await addDoc(collection(db, `thoughts/${thoughtUID}/reactions`), {
@@ -433,7 +439,10 @@ export async function addComment(
           photoURL: userProfilePic,
         },
         participants: arrayUnion(username),
-        [`lastReadTimestamps.${username}`]: serverTimestamp(),
+        [`lastReadTimestamps.${username}`]: {
+          time: serverTimestamp(),
+          photoURL: userProfilePic,
+        },
       }).then(() => {
         resolve(true);
       });
@@ -754,6 +763,7 @@ export async function getProfilePictureByUsername(username) {
   );
   console.log("username", username);
   const userQuerySnapshot = await getDocs(userQuery);
+  console.log("looking at", userQuerySnapshot.docs[0].data());
   return userQuerySnapshot.docs[0].data().photoURL;
 }
 
@@ -827,10 +837,13 @@ export async function getOriginalThoughtsFromReactions(reactions, cutoff) {
   return Promise.all(results);
 }
 
-export async function updateLastReadTimestamps(thoughtUID, username) {
+export async function updateLastReadTimestamps(thoughtUID, username, photoURL) {
   const thoughtsRef = doc(db, "thoughts", thoughtUID);
   updateDoc(thoughtsRef, {
-    [`lastReadTimestamps.${username}`]: serverTimestamp(),
+    [`lastReadTimestamps.${username}`]: {
+      time: serverTimestamp(),
+      photoURL: photoURL,
+    },
   });
 }
 

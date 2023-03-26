@@ -6,6 +6,7 @@ import {
   addDoc,
   updateDoc,
   query,
+  where,
   orderBy,
   limit,
   getDoc,
@@ -369,6 +370,29 @@ export async function addVisibilityFieldToThoughts() {
       updateDoc(doc(db, "thoughts", docData.id), {
         visibility: "friends",
       });
+    });
+  });
+}
+
+// For each thought, change the lastReadTimestamps object to a map of usernames as keys and a map of the profile URL and time as values
+export async function changeLastReadTimestampsObjectToMap() {
+  const thoughtsRef = collection(db, "thoughts");
+  const thoughtsSnapshot = await getDocs(thoughtsRef);
+  thoughtsSnapshot.forEach(async (docData) => {
+    let lastReadTimestampsMap = {};
+    for (const username of Object.keys(docData.data().lastReadTimestamps)) {
+      const usersRef = collection(db, "users");
+      const usersSnapshot = await getDocs(
+        query(usersRef, where("username", "==", username))
+      );
+      lastReadTimestampsMap[username] = {
+        profileURL: usersSnapshot.docs[0].data().photoURL,
+        time: docData.data().lastReadTimestamps[username],
+      };
+    }
+    // console.log("lastReadTimestampsMap", lastReadTimestampsMap);
+    updateDoc(doc(db, "thoughts", docData.id), {
+      lastReadTimestamps: lastReadTimestampsMap,
     });
   });
 }

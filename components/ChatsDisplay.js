@@ -259,7 +259,7 @@ const ChatsDisplay = ({ navigation, archived }) => {
                       unread={
                         userData.manuallyMarkedUnread.includes(item.uid) ||
                         item.lastInteraction >
-                          item.lastReadTimestamps[user.username]
+                          item.lastReadTimestamps[user.username].time
                       }
                     />
                   </TouchableOpacity>

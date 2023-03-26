@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import {
   View,
   Text,
@@ -16,7 +22,6 @@ import SingleChatHeader from "../components/SingleChatHeader";
 import colors from "../assets/colors";
 import {
   getUser,
-  getProfilePictureByUsername,
   getReactions,
   addComment,
   updateLastReadTimestamps,
@@ -48,26 +53,29 @@ const SingleChatScreen = ({ navigation, route }) => {
   const [thoughtData] = useDocumentData(thoughtRef, {
     idField: "id",
   });
-  const [pendingProfilePictures, setPendingProfilePictures] = useState([]);
 
   const [lastReadMessageIndices, setLastReadMessageIndices] = useState({});
 
   const updateLastReadMessageIndices = () => {
+    console.log("updating last read message indices");
     const newLastReadMessageIndices = {};
 
     if (thoughtData && data && thoughtData.lastReadTimestamps) {
       // Iterate through the lastReadTimestamps map
-      for (const [username, timestamp] of Object.entries(
+      for (const [username, userValues] of Object.entries(
         thoughtData.lastReadTimestamps
       )) {
         // Find the last message index that the user has read
         for (let i = data.length - 1; i >= 0; i--) {
           if (
-            timestamp &&
+            userValues.time &&
             data[i].time &&
-            timestamp.toDate() >= data[i].time.toDate()
+            userValues.time.toDate() >= data[i].time.toDate()
           ) {
-            newLastReadMessageIndices[username] = i;
+            newLastReadMessageIndices[username] = {
+              index: i,
+              profileURL: userValues.profileURL,
+            };
             break;
           }
         }
@@ -130,60 +138,38 @@ const SingleChatScreen = ({ navigation, route }) => {
   }, [message]);
 
   useEffect(() => {
-    console.log("updati????");
-    updateLastReadTimestamps(route.params.id, user.username);
+    updateLastReadTimestamps(route.params.id, user.username, user.imageURL);
   }, [data]);
 
-  const renderReadReceipts = (messageIndex) => {
-    console.log("render");
+  const renderReadReceipts = useMemo(() => {
     // Render the mini profile pictures only at the last message a user has read
-    return Object.entries(lastReadMessageIndices).map(
-      ([username, lastIndex], index) => {
-        if (messageIndex === lastIndex && username != user.username) {
-          let profile = data.find((msg) => msg.username === username);
-          if (profile === undefined) {
-            // Check if we already have the profile picture
-            const existingProfile = pendingProfilePictures.find(
-              (p) => p.username === username
-            );
-            if (existingProfile) {
-              profile = { photoURL: existingProfile.photoURL };
-            } else {
-              // Call getProfilePictureByUsername and update profilePictures when the URL is returned
-              getProfilePictureByUsername(username).then((url) => {
-                if (url != undefined) {
-                  const newProfilePictures = [
-                    ...pendingProfilePictures,
-                    { username, photoURL: url },
-                  ];
-                  setPendingProfilePictures(newProfilePictures);
+    return (messageIndex) =>
+      Object.entries(lastReadMessageIndices).map(
+        ([username, values], index) => {
+          if (messageIndex === values.index && username != user.username) {
+            return (
+              <Image
+                key={index}
+                source={
+                  values.profileURL != ""
+                    ? { uri: values.profileURL }
+                    : require("../assets/default.jpeg")
                 }
-              });
-            }
+                style={{
+                  width: 18,
+                  height: 18,
+                  borderRadius: 12,
+                  marginRight: 4,
+                  marginBottom: 8,
+                  marginTop: 4,
+                }}
+              />
+            );
           }
-          return (
-            <Image
-              key={index}
-              source={
-                profile != undefined && profile.photoURL != ""
-                  ? { uri: profile.photoURL }
-                  : require("../assets/default.jpeg")
-              }
-              style={{
-                width: 18,
-                height: 18,
-                borderRadius: 12,
-                marginRight: 4,
-                marginBottom: 8,
-                marginTop: 4,
-              }}
-            />
-          );
+          return null;
         }
-        return null;
-      }
-    );
-  };
+      );
+  }, [lastReadMessageIndices]);
 
   const onSendMessage = () => {
     console.log("Sending message: " + message);
@@ -246,8 +232,7 @@ const SingleChatScreen = ({ navigation, route }) => {
   };
 
   // Function to render messages
-  const renderMessages = () => {
-    console.log("rednerMessages");
+  const renderMessages = useCallback(() => {
     const messages = data.map((message) => {
       return {
         username: message.username,
@@ -544,7 +529,7 @@ const SingleChatScreen = ({ navigation, route }) => {
         );
       }
     });
-  };
+  }, [data, lastReadMessageIndices]);
 
   return (
     <KeyboardAvoidingView
