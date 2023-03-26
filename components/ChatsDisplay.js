@@ -172,9 +172,11 @@ const ChatsDisplay = ({ navigation, archived }) => {
             ...invitedData,
             ...data
               .filter((thought) =>
-                archived
-                  ? userData.archived.includes(thought.uid)
-                  : !userData.archived.includes(thought.uid)
+                userData != null
+                  ? archived
+                    ? userData.archived.includes(thought.uid)
+                    : !userData.archived.includes(thought.uid)
+                  : false
               )
               .sort(function (x, y) {
                 return y.lastInteraction - x.lastInteraction;

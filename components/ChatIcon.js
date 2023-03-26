@@ -9,7 +9,7 @@ import { userState } from "../globalState";
 const ChatIcon = () => {
   const [user, setUser] = useRecoilState(userState);
   const [data, setData] = useState([]);
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState({ manuallyMarkedUnread: [] });
   const [notificationCount, setNotificationCount] = useState(0);
 
   const getNotificationCount = (ofUser) => {
@@ -64,6 +64,7 @@ const ChatIcon = () => {
         const newUserData = snapshot.data();
         if (
           newUserData.manuallyMarkedUnread &&
+          userData != null &&
           JSON.stringify(newUserData.manuallyMarkedUnread) !==
             JSON.stringify(userData.manuallyMarkedUnread)
         ) {

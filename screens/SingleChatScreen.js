@@ -79,6 +79,7 @@ const SingleChatScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     updateLastReadMessageIndices();
+    console.log("UDDD");
   }, [thoughtData, data]);
 
   const scrollViewRef = useRef(null);
@@ -129,10 +130,12 @@ const SingleChatScreen = ({ navigation, route }) => {
   }, [message]);
 
   useEffect(() => {
+    console.log("updati????");
     updateLastReadTimestamps(route.params.id, user.username);
   }, [data]);
 
   const renderReadReceipts = (messageIndex) => {
+    console.log("render");
     // Render the mini profile pictures only at the last message a user has read
     return Object.entries(lastReadMessageIndices).map(
       ([username, lastIndex], index) => {
@@ -244,6 +247,7 @@ const SingleChatScreen = ({ navigation, route }) => {
 
   // Function to render messages
   const renderMessages = () => {
+    console.log("rednerMessages");
     const messages = data.map((message) => {
       return {
         username: message.username,

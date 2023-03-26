@@ -752,6 +752,7 @@ export async function getProfilePictureByUsername(username) {
     collection(db, "users"),
     where("username", "==", username)
   );
+  console.log("username", username);
   const userQuerySnapshot = await getDocs(userQuery);
   return userQuerySnapshot.docs[0].data().photoURL;
 }
