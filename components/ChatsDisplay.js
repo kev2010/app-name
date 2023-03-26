@@ -232,7 +232,7 @@ const ChatsDisplay = ({ navigation, archived }) => {
                 >
                   <TouchableOpacity
                     key={index.toString()}
-                    onPress={async () => {
+                    onPress={() => {
                       removeManuallyMarkedUnread(user.uid, item.uid);
                       navigation.navigate("SingleChat", {
                         id: item.uid,

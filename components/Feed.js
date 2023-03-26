@@ -11,7 +11,7 @@ import { calculateTimeDiffFromNow } from "../helpers";
 import { refreshFeed } from "../logic";
 import { useRecoilState } from "recoil";
 import { feedDataState, refreshingState } from "../globalState";
-import { checkUserPostedToday } from "../api";
+import { checkUserPostedToday, removeManuallyMarkedUnread } from "../api";
 import { CONSTANTS } from "../constants";
 
 const Feed = ({
@@ -73,6 +73,7 @@ const Feed = ({
         <TouchableOpacity
           key={index.toString()}
           onPress={() => {
+            removeManuallyMarkedUnread(uid, item.thoughtUID);
             navigation.navigate("SingleChat", {
               creatorID: item.creatorID,
               id: item.id,
