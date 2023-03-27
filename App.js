@@ -20,6 +20,7 @@ export default function App() {
     "Nunito-Medium": require("./assets/fonts/Nunito-Medium.ttf"),
     "Nunito-Regular": require("./assets/fonts/Nunito-Regular.ttf"),
     "Nunito-SemiBold": require("./assets/fonts/Nunito-SemiBold.ttf"),
+    "Nunito-Italic": require("./assets/fonts/Nunito-Italic.ttf"),
   });
 
   const [assets, error] = useAssets([

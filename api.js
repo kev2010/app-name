@@ -24,6 +24,7 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { db, storage } from "./firebaseConfig";
+import { CONSTANTS } from "./constants";
 const _ = require("lodash");
 
 // TODO: Needed because of dumb bug of "add document" after Firebase phone number authentication. So to circumvent it, we do a dummy call BEFORE we've been signed in and then add the user during "onSubmit" in UsernameScreen. Why does this work? I don't know bro.
@@ -427,7 +428,7 @@ export async function addComment(
       time: serverTimestamp(),
       imageURL: "",
       photoURL: userProfilePic,
-    }).then(() => {
+    }).then((doc) => {
       updateDoc(originalThoughtRef, {
         lastInteraction: serverTimestamp(),
         lastReaction: {
@@ -445,8 +446,40 @@ export async function addComment(
           photoURL: userProfilePic,
         },
       }).then(() => {
-        resolve(true);
+        resolve(doc.id);
       });
+    });
+  });
+}
+
+export async function editComment(thoughtUID, docID, text) {
+  return new Promise((resolve, reject) => {
+    const reactionsRef = collection(db, `thoughts/${thoughtUID}/reactions`);
+    const docRef = doc(reactionsRef, docID);
+    // Update the text field of the document
+    updateDoc(docRef, {
+      text: text,
+    }).then(() => {
+      // Update the original thought's last reaction if it was the edited comment
+      getDoc(doc(db, "thoughts", thoughtUID)).then((thoughtData) => {
+        if (
+          thoughtData.data().lastReaction.username === CONSTANTS.BOT_USERNAME &&
+          thoughtData.data().lastReaction.text === CONSTANTS.BOT_THINKING_TEXT
+        ) {
+          updateDoc(doc(db, "thoughts", thoughtUID), {
+            lastReaction: {
+              name: thoughtData.data().lastReaction.name,
+              originalThought: thoughtData.data().lastReaction.originalThought,
+              username: thoughtData.data().lastReaction.username,
+              text: text,
+              time: thoughtData.data().lastReaction.time,
+              imageURL: thoughtData.data().lastReaction.imageURL,
+              photoURL: thoughtData.data().lastReaction.photoURL,
+            },
+          });
+        }
+      });
+      resolve(true);
     });
   });
 }

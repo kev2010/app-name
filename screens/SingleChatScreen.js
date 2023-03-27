@@ -25,6 +25,7 @@ import {
   getReactions,
   addComment,
   updateLastReadTimestamps,
+  editComment,
 } from "../api";
 import { calculateTimeDiffFromNow } from "../helpers";
 import { useRecoilState } from "recoil";
@@ -185,12 +186,12 @@ const SingleChatScreen = ({ navigation, route }) => {
   const generateResponse = async (prompt) => {
     try {
       // Initialize with the system prompt token count
-      let estimateTokenCount = 131;
+      let estimateTokenCount = 156;
       const messages = [
         {
           role: "system",
           content:
-            "You are Thonk, a personal chat assistant for the app called App Name. Every conversation that users have on the app will be different, and your job is to assist them in any way. Some examples include summarizing conversations, suggesting conversation topics, and helping with chat moderation. The goal of the app is to enable deeper connections among friends virtually, and you will do everything in your power to achieve that. Everything you say should be accurate, creative, and playful! You can introduce yourself by suggesting things you can do. Finally, do NOT begin your messages with `thonk: `, just start with what you are going to say.",
+            "You are Thonk, a personal chat assistant for the app called App Name. Every conversation that users have on the app will be different, and your job is to assist them in any way. Some examples include summarizing conversations, suggesting conversation topics, providing unique insights, and helping with chat moderation. The goal of the app is to enable deeper connections among friends virtually, and you will do everything in your power to achieve that. Your north star is to provide as many `aha` and `wow` moments to the discussion participants. Everything you say should be accurate, creative, and playful! You can introduce yourself by suggesting things you can do. Finally, do NOT begin your messages with `thonk: `, just start with what you are going to say. Break your messages into many paragraphs so that users can easily read them.",
         },
       ];
 
@@ -202,7 +203,7 @@ const SingleChatScreen = ({ navigation, route }) => {
             : message.username
         }: ${message.text}`;
 
-        contentTokens = content.length / 4;
+        let contentTokens = content.length / 4;
         if (estimateTokenCount + contentTokens <= 8000) {
           estimateTokenCount += contentTokens;
           messages.push({
@@ -217,24 +218,32 @@ const SingleChatScreen = ({ navigation, route }) => {
         content: `${user.username}: ${prompt}`,
       });
 
-      const response = await openai.createChatCompletion({
-        model: "gpt-4",
-        messages: messages,
-        max_tokens: 500,
-        temperature: 0.7,
-      });
-      console.log(
-        "generated response",
-        response.data.choices[0].message.content,
-        messages
-      );
       addComment(
         route.params.id,
         CONSTANTS.BOT_ID,
         CONSTANTS.BOT_IMAGE_URL,
         CONSTANTS.BOT_USERNAME,
-        response.data.choices[0].message.content
-      );
+        CONSTANTS.BOT_THINKING_TEXT
+      ).then(async (docID) => {
+        const response = await openai.createChatCompletion({
+          model: "gpt-4",
+          messages: messages,
+          max_tokens: 500,
+          temperature: 0.7,
+        });
+
+        console.log(
+          "generated response",
+          response.data.choices[0].message.content,
+          messages
+        );
+
+        editComment(
+          route.params.id,
+          docID,
+          response.data.choices[0].message.content
+        );
+      });
     } catch (error) {
       if (error.response) {
         console.error(error.response.data);
@@ -543,7 +552,19 @@ const SingleChatScreen = ({ navigation, route }) => {
                       <Text style={styles.timestamp}>{message.timestamp}</Text>
                     </View>
                     <View style={styles.otherTextBubble}>
-                      <Autolink style={styles.otherText} text={message.text} />
+                      <Autolink
+                        style={[
+                          styles.otherText,
+                          {
+                            fontFamily:
+                              message.username === CONSTANTS.BOT_USERNAME &&
+                              message.text === CONSTANTS.BOT_THINKING_TEXT
+                                ? "Nunito-Italic"
+                                : "Nunito-Regular",
+                          },
+                        ]}
+                        text={message.text}
+                      />
                     </View>
                   </View>
                 )}

@@ -8,4 +8,5 @@ export const CONSTANTS = {
   BOT_IMAGE_URL:
     "https://firebasestorage.googleapis.com/v0/b/thoughts-f813e.appspot.com/o/profileImages%2FzaVTXDrvP6VacNLbNc2jugzCCOZ2.jpg?alt=media&token=d892daf7-4d61-4c41-b0b2-b2ad76269943",
   BOT_USERNAME: "thonk",
+  BOT_THINKING_TEXT: "Thinking... (this might take 5-10 seconds)",
 };
