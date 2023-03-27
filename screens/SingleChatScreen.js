@@ -37,6 +37,15 @@ import {
 } from "react-firebase-hooks/firestore";
 import { collection, query, orderBy, doc } from "firebase/firestore";
 import { db, storage } from "../firebaseConfig";
+import "react-native-url-polyfill/auto";
+import { OPENAI_API_KEY } from "@env";
+import { Configuration, OpenAIApi } from "openai";
+import { CONSTANTS } from "../constants";
+const configuration = new Configuration({
+  organization: "org-2ANEl8mee17FP83I60Co5aRR",
+  apiKey: OPENAI_API_KEY,
+});
+const openai = new OpenAIApi(configuration);
 
 const SingleChatScreen = ({ navigation, route }) => {
   const [loading, setLoading] = useState(false);
@@ -144,7 +153,11 @@ const SingleChatScreen = ({ navigation, route }) => {
     return (messageIndex) =>
       Object.entries(lastReadMessageIndices).map(
         ([username, values], index) => {
-          if (messageIndex === values.index && username != user.username) {
+          if (
+            username != CONSTANTS.BOT_USERNAME &&
+            messageIndex === values.index &&
+            username != user.username
+          ) {
             return (
               <Image
                 key={index}
@@ -169,6 +182,68 @@ const SingleChatScreen = ({ navigation, route }) => {
       );
   }, [lastReadMessageIndices]);
 
+  const generateResponse = async (prompt) => {
+    try {
+      // Initialize with the system prompt token count
+      let estimateTokenCount = 131;
+      const messages = [
+        {
+          role: "system",
+          content:
+            "You are Thonk, a personal chat assistant for the app called App Name. Every conversation that users have on the app will be different, and your job is to assist them in any way. Some examples include summarizing conversations, suggesting conversation topics, and helping with chat moderation. The goal of the app is to enable deeper connections among friends virtually, and you will do everything in your power to achieve that. Everything you say should be accurate, creative, and playful! You can introduce yourself by suggesting things you can do. Finally, do NOT begin your messages with `thonk: `, just start with what you are going to say.",
+        },
+      ];
+
+      // Add previous messages to the messages array
+      data.reverse().forEach((message) => {
+        let content = `${
+          message.name.id === CONSTANTS.BOT_ID
+            ? CONSTANTS.BOT_USERNAME
+            : message.username
+        }: ${message.text}`;
+
+        contentTokens = content.length / 4;
+        if (estimateTokenCount + contentTokens <= 8000) {
+          estimateTokenCount += contentTokens;
+          messages.push({
+            role: message.name.id === CONSTANTS.BOT_ID ? "system" : "user",
+            content: content,
+          });
+        }
+      });
+
+      messages.push({
+        role: "user",
+        content: `${user.username}: ${prompt}`,
+      });
+
+      const response = await openai.createChatCompletion({
+        model: "gpt-4",
+        messages: messages,
+        max_tokens: 500,
+        temperature: 0.7,
+      });
+      console.log(
+        "generated response",
+        response.data.choices[0].message.content,
+        messages
+      );
+      addComment(
+        route.params.id,
+        CONSTANTS.BOT_ID,
+        CONSTANTS.BOT_IMAGE_URL,
+        CONSTANTS.BOT_USERNAME,
+        response.data.choices[0].message.content
+      );
+    } catch (error) {
+      if (error.response) {
+        console.error(error.response.data);
+      } else {
+        console.log(error.message);
+      }
+    }
+  };
+
   const onSendMessage = () => {
     console.log("Sending message: " + message);
     setLoading(true);
@@ -179,6 +254,11 @@ const SingleChatScreen = ({ navigation, route }) => {
       user.username,
       message
     ).then(() => {
+      if (message[0] == "/") {
+        // Activate GPT-4
+        generateResponse(message.slice(1));
+      }
+
       // Make sure we don't send a push notification if the user replies to their own post!
       if (route.params.creatorID != user.uid) {
         getUser(route.params.creatorID).then((creator) => {
@@ -207,7 +287,10 @@ const SingleChatScreen = ({ navigation, route }) => {
             reactionDoc.data().name.id != route.params.creatorID
           ) {
             getUser(reactionDoc.data().name.id).then((userData) => {
-              if (!userData.data().archived.includes(route.params.id)) {
+              if (
+                userData.data().archived === undefined ||
+                !userData.data().archived.includes(route.params.id)
+              ) {
                 seen.add(userData.data().notificationToken);
               }
 
@@ -240,7 +323,7 @@ const SingleChatScreen = ({ navigation, route }) => {
         text: message.text,
         timestamp:
           message.time === null
-            ? new Date()
+            ? calculateTimeDiffFromNow(new Date())
             : calculateTimeDiffFromNow(message.time.toDate()),
       };
     });
@@ -557,7 +640,7 @@ const SingleChatScreen = ({ navigation, route }) => {
         <View style={styles.inputView}>
           <TextInput
             style={styles.input}
-            placeholder="Message"
+            placeholder="Message or try /hello!"
             multiline={true}
             maxHeight={128}
             value={message}

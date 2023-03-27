@@ -56,6 +56,7 @@ export async function createUser(uid, displayName, username) {
     friendRequests: [],
     sentRequests: [],
     manuallyMarkedUnread: [],
+    archived: [],
     photoURL: "",
   });
 }
