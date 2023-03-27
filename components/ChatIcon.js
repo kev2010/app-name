@@ -43,7 +43,6 @@ const ChatIcon = () => {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      console.log("CHANGING q");
       const newData = snapshot.docs.map((doc) => ({
         ...doc.data(),
         uid: doc.id,

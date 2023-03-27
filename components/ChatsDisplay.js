@@ -251,9 +251,11 @@ const ChatsDisplay = ({ navigation, archived }) => {
                       }
                       thought={item.thought}
                       lastInteraction={item.lastInteraction}
+                      lastReadTimestamps={item.lastReadTimestamps}
                       profileURL={item.lastReaction.photoURL}
                       participants={item.participants}
                       currentUser={user.username}
+                      currentUserPicture={user.imageURL}
                       username={item.lastReaction.username}
                       text={item.lastReaction.text}
                       unread={

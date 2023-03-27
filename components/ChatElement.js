@@ -7,11 +7,13 @@ const ChatElement = ({
   index,
   text,
   currentUser,
+  currentUserPicture,
   username,
   profileURL,
   participants,
   unread,
   lastInteraction,
+  lastReadTimestamps,
   thought,
 }) => {
   return (
@@ -81,6 +83,69 @@ const ChatElement = ({
               ? "0s"
               : calculateTimeDiffFromNow(lastInteraction.toDate())}
           </Text>
+          {lastReadTimestamps &&
+            username === currentUser &&
+            // Filter out the current user
+
+            Object.entries(lastReadTimestamps)
+              .filter(
+                (userObj) =>
+                  userObj[1].photoURL != currentUserPicture &&
+                  userObj[1].time.toDate() >= lastInteraction.toDate()
+              )
+              .map((userObj, index) => {
+                if (index < 3) {
+                  return (
+                    <Image
+                      key={index}
+                      style={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: 16,
+                        borderColor: colors.almost_white,
+                        borderWidth: 1,
+                        marginLeft: index == 0 ? 4 : -6,
+                      }}
+                      source={
+                        userObj[1].photoURL != ""
+                          ? { uri: userObj[1].photoURL }
+                          : require("../assets/default.jpeg")
+                      }
+                    />
+                  );
+                } else if (index === 3) {
+                  return (
+                    <View
+                      key={index}
+                      style={{
+                        width: 28,
+                        height: 20,
+                        borderRadius: 14,
+                        borderColor: colors.almost_white,
+                        borderWidth: 1,
+                        marginLeft: 2,
+                        backgroundColor: colors.gray_1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: colors.gray_3,
+                          fontSize: 12,
+                          fontWeight: "bold",
+                          fontFamily: "Nunito-SemiBold",
+                        }}
+                      >
+                        +
+                        {Object.entries(lastReadTimestamps).filter(
+                          (userObj) => userObj[1].photoURL != currentUserPicture
+                        ).length - 3}
+                      </Text>
+                    </View>
+                  );
+                }
+              })}
         </View>
       </View>
     </View>
@@ -121,8 +186,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   profileImage: {
-    width: 24,
-    height: 24,
+    width: 32,
+    height: 32,
     borderRadius: 100,
     marginRight: 4,
   },
@@ -144,7 +209,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   row3: {
-    width: "80%",
+    width: "55%",
     flexDirection: "row",
     alignItems: "center",
     marginTop: 6,

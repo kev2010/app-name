@@ -376,9 +376,11 @@ export async function addVisibilityFieldToThoughts() {
 
 // For each thought, change the lastReadTimestamps object to a map of usernames as keys and a map of the profile URL and time as values
 export async function changeLastReadTimestampsObjectToMap() {
+  console.log("changing lastReadTimestamps object to map");
   const thoughtsRef = collection(db, "thoughts");
   const thoughtsSnapshot = await getDocs(thoughtsRef);
   thoughtsSnapshot.forEach(async (docData) => {
+    console.log("changing", docData.id);
     let lastReadTimestampsMap = {};
     for (const username of Object.keys(docData.data().lastReadTimestamps)) {
       const usersRef = collection(db, "users");
@@ -386,7 +388,7 @@ export async function changeLastReadTimestampsObjectToMap() {
         query(usersRef, where("username", "==", username))
       );
       lastReadTimestampsMap[username] = {
-        profileURL: usersSnapshot.docs[0].data().photoURL,
+        photoURL: usersSnapshot.docs[0].data().photoURL,
         time: docData.data().lastReadTimestamps[username],
       };
     }

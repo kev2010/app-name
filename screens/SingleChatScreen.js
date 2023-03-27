@@ -57,7 +57,6 @@ const SingleChatScreen = ({ navigation, route }) => {
   const [lastReadMessageIndices, setLastReadMessageIndices] = useState({});
 
   const updateLastReadMessageIndices = () => {
-    console.log("updating last read message indices");
     const newLastReadMessageIndices = {};
 
     if (thoughtData && data && thoughtData.lastReadTimestamps) {
@@ -74,7 +73,7 @@ const SingleChatScreen = ({ navigation, route }) => {
           ) {
             newLastReadMessageIndices[username] = {
               index: i,
-              profileURL: userValues.profileURL,
+              photoURL: userValues.photoURL,
             };
             break;
           }
@@ -87,7 +86,6 @@ const SingleChatScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     updateLastReadMessageIndices();
-    console.log("UDDD");
   }, [thoughtData, data]);
 
   const scrollViewRef = useRef(null);
@@ -151,8 +149,8 @@ const SingleChatScreen = ({ navigation, route }) => {
               <Image
                 key={index}
                 source={
-                  values.profileURL != ""
-                    ? { uri: values.profileURL }
+                  values.photoURL != ""
+                    ? { uri: values.photoURL }
                     : require("../assets/default.jpeg")
                 }
                 style={{
