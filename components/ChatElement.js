@@ -91,6 +91,7 @@ const ChatElement = ({
               .filter(
                 (userObj) =>
                   userObj[1].photoURL != currentUserPicture &&
+                  userObj[1].time != null &&
                   userObj[1].time.toDate() >= lastInteraction.toDate()
               )
               .map((userObj, index) => {
