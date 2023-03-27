@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   FlatList,
   TouchableOpacity,
@@ -11,7 +11,11 @@ import { calculateTimeDiffFromNow } from "../helpers";
 import { refreshFeed } from "../logic";
 import { useRecoilState } from "recoil";
 import { feedDataState, refreshingState } from "../globalState";
-import { checkUserPostedToday, removeManuallyMarkedUnread } from "../api";
+import {
+  checkUserPostedToday,
+  removeManuallyMarkedUnread,
+  addView,
+} from "../api";
 import { CONSTANTS } from "../constants";
 
 const Feed = ({
@@ -40,6 +44,18 @@ const Feed = ({
       thought: "Your feed is a bit empty! Try adding some friends 😎",
     },
   ];
+
+  const onViewableItemsChanged = useRef(({ viewableItems }) => {
+    // console.log("Visible items are:", viewableItems);
+    console.log(viewableItems.length);
+    viewableItems.forEach((thought) => {
+      addView(uid, thought.item.id);
+    });
+  }).current;
+
+  const viewabilityConfig = {
+    itemVisiblePercentThreshold: 100, // This means an item is considered viewable when 50% or more of it is visible.
+  };
 
   // TODO: Should this logic be placed in the Feed componenet or HomeScreen?
   const refreshThoughts = () => {
@@ -92,6 +108,7 @@ const Feed = ({
             collabs={item.collabs}
             emojis={item.emojis}
             participants={item.participants}
+            views={item.views}
             thoughtUID={item.thoughtUID}
             thought={item.thought}
             showTrash={false}
@@ -105,6 +122,8 @@ const Feed = ({
         </TouchableOpacity>
       )}
       keyExtractor={(item) => item.id}
+      onViewableItemsChanged={onViewableItemsChanged}
+      viewabilityConfig={viewabilityConfig}
       refreshControl={
         <RefreshControl
           refreshing={refreshing}

@@ -225,12 +225,16 @@ const Thought = (props) => {
         </View>
         <Text style={styles.thought}>{collabsText}</Text>
         <View style={styles.actions}>
-          <Image
+          {/* <Image
             style={styles.people}
             source={require("../assets/people.png")}
           />
           <Text style={styles.number}>
             {props.participants === undefined ? 0 : props.participants.length}
+          </Text> */}
+          <Image style={styles.views} source={require("../assets/views.png")} />
+          <Text style={styles.number}>
+            {props.views === undefined ? 0 : props.views}
           </Text>
         </View>
       </View>
@@ -381,6 +385,7 @@ const styles = StyleSheet.create({
     color: colors.gray_3,
     fontFamily: "Nunito-SemiBold",
     fontSize: 14,
+    marginBottom: -2,
   },
   lockedRow: {
     flexDirection: "row",
@@ -398,6 +403,13 @@ const styles = StyleSheet.create({
     color: colors.gray_3,
     fontFamily: "Nunito-Regular",
     flex: 1,
+  },
+  views: {
+    width: 14,
+    height: 12,
+    marginRight: 4,
+    // Weird - but to align things??
+    marginBottom: 0,
   },
 });
 
