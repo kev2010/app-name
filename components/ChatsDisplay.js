@@ -119,6 +119,7 @@ const ChatsDisplay = ({ navigation, archived }) => {
       where("invited", "array-contains", {
         imageURL: user.imageURL,
         name: user.name,
+        notificationToken: userData.notificationToken,
         selected: true,
         uid: user.uid,
         username: user.username,
