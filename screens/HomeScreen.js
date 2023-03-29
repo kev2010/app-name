@@ -120,6 +120,12 @@ const HomeScreen = ({ navigation }) => {
           }));
           updateNotificationToken(user.uid, token).then();
         });
+      } else if (user.notificationToken === undefined) {
+        // Token exists and user state doesn't
+        setUser((user) => ({
+          ...user,
+          notificationToken: token,
+        }));
       }
     });
   };
